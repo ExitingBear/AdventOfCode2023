@@ -11,6 +11,52 @@ navbar:
       href: Day-1.html
     - text: "Day 2"
       href: Day-2.html
+    - text: "Day 3"
+      href: Day-3.html
+    - text: "Day 4"
+      href: Day-4.html
+    - text: "Day 5"
+      href: Day-5.html
+    - text: "Day 6"
+      href: Day-6.html
+    - text: "Day 7"
+      href: Day-7.html
+    - text: "Day 8"
+      href: Day-8.html
+    - text: "Day 9"
+      href: Day-9.html
+    - text: "Day 10"
+      href: Day-10.html
+    - text: "Day 11"
+      href: Day-11.html
+    - text: "Day 12"
+      href: Day-12.html
+    - text: "Day 13"
+      href: Day-13.html
+    - text: "Day 14"
+      href: Day-14.html
+    - text: "Day 15"
+      href: Day-15.html
+    - text: "Day 16"
+      href: Day-16.html
+    - text: "Day 17"
+      href: Day-17.html
+    - text: "Day 18"
+      href: Day-18.html
+    - text: "Day 19"
+      href: Day-19.html
+    - text: "Day 20"
+      href: Day-20.html
+    - text: "Day 21"
+      href: Day-21.html
+    - text: "Day 22"
+      href: Day-22.html
+    - text: "Day 23"
+      href: Day-23.html
+    - text: "Day 24"
+      href: Day-24.html
+    - text: "Day 25"
+      href: Day-25.html
 output:
   html_document:
     theme: cosmo

@@ -1,6 +1,5 @@
 ---
 title: "Day 1 Notebook"
-output_dir: "docs"
 output:
   html_document:
     df_print: paged
@@ -67,7 +66,7 @@ the transform is:\
 \
 two1nine -\> 219 -\> 29
 
-But there's a small hitch - look at the example:\
+But there's a small hitch - look at the example: \
 
 eigh**t**wothree\
 
