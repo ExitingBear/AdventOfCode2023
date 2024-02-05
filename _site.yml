@@ -9,6 +9,8 @@ navbar:
     menu:
     - text: "Day 1"
       href: Day-1.html
+    - text: "Day 2"
+      href: Day-2.html
 output:
   html_document:
     theme: cosmo
