@@ -1,0 +1,14 @@
+name: "Advent of Code 2023"
+output_dir: "docs"
+navbar:
+  title: "Advent of Code 2023"
+  left:
+  - text: "Home"
+    href: index.html
+  - text: "Days"
+    menu:
+    - text: "Day 1"
+      href: Day-1.html
+output:
+  html_document:
+    theme: cosmo
