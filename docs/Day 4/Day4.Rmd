@@ -1,0 +1,152 @@
+---
+title: "Day 4 Notebook"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(dplyr)
+library(stringr)
+library(tidyverse)
+library(igraph)
+library(ggplot2)
+library(rgl)
+library(ggraph)
+library(readr)
+options(scipen = 999)
+```
+
+```{r}
+mydata <- read_lines("Day4Sample.txt")
+```
+
+## Part 1
+
+This is what a line of the data looks like
+```{r}
+cat(unlist(mydata[[1]]),"\n")
+```
+The goal for part 1 is to find out how many numbers before the pipe are in the list of numbers after the pipe and then assign points.
+
+So to start, breaking these into 3 parts, the card number, the numbers before, the numbers after
+```{r}
+cardlist <- lapply(mydata,function(x){
+  cardnumber <- as.numeric(str_trim(str_remove(str_split_i(x,": ",1),"Card")))
+  matching <- as.numeric(unlist(str_split(str_split_i(str_split_i(x,": ",2)," \\| ",1)," ")))
+  matching <- matching[!is.na(matching)]
+  winning <- as.numeric(unlist(str_split(str_split_i(str_split_i(x,": ",2)," \\| ",2)," ")))
+  winning <- winning[!is.na(winning)]
+  list(cardnumber,matching,winning)
+  })
+
+cardlist[1]
+```
+
+And then, find out how many are matching and assign points.
+
+If there are no matches, 0 points. If there's at least one match, then 2^(x-1) points.
+
+```{r}
+matches <- sapply(cardlist,function(x){
+  a<-sum(x[[2]] %in% x[[3]])
+  a})
+  
+points <- sapply(matches,function(x){
+  a<-if(x==0){0}else{2^(x-1)}
+  a})
+
+matches[1:min(5,length(matches))]
+points[1:min(5,length(matches))]
+```
+And part 1 is the sum of the points
+
+```{r}
+part1 <- sum(points)
+part1
+```
+## Part 2
+
+Part 2 is just strange - 
+
+For every card you find the number of matches (conveniently in "matched" from part 1). Then for each match, you make a copy of the next X card  It doesn't make any sense in words.  It barely makes sense in numbers.
+
+But from above - starting with 6 tickets
+
+Number of Cards:
+1 1 1 1 1 1
+
+Matches:
+4 2 2 1 0 0
+
+Card 1: 4 matches, so you make a copy of the next 4 tickets
+
+\begin{align}
+1 1 1 &1 1 1  (original number of cards)\\
+  1 1 &1 1    (additional cards)\\
+1 2 2 &2 2 1 \\
+\end{align}
+So for card 2: there are only two matches so you only alter the next two numbers.  But you have to do it twice because two cards:
+
+1 2 2 2 2 1 
+    2 2 
+1 2 4 4 2 1
+
+
+Anyway - here's the code that does it (and the output every step of the way because it's weird)
+
+```{r}
+
+numberofcards <- c(rep(1,length(mydata)))
+
+for (i in 1:length(mydata)){
+  j <-1
+  while (j<=matches[i]){
+    numberofcards[i+j]<-numberofcards[i+j]+numberofcards[i]
+    j<-j+1
+  }}
+
+
+numberofcards[1:min(5,length(numberofcards))]
+```
+And part 2's answer is the sum of the number of cards
+
+```{r}
+part2<-sum(numberofcards)
+part2
+```
+
+```{r}
+day4answers<-function(input){
+  ## find the number of matches - used again in part 2
+    matches <- lapply(input,function(x){
+    matching <- as.numeric(unlist(str_split(str_split_i(str_split_i(x,": ",2)," \\| ",1)," ")))
+    matching <- matching[!is.na(matching)]
+    winning <- as.numeric(unlist(str_split(str_split_i(str_split_i(x,": ",2)," \\| ",2)," ")))
+    winning <- winning[!is.na(winning)]
+    a <- sum(matching %in% winning)
+    a})
+    
+  ## find points for part 1  
+  points <- sapply(matches,function(x){
+    a<-if(x==0){0}else{2^(x-1)}
+    a})
+  part1<-sum(points)
+  
+  ## get the baseline for number of cards
+  numberofcards <- c(rep(1,length(input)))
+  ## get number of cards for part 2
+  for (i in 1:length(input)){
+    j <-1
+    while (j<=matches[i]){
+      numberofcards[i+j]<-numberofcards[i+j]+numberofcards[i]
+      j<-j+1}}
+  part2<-sum(numberofcards)
+  
+  return(c(part1,part2))}
+```
+
+```{r}
+day4answers(mydata)
+```

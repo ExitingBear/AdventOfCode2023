@@ -11,7 +11,7 @@
 
 
 
-<title>Day 3 Notebook</title>
+<title>Day 2 Notebook</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -1746,7 +1746,7 @@ display: none;
 
 
 
-<h1 class="title toc-ignore">Day 3 Notebook</h1>
+<h1 class="title toc-ignore">Day 2 Notebook</h1>
 
 </div>
 
@@ -1756,276 +1756,276 @@ display: none;
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBSZWFkIGluIGRhdGFcbm15ZGF0YSA8LSByZWFkX2xpbmVzKFwiRGF5M1NhbXBsZS50eHRcIilcblxuYGBgIn0= -->
+<!-- rnb-source-begin eyJkYXRhIjpbIiMgUmVhZCBpbiBkYXRhIiwibXlkYXRhIDwtIHJlYWRfbGluZXMoXCJEYXkyU2FtcGxlLnR4dFwiKSJdfQ== -->
 <pre class="r"><code># Read in data
-mydata &lt;- read_lines(&quot;Day3Sample.txt&quot;)
-</code></pre>
+mydata &lt;- read_lines(&quot;Day2Sample.txt&quot;)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <div id="part-1" class="section level2">
 <h2>Part 1</h2>
-<p>We’re looking for all of the numbers that are touching at least one
-not-number.</p>
-<p>To start, let’s read this into a matrix surrounded by a row of
-periods on the top, bottom, and each side (because that will make the
-future parts easier.) I am assuming that all of the lines will have the
-same number of characters - because that’s how squares work (I tried
-read.fwf(). It did not like that.)</p>
-<p>I’m also making a slight change - if I find a number, I’m checking
-the next two spaces to find out how many digits it is. Then, I’m
-labeling all of those spaces with a code “row~starting column;number”
-For example</p>
-<p>…934… would become | . | . | . | 1~4;934 | 1~4;934 | 1~4;934 | . | .
-| . |</p>
-<p>That way, I know that the number “934” stretches across those three
-spaces, starting at row 1, column 4. This is useful later. I swear</p>
+<p>So - the data that looks like this: &gt; Game 1: 3 blue, 4 red; 1
+red, 2 green, 6 blue; 2 green</p>
+<p>and the goal is to figure out if it’s “possible” which means there’s
+never more than 12 reds, 13 greens, and 14 blues. So, it seems that what
+might work was:</p>
+<ol style="list-style-type: decimal">
+<li>organize the data (get rid of the words, always put it in the same
+order)</li>
+<li>find out what the max number of reds, greens, and blues are in any
+game</li>
+<li>figure out if that’s too damn many</li>
+<li>add the game numbers for the ones that are possible</li>
+</ol>
+<div id="organize-the-data" class="section level3">
+<h3>Organize the Data</h3>
+<p>First, I wanted to turn the data into a data frame - or to transform
+Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green into</p>
+<table>
+<thead>
+<tr class="header">
+<th>Game</th>
+<th>Red</th>
+<th>Green</th>
+<th>Blue</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>4</td>
+<td>0</td>
+<td>3</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>1</td>
+<td>2</td>
+<td>6</td>
+</tr>
+<tr class="odd">
+<td>1</td>
+<td>0</td>
+<td>2</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<p>So first, I want a function that changes a string like “1 red, 2
+green, 6 blue” into a vector like c(1, 2, 6). (Where I’d just know that
+the first is red, the second is green, and the third is blue). Here’s
+the function - rgb()</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF0YXJvd3M8LWxlbmd0aChteWRhdGEpXG5kYXRhY29sczwtbmNoYXIobXlkYXRhWzFdKVxuXG5teW1hdHJpeCA8LSBtYXRyaXgobmNvbD1kYXRhY29scysyLG5yb3c9ZGF0YXJvd3MrMilcbm15bWF0cml4WzEsXTwtXCIuXCJcbm15bWF0cml4W2RhdGFyb3dzKzIsXTwtXCIuXCJcbm15bWF0cml4WywxXTwtXCIuXCJcbm15bWF0cml4WyxkYXRhY29scysyXTwtXCIuXCJcblxuZm9yIChpIGluIDE6ZGF0YXJvd3Mpe1xuICB0aGlzbGluZSA8LSBteWRhdGFbaV1cbiAgajwtMVxuICB3aGlsZShqPD1kYXRhY29scyl7XG4gICAgIyNjaGVjayB1cGNvbWluZyB0aHJlZSBzcGFjZXNcbiAgICBjdXJwb2ludDwtc3RyX3N1Yih0aGlzbGluZSxqLGopXG4gICAgbnh0cG9pbnQ8LXN0cl9zdWIodGhpc2xpbmUsaisxLGorMSlcbiAgICBkdWJuZXh0PC1zdHJfc3ViKHRoaXNsaW5lLGorMixqKzIpXG4gICAgIyN1cGRhdGUgaWYgbmVlZGVkXG4gICAgaWYoc3RyX2RldGVjdChjdXJwb2ludCxcIlswMTIzNDU2Nzg5XVwiKSZzdHJfZGV0ZWN0KG54dHBvaW50LFwiWzAxMjM0NTY3ODldXCIpJnN0cl9kZXRlY3QoZHVibmV4dCxcIlswMTIzNDU2Nzg5XVwiKSl7XG4gICAgICBteW1hdHJpeFtpKzEsaisxXTwtcGFzdGUwKGksXCJ+XCIsaixcIjtcIixzdHJfc3ViKHRoaXNsaW5lLGosaisyKSlcbiAgICAgIG15bWF0cml4W2krMSxqKzJdPC1wYXN0ZTAoaSxcIn5cIixqLFwiO1wiLHN0cl9zdWIodGhpc2xpbmUsaixqKzIpKVxuICAgICAgbXltYXRyaXhbaSsxLGorM108LXBhc3RlMChpLFwiflwiLGosXCI7XCIsc3RyX3N1Yih0aGlzbGluZSxqLGorMikpXG4gICAgICBqPC1qKzN9ZWxzZSBpZihzdHJfZGV0ZWN0KGN1cnBvaW50LFwiWzAxMjM0NTY3ODldXCIpJnN0cl9kZXRlY3Qobnh0cG9pbnQsXCJbMDEyMzQ1Njc4OV1cIikpe1xuICAgICAgICBteW1hdHJpeFtpKzEsaisxXTwtcGFzdGUwKGksXCJ+XCIsaixcIjtcIixzdHJfc3ViKHRoaXNsaW5lLGosaisxKSlcbiAgICAgICAgbXltYXRyaXhbaSsxLGorMl08LXBhc3RlMChpLFwiflwiLGosXCI7XCIsc3RyX3N1Yih0aGlzbGluZSxqLGorMSkpXG4gICAgICAgIGo8LWorMn1lbHNlIGlmKHN0cl9kZXRlY3QoY3VycG9pbnQsXCJbMDEyMzQ1Njc4OV1cIikpe1xuICAgICAgICAgIG15bWF0cml4W2krMSxqKzFdPC1wYXN0ZTAoaSxcIn5cIixqLFwiO1wiLHN0cl9zdWIodGhpc2xpbmUsaixqKSlcbiAgICAgICAgICBqPC1qKzF9ZWxzZXtcbiAgICAgICAgICAgICMjIyBvdGhlcndpc2UgaWYgaXQgaXMganVzdCBhIHN5bWJvbCBvciBhIHBlcmlvZCwgcHV0IHRoYXQgaW4gdGhlIG1hdHJpeFxuICAgICAgICAgICAgbXltYXRyaXhbaSsxLGorMV08LWN1cnBvaW50XG4gICAgICAgICAgICBqPC1qKzF9fX1cbmBgYCJ9 -->
-<pre class="r"><code>datarows&lt;-length(mydata)
-datacols&lt;-nchar(mydata[1])
+<!-- rnb-source-begin eyJkYXRhIjpbInJnYiA8LSBmdW5jdGlvbih4KXtcbiAgeDwtdW5saXN0KHN0cl9zcGxpdCh4LFwiLFwiKSlcbiAgaTwtMVxuICBvdXRyZ2IgPC0gYygwLDAsMClcbiAgd2hpbGUgKGk8PWxlbmd0aCh4KSl7XG4gICAgaWYoZ3JlcGwoXCJyZWRcIix4W2ldKSl7b3V0cmdiWzFdPC1wYXJzZV9udW1iZXIoeFtpXSl9XG4gICAgaWYoZ3JlcGwoXCJncmVlblwiLHhbaV0pKXtvdXRyZ2JbMl08LXBhcnNlX251bWJlcih4W2ldKX1cbiAgICBpZihncmVwbChcImJsdWVcIix4W2ldKSl7b3V0cmdiWzNdPC1wYXJzZV9udW1iZXIoeFtpXSl9XG4gICAgaTwtaSsxXG4gIH1cbiAgb3V0cmdiXG59IiwiIiwicmdiKFwiMSByZWQsIDIgZ3JlZW4sIDYgYmx1ZVwiKSJdfQ== -->
+<pre class="r"><code>rgb &lt;- function(x){
+  x&lt;-unlist(str_split(x,&quot;,&quot;))
+  i&lt;-1
+  outrgb &lt;- c(0,0,0)
+  while (i&lt;=length(x)){
+    if(grepl(&quot;red&quot;,x[i])){outrgb[1]&lt;-parse_number(x[i])}
+    if(grepl(&quot;green&quot;,x[i])){outrgb[2]&lt;-parse_number(x[i])}
+    if(grepl(&quot;blue&quot;,x[i])){outrgb[3]&lt;-parse_number(x[i])}
+    i&lt;-i+1
+  }
+  outrgb
+}
 
-mymatrix &lt;- matrix(ncol=datacols+2,nrow=datarows+2)
-mymatrix[1,]&lt;-&quot;.&quot;
-mymatrix[datarows+2,]&lt;-&quot;.&quot;
-mymatrix[,1]&lt;-&quot;.&quot;
-mymatrix[,datacols+2]&lt;-&quot;.&quot;
-
-for (i in 1:datarows){
-  thisline &lt;- mydata[i]
-  j&lt;-1
-  while(j&lt;=datacols){
-    ##check upcoming three spaces
-    curpoint&lt;-str_sub(thisline,j,j)
-    nxtpoint&lt;-str_sub(thisline,j+1,j+1)
-    dubnext&lt;-str_sub(thisline,j+2,j+2)
-    ##update if needed
-    if(str_detect(curpoint,&quot;[0123456789]&quot;)&amp;str_detect(nxtpoint,&quot;[0123456789]&quot;)&amp;str_detect(dubnext,&quot;[0123456789]&quot;)){
-      mymatrix[i+1,j+1]&lt;-paste0(i,&quot;~&quot;,j,&quot;;&quot;,str_sub(thisline,j,j+2))
-      mymatrix[i+1,j+2]&lt;-paste0(i,&quot;~&quot;,j,&quot;;&quot;,str_sub(thisline,j,j+2))
-      mymatrix[i+1,j+3]&lt;-paste0(i,&quot;~&quot;,j,&quot;;&quot;,str_sub(thisline,j,j+2))
-      j&lt;-j+3}else if(str_detect(curpoint,&quot;[0123456789]&quot;)&amp;str_detect(nxtpoint,&quot;[0123456789]&quot;)){
-        mymatrix[i+1,j+1]&lt;-paste0(i,&quot;~&quot;,j,&quot;;&quot;,str_sub(thisline,j,j+1))
-        mymatrix[i+1,j+2]&lt;-paste0(i,&quot;~&quot;,j,&quot;;&quot;,str_sub(thisline,j,j+1))
-        j&lt;-j+2}else if(str_detect(curpoint,&quot;[0123456789]&quot;)){
-          mymatrix[i+1,j+1]&lt;-paste0(i,&quot;~&quot;,j,&quot;;&quot;,str_sub(thisline,j,j))
-          j&lt;-j+1}else{
-            ### otherwise if it is just a symbol or a period, put that in the matrix
-            mymatrix[i+1,j+1]&lt;-curpoint
-            j&lt;-j+1}}}</code></pre>
+rgb(&quot;1 red, 2 green, 6 blue&quot;)</code></pre>
 <!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDEgMiA2XG4ifQ== -->
+<pre><code>[1] 1 2 6</code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>Now, with a matrix of everything, I want to grab all of the symbols
-and everything that surrounds them and put that into a dataframe
-(because if a number is touching a symbol, the symbol is also touching a
-number. So I just need the symbols:</p>
+<p>Now to reformat the data to be a list of lists</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3ltYm9scyA8LSBhcy5kYXRhLmZyYW1lKG1hdHJpeChuY29sPTksbnJvdz0wKSlcblxuZm9yKGkgaW4gMjpkYXRhcm93cysxKXtcbiAgZm9yKGogaW4gMjpkYXRhY29scysxKXtcbiAgICAjIyBjaGVjayB0byBzZWUgaWYgdGhpcyBpcyBvbmUgb2YgdGhlIC4ncyBvciBvbmUgb2YgdGhlIG51bWJlcnMuIFwiflwiIGlzIG5vdCBvbmUgb2YgdGhlIHN5bWJvbHMgaW4gdGhlIGRhdGFzZXQuXG4gICAgaWYobXltYXRyaXhbaSxqXSE9XCIuXCIgJiAhc3RyX2RldGVjdChteW1hdHJpeFtpLGpdLFwiflwiKSl7XG4gICAgICBhZGRpdDwtYyhteW1hdHJpeFtpLGpdLFxuICAgICAgICAgICAgICAgbXltYXRyaXhbaSsxLGorMV0sXG4gICAgICAgICAgICAgICBteW1hdHJpeFtpKzEsal0sXG4gICAgICAgICAgICAgICBteW1hdHJpeFtpKzEsai0xXSxcbiAgICAgICAgICAgICAgIG15bWF0cml4W2ksai0xXSxcbiAgICAgICAgICAgICAgIG15bWF0cml4W2ksaisxXSxcbiAgICAgICAgICAgICAgIG15bWF0cml4W2ktMSxqKzFdLFxuICAgICAgICAgICAgICAgbXltYXRyaXhbaS0xLGpdLFxuICAgICAgICAgICAgICAgbXltYXRyaXhbaS0xLGotMV0pXG4gICAgICBzeW1ib2xzPC1yYmluZChzeW1ib2xzLGFkZGl0KX19fVxuXG5jb2xuYW1lcyhzeW1ib2xzKTwtYyhcInBvaW50XCIsXCJQMVwiLFwiUDJcIixcIlAzXCIsXCJQNFwiLFwiUDVcIixcIlA2XCIsXCJQN1wiLFwiUDhcIikgIyBUaGUgUHMgZ28gYXJvdW5kIHRoZSBcbiMjIyBob3cgbWFueSBzeW1ib2xzIHRvdGFsP1xubnJvdyhzeW1ib2xzKVxuIyMjXG5zeW1ib2xzWzE6NSxdXG5cblxuYGBgIn0= -->
-<pre class="r"><code>symbols &lt;- as.data.frame(matrix(ncol=9,nrow=0))
+<!-- rnb-source-begin eyJkYXRhIjpbImNoYW5nZWRhdGEgPC0gc2FwcGx5KG15ZGF0YSxmdW5jdGlvbih4KXtcbiAgZ2FtZSA8LSBhcy5udW1lcmljKHN0cl9zcGxpdF9pKHN0cl9yZW1vdmUoeCxcIkdhbWUgXCIpLFwiOiBcIiwxKSlcbiAgdHJpZXMgPC0gc3RyX3NwbGl0KHN0cl9zcGxpdF9pKHgsXCI6IFwiLDIpLFwiOyBcIilcbiAgdHJpZXMgPC0gbGFwcGx5KHVubGlzdCh0cmllcykscmdiKVxuICB0cmllcyA8LSBsYXBwbHkodHJpZXMsZnVuY3Rpb24oeCl7YXBwZW5kKGdhbWUseCl9KVxuICB0cmllc30pIiwiIiwibXlkYXRhW1sxXV0iXX0= -->
+<pre class="r"><code>changedata &lt;- sapply(mydata,function(x){
+  game &lt;- as.numeric(str_split_i(str_remove(x,&quot;Game &quot;),&quot;: &quot;,1))
+  tries &lt;- str_split(str_split_i(x,&quot;: &quot;,2),&quot;; &quot;)
+  tries &lt;- lapply(unlist(tries),rgb)
+  tries &lt;- lapply(tries,function(x){append(game,x)})
+  tries})
 
-for(i in 2:datarows+1){
-  for(j in 2:datacols+1){
-    ## check to see if this is one of the .&#39;s or one of the numbers. &quot;~&quot; is not one of the symbols in the dataset.
-    if(mymatrix[i,j]!=&quot;.&quot; &amp; !str_detect(mymatrix[i,j],&quot;~&quot;)){
-      addit&lt;-c(mymatrix[i,j],
-               mymatrix[i+1,j+1],
-               mymatrix[i+1,j],
-               mymatrix[i+1,j-1],
-               mymatrix[i,j-1],
-               mymatrix[i,j+1],
-               mymatrix[i-1,j+1],
-               mymatrix[i-1,j],
-               mymatrix[i-1,j-1])
-      symbols&lt;-rbind(symbols,addit)}}}
-
-colnames(symbols)&lt;-c(&quot;point&quot;,&quot;P1&quot;,&quot;P2&quot;,&quot;P3&quot;,&quot;P4&quot;,&quot;P5&quot;,&quot;P6&quot;,&quot;P7&quot;,&quot;P8&quot;) # The Ps go around the 
-### how many symbols total?
-nrow(symbols)
-###
-symbols[1:5,]
-</code></pre>
+mydata[[1]]</code></pre>
 <!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiR2FtZSAxOiAzIGJsdWUsIDQgcmVkOyAxIHJlZCwgMiBncmVlbiwgNiBibHVlOyAyIGdyZWVuXCJcbiJ9 -->
+<pre><code>[1] &quot;Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green&quot;</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiR2FtZSAxOiAzIGJsdWUsIDQgcmVkOyAxIHJlZCwgMiBncmVlbiwgNiBibHVlOyAyIGdyZWVuXG4ifQ== -->
+<pre><code>Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiY2hhbmdlZGF0YVtbMV1dIn0= -->
+<pre class="r"><code>changedata[[1]]</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiW1sxXV1cblsxXSAxIDQgMCAzXG5cbltbMl1dXG5bMV0gMSAxIDIgNlxuXG5bWzNdXVxuWzFdIDEgMCAyIDBcbiJ9 -->
+<pre><code>[[1]]
+[1] 1 4 0 3
+
+[[2]]
+[1] 1 1 2 6
+
+[[3]]
+[1] 1 0 2 0</code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>The above is an example - row 1 shows a symbol “*” and it is next to
-two of the digits in the number 35 that starts at row 3, column 3. It is
-also next to one of the digits of the number 467 at row 1, column 1</p>
-<p>Now, just collect all of the unique values in columns A-H (those are
-the numbers touching a part)</p>
+<p>And make the data frame</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyMjIGdldCBudW1iZXJzIC0gdGhlIHJlYXNvbiB0aGF0IHRoZSBjb29yZGluYXRlIHZhbHVlcyB3ZXJlIHVzZWQgZWFybGllciBpcyB0byBtYWtlIHN1cmUgdGhhdCBpZiBhIG51bWJlciBhcHBlYXJlZCB0d2ljZSBpbiB0aGUgbWF0cml4LCBpdCB3YXMgY291bnRlZCB0d2ljZTsgYnV0IGlmIHRoZSBzYW1lIG51bWJlciB3YXMgdG91Y2hpbmcgbXVsdGlwbGUgcGFydHMsIGl0IGlzIG9ubHkgY291bnRlZCBvbmNlXG5wYXJ0cyA8LSB1bmlxdWUoYyhzeW1ib2xzJFAxLHN5bWJvbHMkUDIsc3ltYm9scyRQMyxzeW1ib2xzJFA0LHN5bWJvbHMkUDUsc3ltYm9scyRQNixzeW1ib2xzJFA3LHN5bWJvbHMkUDgpKVxuXG4jIyMgcmVtb3ZlIFwiLlwiXG5wYXJ0cyA8LSBwYXJ0c1shcGFydHM9PVwiLlwiXVxuXG4jIyMgcHVsbCBvdXQgbnVtYmVyc1xucGFydHMgPC0gYXMubnVtZXJpYyhzdHJfc3BsaXRfaShwYXJ0cyxcIjtcIiwyKSlcblxucGFydDE8LXN1bShwYXJ0cylcblxucGFydDFcbmBgYCJ9 -->
-<pre class="r"><code>### get numbers - the reason that the coordinate values were used earlier is to make sure that if a number appeared twice in the matrix, it was counted twice; but if the same number was touching multiple parts, it is only counted once
-parts &lt;- unique(c(symbols$P1,symbols$P2,symbols$P3,symbols$P4,symbols$P5,symbols$P6,symbols$P7,symbols$P8))
+<!-- rnb-source-begin eyJkYXRhIjpbImFuc3dlcmZyYW1lIDwtIGFzLmRhdGEuZnJhbWUobWF0cml4KG5jb2w9NCxucm93PTApKSIsIiIsImZvcihpIGluIDE6bGVuZ3RoKGNoYW5nZWRhdGEpKXtcbiAgZm9yKGogaW4gMTpsZW5ndGgoY2hhbmdlZGF0YVtbaV1dKSl7XG4gICAgeDwtY2hhbmdlZGF0YVtbaV1dW1tqXV1cbiAgICBhbnN3ZXJmcmFtZSA8LSByYmluZChhbnN3ZXJmcmFtZSx4KX19IiwiIiwiY29sbmFtZXMoYW5zd2VyZnJhbWUpPC1jKFwiZ2FtZVwiLFwicmVkXCIsXCJncmVlblwiLFwiYmx1ZVwiKSIsIiIsImFuc3dlcmZyYW1lWzE6bWluKDgsbnJvdyhhbnN3ZXJmcmFtZSkpLF0iXX0= -->
+<pre class="r"><code>answerframe &lt;- as.data.frame(matrix(ncol=4,nrow=0))
 
-### remove &quot;.&quot;
-parts &lt;- parts[!parts==&quot;.&quot;]
+for(i in 1:length(changedata)){
+  for(j in 1:length(changedata[[i]])){
+    x&lt;-changedata[[i]][[j]]
+    answerframe &lt;- rbind(answerframe,x)}}
 
-### pull out numbers
-parts &lt;- as.numeric(str_split_i(parts,&quot;;&quot;,2))
+colnames(answerframe)&lt;-c(&quot;game&quot;,&quot;red&quot;,&quot;green&quot;,&quot;blue&quot;)
 
-part1&lt;-sum(parts)
+answerframe[1:min(8,nrow(answerframe)),]</code></pre>
+<!-- rnb-source-end -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["game"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["red"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["green"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["blue"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"4","3":"0","4":"3","_rn_":"1"},{"1":"1","2":"1","3":"2","4":"6","_rn_":"2"},{"1":"1","2":"0","3":"2","4":"0","_rn_":"3"},{"1":"2","2":"0","3":"2","4":"1","_rn_":"4"},{"1":"2","2":"1","3":"3","4":"4","_rn_":"5"},{"1":"2","2":"0","3":"1","4":"1","_rn_":"6"},{"1":"3","2":"20","3":"8","4":"6","_rn_":"7"},{"1":"3","2":"4","3":"13","4":"5","_rn_":"8"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>The data is organized &amp; usable so</p>
+</div>
+<div id="find-out-what-the-max-number-of-reds-greens-and-blues-are-in-any-game" class="section level3">
+<h3>Find out what the max number of reds, greens, and blues are in any
+game</h3>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjpbImFuc3dlcmZyYW1lIDwtIGFuc3dlcmZyYW1lICU+JSBncm91cF9ieShnYW1lKSAlPiUgc3VtbWFyaXNlKG1heHJlZCA9IG1heChyZWQpLG1heGdyZWVuPSBtYXgoZ3JlZW4pLG1heGJsdWU9bWF4KGJsdWUpKSIsIiIsImFuc3dlcmZyYW1lWzE6bWluKDgsbnJvdyhhbnN3ZXJmcmFtZSkpLF0iXX0= -->
+<pre class="r"><code>answerframe &lt;- answerframe %&gt;% group_by(game) %&gt;% summarise(maxred = max(red),maxgreen= max(green),maxblue=max(blue))
 
+answerframe[1:min(8,nrow(answerframe)),]</code></pre>
+<!-- rnb-source-end -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["game"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["maxred"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["maxgreen"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["maxblue"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"4","3":"2","4":"6"},{"1":"2","2":"1","3":"3","4":"4"},{"1":"3","2":"20","3":"13","4":"6"},{"1":"4","2":"14","3":"3","4":"15"},{"1":"5","2":"6","3":"3","4":"2"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="figure-out-if-thats-too-damn-many" class="section level3">
+<h3>Figure out if that’s too damn many</h3>
+<p>In case we need the maxes later, don’t filter, just add a new
+column</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjpbImFuc3dlcmZyYW1lIDwtIGFuc3dlcmZyYW1lICU+JSBtdXRhdGUocG9zc2libGUgPSBpZmVsc2UobWF4cmVkPD0xMiAmIG1heGdyZWVuPD0xMyAmIG1heGJsdWU8PTE0LGdhbWUsMCkpIiwiIiwiIiwiYW5zd2VyZnJhbWVbMTptaW4oOCxucm93KGFuc3dlcmZyYW1lKSksXSJdfQ== -->
+<pre class="r"><code>answerframe &lt;- answerframe %&gt;% mutate(possible = ifelse(maxred&lt;=12 &amp; maxgreen&lt;=13 &amp; maxblue&lt;=14,game,0))
+
+
+answerframe[1:min(8,nrow(answerframe)),]</code></pre>
+<!-- rnb-source-end -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["game"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["maxred"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["maxgreen"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["maxblue"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["possible"],"name":[5],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"4","3":"2","4":"6","5":"1"},{"1":"2","2":"1","3":"3","4":"4","5":"2"},{"1":"3","2":"20","3":"13","4":"6","5":"0"},{"1":"4","2":"14","3":"3","4":"15","5":"0"},{"1":"5","2":"6","3":"3","4":"2","5":"5"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="add-game-numbers" class="section level3">
+<h3>Add game numbers</h3>
+<p>Which is the sum of possible</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjpbInBhcnQxPC1zdW0oYW5zd2VyZnJhbWUkcG9zc2libGUpIiwicGFydDEiXX0= -->
+<pre class="r"><code>part1&lt;-sum(answerframe$possible)
 part1</code></pre>
 <!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDhcbiJ9 -->
+<pre><code>[1] 8</code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+</div>
 </div>
 <div id="part-2" class="section level2">
 <h2>Part 2</h2>
-<p>For part 2 - the focus is on the gears - so first find them (the
-symbol “*“)</p>
+<p>To get “power” take the max of each color and multiply them
+together</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2VhcnMgPC0gc3ltYm9scyAlPiUgZmlsdGVyKHBvaW50ID09IFwiKlwiKVxuXG5nZWFyc1sxOm1pbig4LG5yb3coZ2VhcnMpKSxdXG5gYGAifQ== -->
-<pre class="r"><code>gears &lt;- symbols %&gt;% filter(point == &quot;*&quot;)
-
-gears[1:min(8,nrow(gears)),]</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjpbImFuc3dlcmZyYW1lPC1hbnN3ZXJmcmFtZSAlPiUgbXV0YXRlKHBvd2VyPW1heHJlZCptYXhibHVlKm1heGdyZWVuKSIsInBhcnQyPC1zdW0oYW5zd2VyZnJhbWUkcG93ZXIpIiwiYW5zd2VyZnJhbWVbMTptaW4oOCxucm93KGFuc3dlcmZyYW1lKSksXSJdfQ== -->
+<pre class="r"><code>answerframe&lt;-answerframe %&gt;% mutate(power=maxred*maxblue*maxgreen)
+part2&lt;-sum(answerframe$power)
+answerframe[1:min(8,nrow(answerframe)),]</code></pre>
 <!-- rnb-source-end -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["game"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["maxred"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["maxgreen"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["maxblue"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["possible"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["power"],"name":[6],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"4","3":"2","4":"6","5":"1","6":"48"},{"1":"2","2":"1","3":"3","4":"4","5":"2","6":"12"},{"1":"3","2":"20","3":"13","4":"6","5":"0","6":"1560"},{"1":"4","2":"14","3":"3","4":"15","5":"0","6":"630"},{"1":"5","2":"6","3":"3","4":"2","5":"5","6":"36"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-source-begin eyJkYXRhIjoicGFydDIifQ== -->
+<pre class="r"><code>part2</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDIyODZcbiJ9 -->
+<pre><code>[1] 2286</code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>And we’re looking for gears that are touching two numbers - grab
-P1-P8 and find the unique values (not including the “.”s)</p>
+<p>Or to put it all in a single function (with a helper function - rgb()
+above, so two functions - but you know what I mean):</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2VhcnMgPC0gZ2VhcnMgJT4lIHJvd3dpc2UlPiUgbXV0YXRlKHBhcnRsaXN0PWxpc3QoYyhQMSxQMixQMyxQNCxQNSxQNixQNyxQOCkpKSAlPiVcbiAgbXV0YXRlKHBhcnRsaXN0PWxpc3QodW5pcXVlKHBhcnRsaXN0KSkpICU+JVxuICBtdXRhdGUocGFydGxpc3Q9bGlzdChwYXJ0bGlzdFshcGFydGxpc3Q9PVwiLlwiXSkpICU+JVxuICAjIyMgdGhlIG9ubHkgdGhpbmdzIHRoYXQgbWF0dGVyIGFyZSB0aGUgZ2Vhcmxpc3QgLSBidXQgd2UgbWF5IGFzIHdlbGwga2VlcCB0aGUgcG9pbnQsIGp1c3QgZm9yIGZ1blxuICBzZWxlY3QocG9pbnQscGFydGxpc3QpXG5cbmdlYXJzWzE6bWluKDgsbnJvdyhnZWFycykpLF1cbmBgYCJ9 -->
-<pre class="r"><code>gears &lt;- gears %&gt;% rowwise%&gt;% mutate(partlist=list(c(P1,P2,P3,P4,P5,P6,P7,P8))) %&gt;%
-  mutate(partlist=list(unique(partlist))) %&gt;%
-  mutate(partlist=list(partlist[!partlist==&quot;.&quot;])) %&gt;%
-  ### the only things that matter are the gearlist - but we may as well keep the point, just for fun
-  select(point,partlist)
-
-gears[1:min(8,nrow(gears)),]</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>At this point, filter out anything that is only touching 1 thing.
-Instead just look at gears touching two numbers and get those numbers.
-Then multiply them.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2VhcnMgPC0gZ2VhcnMgJT4lXG4gIGZpbHRlcihsZW5ndGgocGFydGxpc3QpPT0yKSAlPiVcbiAgbXV0YXRlKHAxPXBhcnRsaXN0WzFdLHAyPXBhcnRsaXN0WzJdKSAlPiVcbiAgbXV0YXRlKHAxPWFzLm51bWVyaWMoc3RyX3NwbGl0X2kocDEsXCI7XCIsMikpLHAyPWFzLm51bWVyaWMoc3RyX3NwbGl0X2kocDIsXCI7XCIsMikpKSAlPiVcbiAgbXV0YXRlKGdlYXJyYXRpbz1wMSpwMilcblxuZ2VhcnNbMTptaW4oOCxucm93KGdlYXJzKSksXVxuXG5gYGAifQ== -->
-<pre class="r"><code>gears &lt;- gears %&gt;%
-  filter(length(partlist)==2) %&gt;%
-  mutate(p1=partlist[1],p2=partlist[2]) %&gt;%
-  mutate(p1=as.numeric(str_split_i(p1,&quot;;&quot;,2)),p2=as.numeric(str_split_i(p2,&quot;;&quot;,2))) %&gt;%
-  mutate(gearratio=p1*p2)
-
-gears[1:min(8,nrow(gears)),]
-</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>And finally, part 2 is the sum of the gear ratios</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGFydDIgPC0gc3VtKGdlYXJzJGdlYXJyYXRpbylcbnBhcnQyXG5gYGAifQ== -->
-<pre class="r"><code>part2 &lt;- sum(gears$gearratio)
-part2</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>In a single function</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyMjIHN0YXJ0cyB3aXRoIHRoZSBkYXRhIGFscmVhZHkgcmVhZCBpbiB1c2luZyByZWFkX2xpbmVzKClcbmRheTNhbnN3ZXJzPC1mdW5jdGlvbihpbnB1dCl7XG4gIGRhdGFyb3dzPC1sZW5ndGgoaW5wdXQpXG4gIGRhdGFjb2xzPC1uY2hhcihpbnB1dFsxXSlcbiAgXG4gICMjIyByZWFkIGRhdGEgaW50byBtYXRyaXhcbiAgbXltYXRyaXggPC0gbWF0cml4KG5jb2w9ZGF0YWNvbHMrMixucm93PWRhdGFyb3dzKzIpXG4gIG15bWF0cml4WzEsXTwtXCIuXCJcbiAgbXltYXRyaXhbZGF0YXJvd3MrMixdPC1cIi5cIlxuICBteW1hdHJpeFssMV08LVwiLlwiXG4gIG15bWF0cml4WyxkYXRhY29scysyXTwtXCIuXCJcbiAgXG4gIGZvciAoaSBpbiAxOmRhdGFyb3dzKXtcbiAgICB0aGlzbGluZSA8LSBpbnB1dFtpXVxuICAgIGo8LTFcbiAgICB3aGlsZShqPD1kYXRhY29scyl7XG4gICAgICAjI2NoZWNrIHVwY29taW5nIHRocmVlIHNwYWNlc1xuICAgICAgY3VycG9pbnQ8LXN0cl9zdWIodGhpc2xpbmUsaixqKVxuICAgICAgbnh0cG9pbnQ8LXN0cl9zdWIodGhpc2xpbmUsaisxLGorMSlcbiAgICAgIGR1Ym5leHQ8LXN0cl9zdWIodGhpc2xpbmUsaisyLGorMilcbiAgICAgICMjdXBkYXRlIGlmIG5lZWRlZFxuICAgICAgaWYoc3RyX2RldGVjdChjdXJwb2ludCxcIlswMTIzNDU2Nzg5XVwiKSZzdHJfZGV0ZWN0KG54dHBvaW50LFwiWzAxMjM0NTY3ODldXCIpJnN0cl9kZXRlY3QoZHVibmV4dCxcIlswMTIzNDU2Nzg5XVwiKSl7XG4gICAgICAgIG15bWF0cml4W2krMSxqKzFdPC1wYXN0ZTAoaSxcIn5cIixqLFwiO1wiLHN0cl9zdWIodGhpc2xpbmUsaixqKzIpKVxuICAgICAgICBteW1hdHJpeFtpKzEsaisyXTwtcGFzdGUwKGksXCJ+XCIsaixcIjtcIixzdHJfc3ViKHRoaXNsaW5lLGosaisyKSlcbiAgICAgICAgbXltYXRyaXhbaSsxLGorM108LXBhc3RlMChpLFwiflwiLGosXCI7XCIsc3RyX3N1Yih0aGlzbGluZSxqLGorMikpXG4gICAgICAgIGo8LWorM31lbHNlIGlmKHN0cl9kZXRlY3QoY3VycG9pbnQsXCJbMDEyMzQ1Njc4OV1cIikmc3RyX2RldGVjdChueHRwb2ludCxcIlswMTIzNDU2Nzg5XVwiKSl7XG4gICAgICAgICAgbXltYXRyaXhbaSsxLGorMV08LXBhc3RlMChpLFwiflwiLGosXCI7XCIsc3RyX3N1Yih0aGlzbGluZSxqLGorMSkpXG4gICAgICAgICAgbXltYXRyaXhbaSsxLGorMl08LXBhc3RlMChpLFwiflwiLGosXCI7XCIsc3RyX3N1Yih0aGlzbGluZSxqLGorMSkpXG4gICAgICAgICAgajwtaisyfWVsc2UgaWYoc3RyX2RldGVjdChjdXJwb2ludCxcIlswMTIzNDU2Nzg5XVwiKSl7XG4gICAgICAgICAgICBteW1hdHJpeFtpKzEsaisxXTwtcGFzdGUwKGksXCJ+XCIsaixcIjtcIixzdHJfc3ViKHRoaXNsaW5lLGosaikpXG4gICAgICAgICAgICBqPC1qKzF9ZWxzZXtcbiAgICAgICAgICAgICAgIyMjIG90aGVyd2lzZSBpZiBpdCBpcyBqdXN0IGEgc3ltYm9sIG9yIGEgcGVyaW9kLCBwdXQgdGhhdCBpbiB0aGUgbWF0cml4XG4gICAgICAgICAgICAgIG15bWF0cml4W2krMSxqKzFdPC1jdXJwb2ludFxuICAgICAgICAgICAgICBqPC1qKzF9fX1cbiAgXG4gICMjIyBjcmVhdGUgZGF0YSBmcmFtZSBvZiBzeW1ib2xzXG4gIHN5bWJvbHMgPC0gYXMuZGF0YS5mcmFtZShtYXRyaXgobmNvbD05LG5yb3c9MCkpXG5cbiAgZm9yKGkgaW4gMjpkYXRhcm93cysxKXtcbiAgICBmb3IoaiBpbiAyOmRhdGFjb2xzKzEpe1xuICAgICAgIyMgY2hlY2sgdG8gc2VlIGlmIHRoaXMgaXMgb25lIG9mIHRoZSAuJ3Mgb3Igb25lIG9mIHRoZSBudW1iZXJzLiBcIn5cIiBpcyBub3Qgb25lIG9mIHRoZSBzeW1ib2xzIGluIHRoZSBkYXRhc2V0LlxuICAgICAgaWYobXltYXRyaXhbaSxqXSE9XCIuXCIgJiAhc3RyX2RldGVjdChteW1hdHJpeFtpLGpdLFwiflwiKSl7XG4gICAgICAgIGFkZGl0PC1jKG15bWF0cml4W2ksal0sXG4gICAgICAgICAgICAgICAgIG15bWF0cml4W2krMSxqKzFdLFxuICAgICAgICAgICAgICAgICBteW1hdHJpeFtpKzEsal0sXG4gICAgICAgICAgICAgICAgIG15bWF0cml4W2krMSxqLTFdLFxuICAgICAgICAgICAgICAgICBteW1hdHJpeFtpLGotMV0sXG4gICAgICAgICAgICAgICAgIG15bWF0cml4W2ksaisxXSxcbiAgICAgICAgICAgICAgICAgbXltYXRyaXhbaS0xLGorMV0sXG4gICAgICAgICAgICAgICAgIG15bWF0cml4W2ktMSxqXSxcbiAgICAgICAgICAgICAgICAgbXltYXRyaXhbaS0xLGotMV0pXG4gICAgICAgIHN5bWJvbHM8LXJiaW5kKHN5bWJvbHMsYWRkaXQpfX19XG4gIFxuICBjb2xuYW1lcyhzeW1ib2xzKTwtYyhcInBvaW50XCIsXCJQMVwiLFwiUDJcIixcIlAzXCIsXCJQNFwiLFwiUDVcIixcIlA2XCIsXCJQN1wiLFwiUDhcIilcbiAgXG4gICMjI2dldCBwYXJ0cyBmcm9tIHRoZSBudW1iZXJzIHRvdWNoaW5nIGF0IGxlYXN0IG9uZSBzeW1ib2xcbiAgcGFydHMgPC0gdW5pcXVlKGMoc3ltYm9scyRQMSxzeW1ib2xzJFAyLHN5bWJvbHMkUDMsc3ltYm9scyRQNCxzeW1ib2xzJFA1LHN5bWJvbHMkUDYsc3ltYm9scyRQNyxzeW1ib2xzJFA4KSlcbiAgcGFydHMgPC0gcGFydHNbIXBhcnRzPT1cIi5cIl1cbiAgcGFydHMgPC0gYXMubnVtZXJpYyhzdHJfc3BsaXRfaShwYXJ0cyxcIjtcIiwyKSlcbiAgXG4gIHBhcnQxPC1zdW0ocGFydHMpXG4gIFxuICAjIyNnZXQgZ2VhcnNcbiAgZ2VhcnMgPC0gc3ltYm9scyAlPiUgZmlsdGVyKHBvaW50ID09IFwiKlwiKSAlPiVcbiAgICByb3d3aXNlICU+JVxuICAgICMjIyBnZXQgdGhlIGxpc3Qgb2YgcGFydHMgdG91Y2hpbmcgdGhlIGdlYXJzXG4gICAgbXV0YXRlKHBhcnRsaXN0PWxpc3QoYyhQMSxQMixQMyxQNCxQNSxQNixQNyxQOCkpKSAlPiVcbiAgICBtdXRhdGUocGFydGxpc3Q9bGlzdCh1bmlxdWUocGFydGxpc3QpKSkgJT4lXG4gICAgbXV0YXRlKHBhcnRsaXN0PWxpc3QocGFydGxpc3RbIXBhcnRsaXN0PT1cIi5cIl0pKSAlPiVcbiAgICBzZWxlY3QocG9pbnQscGFydGxpc3QpICU+JVxuICAgICMjIyBsaXN0IGdldCBwYXJ0cyAmIGNhbGN1bGF0ZSBnZWFyIHJhdGlvXG4gICAgZmlsdGVyKGxlbmd0aChwYXJ0bGlzdCk9PTIpICU+JVxuICAgIG11dGF0ZShwMT1wYXJ0bGlzdFsxXSxwMj1wYXJ0bGlzdFsyXSkgJT4lXG4gICAgbXV0YXRlKHAxPWFzLm51bWVyaWMoc3RyX3NwbGl0X2kocDEsXCI7XCIsMikpLHAyPWFzLm51bWVyaWMoc3RyX3NwbGl0X2kocDIsXCI7XCIsMikpKSAlPiVcbiAgICBtdXRhdGUoZ2VhcnJhdGlvPXAxKnAyKVxuICBcbiAgcGFydDIgPC0gc3VtKGdlYXJzJGdlYXJyYXRpbylcblxuICByZXR1cm4oYyhwYXJ0MSxwYXJ0MikpfVxuXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjpbIiMjIyBzdGFydHMgd2l0aCB0aGUgZGF0YSBhbHJlYWR5IHJlYWQgaW4gdXNpbmcgcmVhZF9saW5lcygpIiwiZGF5MmFuc3dlcnM8LWZ1bmN0aW9uKGlucHV0KXtcbiAgIyMjIHJlZm9ybWF0IGlucHV0IGludG8gbGlzdCBvZiBsaXN0c1xuICBsaXN0ZGF0YSA8LSBzYXBwbHkoaW5wdXQsZnVuY3Rpb24oeCl7XG4gICAgZ2FtZSA8LSBhcy5udW1lcmljKHN0cl9zcGxpdF9pKHN0cl9yZW1vdmUoeCxcIkdhbWUgXCIpLFwiOiBcIiwxKSlcbiAgICB0cmllcyA8LSBzdHJfc3BsaXQoc3RyX3NwbGl0X2koeCxcIjogXCIsMiksXCI7IFwiKVxuICAgIHRyaWVzIDwtIGxhcHBseSh1bmxpc3QodHJpZXMpLHJnYilcbiAgICB0cmllcyA8LSBsYXBwbHkodHJpZXMsZnVuY3Rpb24oeCl7YXBwZW5kKGdhbWUseCl9KVxuICAgIHRyaWVzfSlcblxuICAjIyMgZW50ZXIgaW50byBhIGRhdGEgZnJhbWVcbiAgYW5zd2VyZnJhbWUgPC0gYXMuZGF0YS5mcmFtZShtYXRyaXgobmNvbD00LG5yb3c9MCkpXG4gIFxuICBmb3IoaSBpbiAxOmxlbmd0aChsaXN0ZGF0YSkpe1xuICAgIGZvcihqIGluIDE6bGVuZ3RoKGxpc3RkYXRhW1tpXV0pKXtcbiAgICAgIHg8LWxpc3RkYXRhW1tpXV1bW2pdXVxuICAgICAgYW5zd2VyZnJhbWUgPC0gcmJpbmQoYW5zd2VyZnJhbWUseCl9fVxuICBjb2xuYW1lcyhhbnN3ZXJmcmFtZSk8LWMoXCJnYW1lXCIsXCJyZWRcIixcImdyZWVuXCIsXCJibHVlXCIpXG4gIFxuICAjIyMgZ2V0IG1heCByZ2JcbiAgYW5zd2VyZnJhbWUgPC0gYW5zd2VyZnJhbWUgJT4lIGdyb3VwX2J5KGdhbWUpICU+JVxuICAgIHN1bW1hcmlzZShtYXhyZWQgPSBtYXgocmVkKSxtYXhncmVlbiA9IG1heChncmVlbiksbWF4Ymx1ZSA9IG1heChibHVlKSlcbiAgXG4gICMjIyBnZXQgcG9zc2libGUgYW5kIHBvd2VyXG4gIGFuc3dlcmZyYW1lIDwtIGFuc3dlcmZyYW1lICU+JVxuICAgIG11dGF0ZShwb3NzaWJsZSA9IGlmZWxzZShtYXhyZWQ8PTEyICYgbWF4Z3JlZW48PTEzICYgbWF4Ymx1ZTw9MTQsZ2FtZSwwKSxcbiAgICAgICAgICAgcG93ZXIgPSBtYXhyZWQqbWF4Z3JlZW4qbWF4Ymx1ZSlcbiAgcGFydDEgPC1zdW0oYW5zd2VyZnJhbWUkcG9zc2libGUpXG4gIHBhcnQyIDwtc3VtKGFuc3dlcmZyYW1lJHBvd2VyKVxuICByZXR1cm4oYyhwYXJ0MSxwYXJ0MikpfSJdfQ== -->
 <pre class="r"><code>### starts with the data already read in using read_lines()
-day3answers&lt;-function(input){
-  datarows&lt;-length(input)
-  datacols&lt;-nchar(input[1])
-  
-  ### read data into matrix
-  mymatrix &lt;- matrix(ncol=datacols+2,nrow=datarows+2)
-  mymatrix[1,]&lt;-&quot;.&quot;
-  mymatrix[datarows+2,]&lt;-&quot;.&quot;
-  mymatrix[,1]&lt;-&quot;.&quot;
-  mymatrix[,datacols+2]&lt;-&quot;.&quot;
-  
-  for (i in 1:datarows){
-    thisline &lt;- input[i]
-    j&lt;-1
-    while(j&lt;=datacols){
-      ##check upcoming three spaces
-      curpoint&lt;-str_sub(thisline,j,j)
-      nxtpoint&lt;-str_sub(thisline,j+1,j+1)
-      dubnext&lt;-str_sub(thisline,j+2,j+2)
-      ##update if needed
-      if(str_detect(curpoint,&quot;[0123456789]&quot;)&amp;str_detect(nxtpoint,&quot;[0123456789]&quot;)&amp;str_detect(dubnext,&quot;[0123456789]&quot;)){
-        mymatrix[i+1,j+1]&lt;-paste0(i,&quot;~&quot;,j,&quot;;&quot;,str_sub(thisline,j,j+2))
-        mymatrix[i+1,j+2]&lt;-paste0(i,&quot;~&quot;,j,&quot;;&quot;,str_sub(thisline,j,j+2))
-        mymatrix[i+1,j+3]&lt;-paste0(i,&quot;~&quot;,j,&quot;;&quot;,str_sub(thisline,j,j+2))
-        j&lt;-j+3}else if(str_detect(curpoint,&quot;[0123456789]&quot;)&amp;str_detect(nxtpoint,&quot;[0123456789]&quot;)){
-          mymatrix[i+1,j+1]&lt;-paste0(i,&quot;~&quot;,j,&quot;;&quot;,str_sub(thisline,j,j+1))
-          mymatrix[i+1,j+2]&lt;-paste0(i,&quot;~&quot;,j,&quot;;&quot;,str_sub(thisline,j,j+1))
-          j&lt;-j+2}else if(str_detect(curpoint,&quot;[0123456789]&quot;)){
-            mymatrix[i+1,j+1]&lt;-paste0(i,&quot;~&quot;,j,&quot;;&quot;,str_sub(thisline,j,j))
-            j&lt;-j+1}else{
-              ### otherwise if it is just a symbol or a period, put that in the matrix
-              mymatrix[i+1,j+1]&lt;-curpoint
-              j&lt;-j+1}}}
-  
-  ### create data frame of symbols
-  symbols &lt;- as.data.frame(matrix(ncol=9,nrow=0))
+day2answers&lt;-function(input){
+  ### reformat input into list of lists
+  listdata &lt;- sapply(input,function(x){
+    game &lt;- as.numeric(str_split_i(str_remove(x,&quot;Game &quot;),&quot;: &quot;,1))
+    tries &lt;- str_split(str_split_i(x,&quot;: &quot;,2),&quot;; &quot;)
+    tries &lt;- lapply(unlist(tries),rgb)
+    tries &lt;- lapply(tries,function(x){append(game,x)})
+    tries})
 
-  for(i in 2:datarows+1){
-    for(j in 2:datacols+1){
-      ## check to see if this is one of the .&#39;s or one of the numbers. &quot;~&quot; is not one of the symbols in the dataset.
-      if(mymatrix[i,j]!=&quot;.&quot; &amp; !str_detect(mymatrix[i,j],&quot;~&quot;)){
-        addit&lt;-c(mymatrix[i,j],
-                 mymatrix[i+1,j+1],
-                 mymatrix[i+1,j],
-                 mymatrix[i+1,j-1],
-                 mymatrix[i,j-1],
-                 mymatrix[i,j+1],
-                 mymatrix[i-1,j+1],
-                 mymatrix[i-1,j],
-                 mymatrix[i-1,j-1])
-        symbols&lt;-rbind(symbols,addit)}}}
+  ### enter into a data frame
+  answerframe &lt;- as.data.frame(matrix(ncol=4,nrow=0))
   
-  colnames(symbols)&lt;-c(&quot;point&quot;,&quot;P1&quot;,&quot;P2&quot;,&quot;P3&quot;,&quot;P4&quot;,&quot;P5&quot;,&quot;P6&quot;,&quot;P7&quot;,&quot;P8&quot;)
+  for(i in 1:length(listdata)){
+    for(j in 1:length(listdata[[i]])){
+      x&lt;-listdata[[i]][[j]]
+      answerframe &lt;- rbind(answerframe,x)}}
+  colnames(answerframe)&lt;-c(&quot;game&quot;,&quot;red&quot;,&quot;green&quot;,&quot;blue&quot;)
   
-  ###get parts from the numbers touching at least one symbol
-  parts &lt;- unique(c(symbols$P1,symbols$P2,symbols$P3,symbols$P4,symbols$P5,symbols$P6,symbols$P7,symbols$P8))
-  parts &lt;- parts[!parts==&quot;.&quot;]
-  parts &lt;- as.numeric(str_split_i(parts,&quot;;&quot;,2))
+  ### get max rgb
+  answerframe &lt;- answerframe %&gt;% group_by(game) %&gt;%
+    summarise(maxred = max(red),maxgreen = max(green),maxblue = max(blue))
   
-  part1&lt;-sum(parts)
-  
-  ###get gears
-  gears &lt;- symbols %&gt;% filter(point == &quot;*&quot;) %&gt;%
-    rowwise %&gt;%
-    ### get the list of parts touching the gears
-    mutate(partlist=list(c(P1,P2,P3,P4,P5,P6,P7,P8))) %&gt;%
-    mutate(partlist=list(unique(partlist))) %&gt;%
-    mutate(partlist=list(partlist[!partlist==&quot;.&quot;])) %&gt;%
-    select(point,partlist) %&gt;%
-    ### list get parts &amp; calculate gear ratio
-    filter(length(partlist)==2) %&gt;%
-    mutate(p1=partlist[1],p2=partlist[2]) %&gt;%
-    mutate(p1=as.numeric(str_split_i(p1,&quot;;&quot;,2)),p2=as.numeric(str_split_i(p2,&quot;;&quot;,2))) %&gt;%
-    mutate(gearratio=p1*p2)
-  
-  part2 &lt;- sum(gears$gearratio)
-
-  return(c(part1,part2))}
-</code></pre>
+  ### get possible and power
+  answerframe &lt;- answerframe %&gt;%
+    mutate(possible = ifelse(maxred&lt;=12 &amp; maxgreen&lt;=13 &amp; maxblue&lt;=14,game,0),
+           power = maxred*maxgreen*maxblue)
+  part1 &lt;-sum(answerframe$possible)
+  part2 &lt;-sum(answerframe$power)
+  return(c(part1,part2))}</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF5M2Fuc3dlcnMobXlkYXRhKVxuYGBgIn0= -->
-<pre class="r"><code>day3answers(mydata)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiZGF5MmFuc3dlcnMobXlkYXRhKSJ9 -->
+<pre class="r"><code>day2answers(mydata)</code></pre>
 <!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdICAgIDggMjI4NlxuIn0= -->
+<pre><code>[1]    8 2286</code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 </div>
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIkRheSAzIE5vdGVib29rIg0Kb3V0cHV0Og0KICBodG1sX25vdGVib29rOg0KICAgIGRmX3ByaW50OiBwYWdlZA0KLS0tDQoNCmBgYHtyIHNldHVwLCBpbmNsdWRlPUZBTFNFfQ0KbGlicmFyeShrbml0cikNCmxpYnJhcnkoZHBseXIpDQpsaWJyYXJ5KHN0cmluZ3IpDQpsaWJyYXJ5KHRpZHl2ZXJzZSkNCmxpYnJhcnkoaWdyYXBoKQ0KbGlicmFyeShnZ3Bsb3QyKQ0KbGlicmFyeShyZ2wpDQpsaWJyYXJ5KGdncmFwaCkNCmxpYnJhcnkocmVhZHIpDQpvcHRpb25zKHNjaXBlbiA9IDk5OSkNCg0KDQpgYGANCg0KYGBge3J9DQojIFJlYWQgaW4gZGF0YQ0KbXlkYXRhIDwtIHJlYWRfbGluZXMoIkRheTNTYW1wbGUudHh0IikNCg0KYGBgDQoNCiMjIFBhcnQgMQ0KV2UncmUgbG9va2luZyBmb3IgYWxsIG9mIHRoZSBudW1iZXJzIHRoYXQgYXJlIHRvdWNoaW5nIGF0IGxlYXN0IG9uZSBub3QtbnVtYmVyLg0KDQpUbyBzdGFydCwgbGV0J3MgcmVhZCB0aGlzIGludG8gYSBtYXRyaXggc3Vycm91bmRlZCBieSBhIHJvdyBvZiBwZXJpb2RzIG9uIHRoZSB0b3AsIGJvdHRvbSwgYW5kIGVhY2ggc2lkZSAoYmVjYXVzZSB0aGF0IHdpbGwgbWFrZSB0aGUgZnV0dXJlIHBhcnRzIGVhc2llci4pIEkgYW0gYXNzdW1pbmcgdGhhdCBhbGwgb2YgdGhlIGxpbmVzIHdpbGwgaGF2ZSB0aGUgc2FtZSBudW1iZXIgb2YgY2hhcmFjdGVycyAtIGJlY2F1c2UgdGhhdCdzIGhvdyBzcXVhcmVzIHdvcmsgKEkgdHJpZWQgcmVhZC5md2YoKS4gIEl0IGRpZCBub3QgbGlrZSB0aGF0LikNCg0KSSdtIGFsc28gbWFraW5nIGEgc2xpZ2h0IGNoYW5nZSAtIGlmIEkgZmluZCBhIG51bWJlciwgSSdtIGNoZWNraW5nIHRoZSBuZXh0IHR3byBzcGFjZXMgdG8gZmluZCBvdXQgaG93IG1hbnkgZGlnaXRzIGl0IGlzLiAgVGhlbiwgSSdtIGxhYmVsaW5nIGFsbCBvZiB0aG9zZSBzcGFjZXMgd2l0aCBhIGNvZGUgInJvd35zdGFydGluZyBjb2x1bW47bnVtYmVyIiBGb3IgZXhhbXBsZQ0KDQouLi45MzQuLi4NCndvdWxkIGJlY29tZQ0KfCAuIHwgLiB8IC4gfCAxfjQ7OTM0IHwgMX40OzkzNCB8IDF+NDs5MzQgfCAuIHwgLiB8IC4gfA0KDQpUaGF0IHdheSwgSSBrbm93IHRoYXQgdGhlIG51bWJlciAiOTM0IiBzdHJldGNoZXMgYWNyb3NzIHRob3NlIHRocmVlIHNwYWNlcywgc3RhcnRpbmcgYXQgcm93IDEsIGNvbHVtbiA0LiAgVGhpcyBpcyB1c2VmdWwgbGF0ZXIuIEkgc3dlYXINCg0KYGBge3J9DQpkYXRhcm93czwtbGVuZ3RoKG15ZGF0YSkNCmRhdGFjb2xzPC1uY2hhcihteWRhdGFbMV0pDQoNCm15bWF0cml4IDwtIG1hdHJpeChuY29sPWRhdGFjb2xzKzIsbnJvdz1kYXRhcm93cysyKQ0KbXltYXRyaXhbMSxdPC0iLiINCm15bWF0cml4W2RhdGFyb3dzKzIsXTwtIi4iDQpteW1hdHJpeFssMV08LSIuIg0KbXltYXRyaXhbLGRhdGFjb2xzKzJdPC0iLiINCg0KZm9yIChpIGluIDE6ZGF0YXJvd3Mpew0KICB0aGlzbGluZSA8LSBteWRhdGFbaV0NCiAgajwtMQ0KICB3aGlsZShqPD1kYXRhY29scyl7DQogICAgIyNjaGVjayB1cGNvbWluZyB0aHJlZSBzcGFjZXMNCiAgICBjdXJwb2ludDwtc3RyX3N1Yih0aGlzbGluZSxqLGopDQogICAgbnh0cG9pbnQ8LXN0cl9zdWIodGhpc2xpbmUsaisxLGorMSkNCiAgICBkdWJuZXh0PC1zdHJfc3ViKHRoaXNsaW5lLGorMixqKzIpDQogICAgIyN1cGRhdGUgaWYgbmVlZGVkDQogICAgaWYoc3RyX2RldGVjdChjdXJwb2ludCwiWzAxMjM0NTY3ODldIikmc3RyX2RldGVjdChueHRwb2ludCwiWzAxMjM0NTY3ODldIikmc3RyX2RldGVjdChkdWJuZXh0LCJbMDEyMzQ1Njc4OV0iKSl7DQogICAgICBteW1hdHJpeFtpKzEsaisxXTwtcGFzdGUwKGksIn4iLGosIjsiLHN0cl9zdWIodGhpc2xpbmUsaixqKzIpKQ0KICAgICAgbXltYXRyaXhbaSsxLGorMl08LXBhc3RlMChpLCJ+IixqLCI7IixzdHJfc3ViKHRoaXNsaW5lLGosaisyKSkNCiAgICAgIG15bWF0cml4W2krMSxqKzNdPC1wYXN0ZTAoaSwifiIsaiwiOyIsc3RyX3N1Yih0aGlzbGluZSxqLGorMikpDQogICAgICBqPC1qKzN9ZWxzZSBpZihzdHJfZGV0ZWN0KGN1cnBvaW50LCJbMDEyMzQ1Njc4OV0iKSZzdHJfZGV0ZWN0KG54dHBvaW50LCJbMDEyMzQ1Njc4OV0iKSl7DQogICAgICAgIG15bWF0cml4W2krMSxqKzFdPC1wYXN0ZTAoaSwifiIsaiwiOyIsc3RyX3N1Yih0aGlzbGluZSxqLGorMSkpDQogICAgICAgIG15bWF0cml4W2krMSxqKzJdPC1wYXN0ZTAoaSwifiIsaiwiOyIsc3RyX3N1Yih0aGlzbGluZSxqLGorMSkpDQogICAgICAgIGo8LWorMn1lbHNlIGlmKHN0cl9kZXRlY3QoY3VycG9pbnQsIlswMTIzNDU2Nzg5XSIpKXsNCiAgICAgICAgICBteW1hdHJpeFtpKzEsaisxXTwtcGFzdGUwKGksIn4iLGosIjsiLHN0cl9zdWIodGhpc2xpbmUsaixqKSkNCiAgICAgICAgICBqPC1qKzF9ZWxzZXsNCiAgICAgICAgICAgICMjIyBvdGhlcndpc2UgaWYgaXQgaXMganVzdCBhIHN5bWJvbCBvciBhIHBlcmlvZCwgcHV0IHRoYXQgaW4gdGhlIG1hdHJpeA0KICAgICAgICAgICAgbXltYXRyaXhbaSsxLGorMV08LWN1cnBvaW50DQogICAgICAgICAgICBqPC1qKzF9fX0NCmBgYA0KDQoNCk5vdywgd2l0aCBhIG1hdHJpeCBvZiBldmVyeXRoaW5nLCBJIHdhbnQgdG8gZ3JhYiBhbGwgb2YgdGhlIHN5bWJvbHMgYW5kIGV2ZXJ5dGhpbmcgdGhhdCBzdXJyb3VuZHMgdGhlbSBhbmQgcHV0IHRoYXQgaW50byBhIGRhdGFmcmFtZSAoYmVjYXVzZSBpZiBhIG51bWJlciBpcyB0b3VjaGluZyBhIHN5bWJvbCwgdGhlIHN5bWJvbCBpcyBhbHNvIHRvdWNoaW5nIGEgbnVtYmVyLiBTbyBJIGp1c3QgbmVlZCB0aGUgc3ltYm9sczoNCg0KYGBge3J9DQpzeW1ib2xzIDwtIGFzLmRhdGEuZnJhbWUobWF0cml4KG5jb2w9OSxucm93PTApKQ0KDQpmb3IoaSBpbiAyOmRhdGFyb3dzKzEpew0KICBmb3IoaiBpbiAyOmRhdGFjb2xzKzEpew0KICAgICMjIGNoZWNrIHRvIHNlZSBpZiB0aGlzIGlzIG9uZSBvZiB0aGUgLidzIG9yIG9uZSBvZiB0aGUgbnVtYmVycy4gIn4iIGlzIG5vdCBvbmUgb2YgdGhlIHN5bWJvbHMgaW4gdGhlIGRhdGFzZXQuDQogICAgaWYobXltYXRyaXhbaSxqXSE9Ii4iICYgIXN0cl9kZXRlY3QobXltYXRyaXhbaSxqXSwifiIpKXsNCiAgICAgIGFkZGl0PC1jKG15bWF0cml4W2ksal0sDQogICAgICAgICAgICAgICBteW1hdHJpeFtpKzEsaisxXSwNCiAgICAgICAgICAgICAgIG15bWF0cml4W2krMSxqXSwNCiAgICAgICAgICAgICAgIG15bWF0cml4W2krMSxqLTFdLA0KICAgICAgICAgICAgICAgbXltYXRyaXhbaSxqLTFdLA0KICAgICAgICAgICAgICAgbXltYXRyaXhbaSxqKzFdLA0KICAgICAgICAgICAgICAgbXltYXRyaXhbaS0xLGorMV0sDQogICAgICAgICAgICAgICBteW1hdHJpeFtpLTEsal0sDQogICAgICAgICAgICAgICBteW1hdHJpeFtpLTEsai0xXSkNCiAgICAgIHN5bWJvbHM8LXJiaW5kKHN5bWJvbHMsYWRkaXQpfX19DQoNCmNvbG5hbWVzKHN5bWJvbHMpPC1jKCJwb2ludCIsIlAxIiwiUDIiLCJQMyIsIlA0IiwiUDUiLCJQNiIsIlA3IiwiUDgiKSAjIFRoZSBQcyBnbyBhcm91bmQgdGhlIA0KIyMjIGhvdyBtYW55IHN5bWJvbHMgdG90YWw/DQpucm93KHN5bWJvbHMpDQojIyMNCnN5bWJvbHNbMTo1LF0NCg0KDQpgYGANCg0KDQpUaGUgYWJvdmUgaXMgYW4gZXhhbXBsZSAtIHJvdyAxIHNob3dzIGEgc3ltYm9sICIqIiBhbmQgaXQgaXMgbmV4dCB0byB0d28gb2YgdGhlIGRpZ2l0cyBpbiB0aGUgbnVtYmVyIDM1IHRoYXQgc3RhcnRzIGF0IHJvdyAzLCBjb2x1bW4gMy4gSXQgaXMgYWxzbyBuZXh0IHRvIG9uZSBvZiB0aGUgZGlnaXRzIG9mIHRoZSBudW1iZXIgNDY3IGF0IHJvdyAxLCBjb2x1bW4gMQ0KDQpOb3csIGp1c3QgY29sbGVjdCBhbGwgb2YgdGhlIHVuaXF1ZSB2YWx1ZXMgaW4gY29sdW1ucyBBLUggKHRob3NlIGFyZSB0aGUgbnVtYmVycyB0b3VjaGluZyBhIHBhcnQpDQpgYGB7cn0NCiMjIyBnZXQgbnVtYmVycyAtIHRoZSByZWFzb24gdGhhdCB0aGUgY29vcmRpbmF0ZSB2YWx1ZXMgd2VyZSB1c2VkIGVhcmxpZXIgaXMgdG8gbWFrZSBzdXJlIHRoYXQgaWYgYSBudW1iZXIgYXBwZWFyZWQgdHdpY2UgaW4gdGhlIG1hdHJpeCwgaXQgd2FzIGNvdW50ZWQgdHdpY2U7IGJ1dCBpZiB0aGUgc2FtZSBudW1iZXIgd2FzIHRvdWNoaW5nIG11bHRpcGxlIHBhcnRzLCBpdCBpcyBvbmx5IGNvdW50ZWQgb25jZQ0KcGFydHMgPC0gdW5pcXVlKGMoc3ltYm9scyRQMSxzeW1ib2xzJFAyLHN5bWJvbHMkUDMsc3ltYm9scyRQNCxzeW1ib2xzJFA1LHN5bWJvbHMkUDYsc3ltYm9scyRQNyxzeW1ib2xzJFA4KSkNCg0KIyMjIHJlbW92ZSAiLiINCnBhcnRzIDwtIHBhcnRzWyFwYXJ0cz09Ii4iXQ0KDQojIyMgcHVsbCBvdXQgbnVtYmVycw0KcGFydHMgPC0gYXMubnVtZXJpYyhzdHJfc3BsaXRfaShwYXJ0cywiOyIsMikpDQoNCnBhcnQxPC1zdW0ocGFydHMpDQoNCnBhcnQxDQpgYGANCg0KIyMgUGFydCAyDQpGb3IgcGFydCAyIC0gdGhlIGZvY3VzIGlzIG9uIHRoZSBnZWFycyAtIHNvIGZpcnN0IGZpbmQgdGhlbSAgKHRoZSBzeW1ib2wgIioiKQ0KYGBge3J9DQpnZWFycyA8LSBzeW1ib2xzICU+JSBmaWx0ZXIocG9pbnQgPT0gIioiKQ0KDQpnZWFyc1sxOm1pbig4LG5yb3coZ2VhcnMpKSxdDQpgYGANCg0KQW5kIHdlJ3JlIGxvb2tpbmcgZm9yIGdlYXJzIHRoYXQgYXJlIHRvdWNoaW5nIHR3byBudW1iZXJzIC0gZ3JhYiBQMS1QOCBhbmQgZmluZCB0aGUgdW5pcXVlIHZhbHVlcyAobm90IGluY2x1ZGluZyB0aGUgIi4icykNCg0KDQpgYGB7cn0NCmdlYXJzIDwtIGdlYXJzICU+JSByb3d3aXNlJT4lIG11dGF0ZShwYXJ0bGlzdD1saXN0KGMoUDEsUDIsUDMsUDQsUDUsUDYsUDcsUDgpKSkgJT4lDQogIG11dGF0ZShwYXJ0bGlzdD1saXN0KHVuaXF1ZShwYXJ0bGlzdCkpKSAlPiUNCiAgbXV0YXRlKHBhcnRsaXN0PWxpc3QocGFydGxpc3RbIXBhcnRsaXN0PT0iLiJdKSkgJT4lDQogICMjIyB0aGUgb25seSB0aGluZ3MgdGhhdCBtYXR0ZXIgYXJlIHRoZSBnZWFybGlzdCAtIGJ1dCB3ZSBtYXkgYXMgd2VsbCBrZWVwIHRoZSBwb2ludCwganVzdCBmb3IgZnVuDQogIHNlbGVjdChwb2ludCxwYXJ0bGlzdCkNCg0KZ2VhcnNbMTptaW4oOCxucm93KGdlYXJzKSksXQ0KYGBgDQoNCkF0IHRoaXMgcG9pbnQsIGZpbHRlciBvdXQgYW55dGhpbmcgdGhhdCBpcyBvbmx5IHRvdWNoaW5nIDEgdGhpbmcuIEluc3RlYWQganVzdCBsb29rIGF0IGdlYXJzIHRvdWNoaW5nIHR3byBudW1iZXJzIGFuZCBnZXQgdGhvc2UgbnVtYmVycy4gIFRoZW4gbXVsdGlwbHkgdGhlbS4NCg0KYGBge3J9DQpnZWFycyA8LSBnZWFycyAlPiUNCiAgZmlsdGVyKGxlbmd0aChwYXJ0bGlzdCk9PTIpICU+JQ0KICBtdXRhdGUocDE9cGFydGxpc3RbMV0scDI9cGFydGxpc3RbMl0pICU+JQ0KICBtdXRhdGUocDE9YXMubnVtZXJpYyhzdHJfc3BsaXRfaShwMSwiOyIsMikpLHAyPWFzLm51bWVyaWMoc3RyX3NwbGl0X2kocDIsIjsiLDIpKSkgJT4lDQogIG11dGF0ZShnZWFycmF0aW89cDEqcDIpDQoNCmdlYXJzWzE6bWluKDgsbnJvdyhnZWFycykpLF0NCg0KYGBgDQpBbmQgZmluYWxseSwgcGFydCAyIGlzIHRoZSBzdW0gb2YgdGhlIGdlYXIgcmF0aW9zDQoNCmBgYHtyfQ0KcGFydDIgPC0gc3VtKGdlYXJzJGdlYXJyYXRpbykNCnBhcnQyDQpgYGANCg0KSW4gYSBzaW5nbGUgZnVuY3Rpb24NCg0KDQpgYGB7cn0NCiMjIyBzdGFydHMgd2l0aCB0aGUgZGF0YSBhbHJlYWR5IHJlYWQgaW4gdXNpbmcgcmVhZF9saW5lcygpDQpkYXkzYW5zd2VyczwtZnVuY3Rpb24oaW5wdXQpew0KICBkYXRhcm93czwtbGVuZ3RoKGlucHV0KQ0KICBkYXRhY29sczwtbmNoYXIoaW5wdXRbMV0pDQogIA0KICAjIyMgcmVhZCBkYXRhIGludG8gbWF0cml4DQogIG15bWF0cml4IDwtIG1hdHJpeChuY29sPWRhdGFjb2xzKzIsbnJvdz1kYXRhcm93cysyKQ0KICBteW1hdHJpeFsxLF08LSIuIg0KICBteW1hdHJpeFtkYXRhcm93cysyLF08LSIuIg0KICBteW1hdHJpeFssMV08LSIuIg0KICBteW1hdHJpeFssZGF0YWNvbHMrMl08LSIuIg0KICANCiAgZm9yIChpIGluIDE6ZGF0YXJvd3Mpew0KICAgIHRoaXNsaW5lIDwtIGlucHV0W2ldDQogICAgajwtMQ0KICAgIHdoaWxlKGo8PWRhdGFjb2xzKXsNCiAgICAgICMjY2hlY2sgdXBjb21pbmcgdGhyZWUgc3BhY2VzDQogICAgICBjdXJwb2ludDwtc3RyX3N1Yih0aGlzbGluZSxqLGopDQogICAgICBueHRwb2ludDwtc3RyX3N1Yih0aGlzbGluZSxqKzEsaisxKQ0KICAgICAgZHVibmV4dDwtc3RyX3N1Yih0aGlzbGluZSxqKzIsaisyKQ0KICAgICAgIyN1cGRhdGUgaWYgbmVlZGVkDQogICAgICBpZihzdHJfZGV0ZWN0KGN1cnBvaW50LCJbMDEyMzQ1Njc4OV0iKSZzdHJfZGV0ZWN0KG54dHBvaW50LCJbMDEyMzQ1Njc4OV0iKSZzdHJfZGV0ZWN0KGR1Ym5leHQsIlswMTIzNDU2Nzg5XSIpKXsNCiAgICAgICAgbXltYXRyaXhbaSsxLGorMV08LXBhc3RlMChpLCJ+IixqLCI7IixzdHJfc3ViKHRoaXNsaW5lLGosaisyKSkNCiAgICAgICAgbXltYXRyaXhbaSsxLGorMl08LXBhc3RlMChpLCJ+IixqLCI7IixzdHJfc3ViKHRoaXNsaW5lLGosaisyKSkNCiAgICAgICAgbXltYXRyaXhbaSsxLGorM108LXBhc3RlMChpLCJ+IixqLCI7IixzdHJfc3ViKHRoaXNsaW5lLGosaisyKSkNCiAgICAgICAgajwtaiszfWVsc2UgaWYoc3RyX2RldGVjdChjdXJwb2ludCwiWzAxMjM0NTY3ODldIikmc3RyX2RldGVjdChueHRwb2ludCwiWzAxMjM0NTY3ODldIikpew0KICAgICAgICAgIG15bWF0cml4W2krMSxqKzFdPC1wYXN0ZTAoaSwifiIsaiwiOyIsc3RyX3N1Yih0aGlzbGluZSxqLGorMSkpDQogICAgICAgICAgbXltYXRyaXhbaSsxLGorMl08LXBhc3RlMChpLCJ+IixqLCI7IixzdHJfc3ViKHRoaXNsaW5lLGosaisxKSkNCiAgICAgICAgICBqPC1qKzJ9ZWxzZSBpZihzdHJfZGV0ZWN0KGN1cnBvaW50LCJbMDEyMzQ1Njc4OV0iKSl7DQogICAgICAgICAgICBteW1hdHJpeFtpKzEsaisxXTwtcGFzdGUwKGksIn4iLGosIjsiLHN0cl9zdWIodGhpc2xpbmUsaixqKSkNCiAgICAgICAgICAgIGo8LWorMX1lbHNlew0KICAgICAgICAgICAgICAjIyMgb3RoZXJ3aXNlIGlmIGl0IGlzIGp1c3QgYSBzeW1ib2wgb3IgYSBwZXJpb2QsIHB1dCB0aGF0IGluIHRoZSBtYXRyaXgNCiAgICAgICAgICAgICAgbXltYXRyaXhbaSsxLGorMV08LWN1cnBvaW50DQogICAgICAgICAgICAgIGo8LWorMX19fQ0KICANCiAgIyMjIGNyZWF0ZSBkYXRhIGZyYW1lIG9mIHN5bWJvbHMNCiAgc3ltYm9scyA8LSBhcy5kYXRhLmZyYW1lKG1hdHJpeChuY29sPTksbnJvdz0wKSkNCg0KICBmb3IoaSBpbiAyOmRhdGFyb3dzKzEpew0KICAgIGZvcihqIGluIDI6ZGF0YWNvbHMrMSl7DQogICAgICAjIyBjaGVjayB0byBzZWUgaWYgdGhpcyBpcyBvbmUgb2YgdGhlIC4ncyBvciBvbmUgb2YgdGhlIG51bWJlcnMuICJ+IiBpcyBub3Qgb25lIG9mIHRoZSBzeW1ib2xzIGluIHRoZSBkYXRhc2V0Lg0KICAgICAgaWYobXltYXRyaXhbaSxqXSE9Ii4iICYgIXN0cl9kZXRlY3QobXltYXRyaXhbaSxqXSwifiIpKXsNCiAgICAgICAgYWRkaXQ8LWMobXltYXRyaXhbaSxqXSwNCiAgICAgICAgICAgICAgICAgbXltYXRyaXhbaSsxLGorMV0sDQogICAgICAgICAgICAgICAgIG15bWF0cml4W2krMSxqXSwNCiAgICAgICAgICAgICAgICAgbXltYXRyaXhbaSsxLGotMV0sDQogICAgICAgICAgICAgICAgIG15bWF0cml4W2ksai0xXSwNCiAgICAgICAgICAgICAgICAgbXltYXRyaXhbaSxqKzFdLA0KICAgICAgICAgICAgICAgICBteW1hdHJpeFtpLTEsaisxXSwNCiAgICAgICAgICAgICAgICAgbXltYXRyaXhbaS0xLGpdLA0KICAgICAgICAgICAgICAgICBteW1hdHJpeFtpLTEsai0xXSkNCiAgICAgICAgc3ltYm9sczwtcmJpbmQoc3ltYm9scyxhZGRpdCl9fX0NCiAgDQogIGNvbG5hbWVzKHN5bWJvbHMpPC1jKCJwb2ludCIsIlAxIiwiUDIiLCJQMyIsIlA0IiwiUDUiLCJQNiIsIlA3IiwiUDgiKQ0KICANCiAgIyMjZ2V0IHBhcnRzIGZyb20gdGhlIG51bWJlcnMgdG91Y2hpbmcgYXQgbGVhc3Qgb25lIHN5bWJvbA0KICBwYXJ0cyA8LSB1bmlxdWUoYyhzeW1ib2xzJFAxLHN5bWJvbHMkUDIsc3ltYm9scyRQMyxzeW1ib2xzJFA0LHN5bWJvbHMkUDUsc3ltYm9scyRQNixzeW1ib2xzJFA3LHN5bWJvbHMkUDgpKQ0KICBwYXJ0cyA8LSBwYXJ0c1shcGFydHM9PSIuIl0NCiAgcGFydHMgPC0gYXMubnVtZXJpYyhzdHJfc3BsaXRfaShwYXJ0cywiOyIsMikpDQogIA0KICBwYXJ0MTwtc3VtKHBhcnRzKQ0KICANCiAgIyMjZ2V0IGdlYXJzDQogIGdlYXJzIDwtIHN5bWJvbHMgJT4lIGZpbHRlcihwb2ludCA9PSAiKiIpICU+JQ0KICAgIHJvd3dpc2UgJT4lDQogICAgIyMjIGdldCB0aGUgbGlzdCBvZiBwYXJ0cyB0b3VjaGluZyB0aGUgZ2VhcnMNCiAgICBtdXRhdGUocGFydGxpc3Q9bGlzdChjKFAxLFAyLFAzLFA0LFA1LFA2LFA3LFA4KSkpICU+JQ0KICAgIG11dGF0ZShwYXJ0bGlzdD1saXN0KHVuaXF1ZShwYXJ0bGlzdCkpKSAlPiUNCiAgICBtdXRhdGUocGFydGxpc3Q9bGlzdChwYXJ0bGlzdFshcGFydGxpc3Q9PSIuIl0pKSAlPiUNCiAgICBzZWxlY3QocG9pbnQscGFydGxpc3QpICU+JQ0KICAgICMjIyBsaXN0IGdldCBwYXJ0cyAmIGNhbGN1bGF0ZSBnZWFyIHJhdGlvDQogICAgZmlsdGVyKGxlbmd0aChwYXJ0bGlzdCk9PTIpICU+JQ0KICAgIG11dGF0ZShwMT1wYXJ0bGlzdFsxXSxwMj1wYXJ0bGlzdFsyXSkgJT4lDQogICAgbXV0YXRlKHAxPWFzLm51bWVyaWMoc3RyX3NwbGl0X2kocDEsIjsiLDIpKSxwMj1hcy5udW1lcmljKHN0cl9zcGxpdF9pKHAyLCI7IiwyKSkpICU+JQ0KICAgIG11dGF0ZShnZWFycmF0aW89cDEqcDIpDQogIA0KICBwYXJ0MiA8LSBzdW0oZ2VhcnMkZ2VhcnJhdGlvKQ0KDQogIHJldHVybihjKHBhcnQxLHBhcnQyKSl9DQoNCmBgYA0KDQoNCmBgYHtyfQ0KZGF5M2Fuc3dlcnMobXlkYXRhKQ0KYGBgDQoNCg==</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIkRheSAyIE5vdGVib29rIg0Kb3V0cHV0Og0KICBodG1sX25vdGVib29rOg0KICAgIGRmX3ByaW50OiBwYWdlZA0KLS0tDQoNCmBgYHtyIHNldHVwLCBpbmNsdWRlPUZBTFNFfQ0KbGlicmFyeShrbml0cikNCmxpYnJhcnkoZHBseXIpDQpsaWJyYXJ5KHN0cmluZ3IpDQpsaWJyYXJ5KHRpZHl2ZXJzZSkNCmxpYnJhcnkocmVhZHIpDQoNCmBgYA0KDQpgYGB7cn0NCiMgUmVhZCBpbiBkYXRhDQpteWRhdGEgPC0gcmVhZF9saW5lcygiRGF5MlNhbXBsZS50eHQiKQ0KYGBgDQoNCiMjIFBhcnQgMQ0KDQpTbyAtIHRoZSAgZGF0YSB0aGF0IGxvb2tzIGxpa2UgdGhpczoNCj4gR2FtZSAxOiAzIGJsdWUsIDQgcmVkOyAxIHJlZCwgMiBncmVlbiwgNiBibHVlOyAyIGdyZWVuDQoNCmFuZCB0aGUgZ29hbCBpcyB0byBmaWd1cmUgb3V0IGlmIGl0J3MgInBvc3NpYmxlIiB3aGljaCBtZWFucyB0aGVyZSdzIG5ldmVyIG1vcmUgdGhhbiAxMiByZWRzLCAxMyBncmVlbnMsIGFuZCAxNCBibHVlcy4NClNvLCBpdCBzZWVtcyB0aGF0IHdoYXQgbWlnaHQgd29yayB3YXM6DQoNCjEuIG9yZ2FuaXplIHRoZSBkYXRhIChnZXQgcmlkIG9mIHRoZSB3b3JkcywgYWx3YXlzIHB1dCBpdCBpbiB0aGUgc2FtZSBvcmRlcikNCjIuIGZpbmQgb3V0IHdoYXQgdGhlIG1heCBudW1iZXIgb2YgcmVkcywgZ3JlZW5zLCBhbmQgYmx1ZXMgYXJlIGluIGFueSBnYW1lDQozLiBmaWd1cmUgb3V0IGlmIHRoYXQncyB0b28gZGFtbiBtYW55DQo0LiBhZGQgdGhlIGdhbWUgbnVtYmVycyBmb3IgdGhlIG9uZXMgdGhhdCBhcmUgcG9zc2libGUNCg0KIyMjIE9yZ2FuaXplIHRoZSBEYXRhDQoNCkZpcnN0LCBJIHdhbnRlZCB0byB0dXJuIHRoZSBkYXRhIGludG8gYSBkYXRhIGZyYW1lIC0gb3IgdG8gdHJhbnNmb3JtDQpHYW1lIDE6IDMgYmx1ZSwgNCByZWQ7IDEgcmVkLCAyIGdyZWVuLCA2IGJsdWU7IDIgZ3JlZW4NCmludG8NCg0KDQp8R2FtZXxSZWR8R3JlZW58Qmx1ZXwNCnwtLS18LS0tfC0tLXwtLS18DQp8MXw0fDB8M3wNCnwxfDF8Mnw2fA0KfDF8MHwyfDB8DQoNClNvIGZpcnN0LCBJIHdhbnQgYSBmdW5jdGlvbiB0aGF0IGNoYW5nZXMgYSBzdHJpbmcgbGlrZSAiMSByZWQsIDIgZ3JlZW4sIDYgYmx1ZSIgaW50byBhIHZlY3RvciBsaWtlIGMoMSwgMiwgNikuICAoV2hlcmUgSSdkIGp1c3Qga25vdyB0aGF0IHRoZSBmaXJzdCBpcyByZWQsIHRoZSBzZWNvbmQgaXMgZ3JlZW4sIGFuZCB0aGUgdGhpcmQgaXMgYmx1ZSkuICBIZXJlJ3MgdGhlIGZ1bmN0aW9uIC0gcmdiKCkNCmBgYHtyfQ0KcmdiIDwtIGZ1bmN0aW9uKHgpew0KICB4PC11bmxpc3Qoc3RyX3NwbGl0KHgsIiwiKSkNCiAgaTwtMQ0KICBvdXRyZ2IgPC0gYygwLDAsMCkNCiAgd2hpbGUgKGk8PWxlbmd0aCh4KSl7DQogICAgaWYoZ3JlcGwoInJlZCIseFtpXSkpe291dHJnYlsxXTwtcGFyc2VfbnVtYmVyKHhbaV0pfQ0KICAgIGlmKGdyZXBsKCJncmVlbiIseFtpXSkpe291dHJnYlsyXTwtcGFyc2VfbnVtYmVyKHhbaV0pfQ0KICAgIGlmKGdyZXBsKCJibHVlIix4W2ldKSl7b3V0cmdiWzNdPC1wYXJzZV9udW1iZXIoeFtpXSl9DQogICAgaTwtaSsxDQogIH0NCiAgb3V0cmdiDQp9DQoNCnJnYigiMSByZWQsIDIgZ3JlZW4sIDYgYmx1ZSIpDQpgYGANCg0KTm93IHRvIHJlZm9ybWF0IHRoZSBkYXRhIHRvIGJlIGEgbGlzdCBvZiBsaXN0cw0KDQpgYGB7cn0NCg0KY2hhbmdlZGF0YSA8LSBzYXBwbHkobXlkYXRhLGZ1bmN0aW9uKHgpew0KICBnYW1lIDwtIGFzLm51bWVyaWMoc3RyX3NwbGl0X2koc3RyX3JlbW92ZSh4LCJHYW1lICIpLCI6ICIsMSkpDQogIHRyaWVzIDwtIHN0cl9zcGxpdChzdHJfc3BsaXRfaSh4LCI6ICIsMiksIjsgIikNCiAgdHJpZXMgPC0gbGFwcGx5KHVubGlzdCh0cmllcykscmdiKQ0KICB0cmllcyA8LSBsYXBwbHkodHJpZXMsZnVuY3Rpb24oeCl7YXBwZW5kKGdhbWUseCl9KQ0KICB0cmllc30pDQoNCm15ZGF0YVtbMV1dDQoNCmNoYW5nZWRhdGFbWzFdXQ0KYGBgDQpBbmQgbWFrZSB0aGUgZGF0YSBmcmFtZQ0KYGBge3J9DQphbnN3ZXJmcmFtZSA8LSBhcy5kYXRhLmZyYW1lKG1hdHJpeChuY29sPTQsbnJvdz0wKSkNCg0KZm9yKGkgaW4gMTpsZW5ndGgoY2hhbmdlZGF0YSkpew0KICBmb3IoaiBpbiAxOmxlbmd0aChjaGFuZ2VkYXRhW1tpXV0pKXsNCiAgICB4PC1jaGFuZ2VkYXRhW1tpXV1bW2pdXQ0KICAgIGFuc3dlcmZyYW1lIDwtIHJiaW5kKGFuc3dlcmZyYW1lLHgpfX0NCg0KY29sbmFtZXMoYW5zd2VyZnJhbWUpPC1jKCJnYW1lIiwicmVkIiwiZ3JlZW4iLCJibHVlIikNCg0KYW5zd2VyZnJhbWVbMTptaW4oOCxucm93KGFuc3dlcmZyYW1lKSksXQ0KYGBgDQoNClRoZSBkYXRhIGlzIG9yZ2FuaXplZCAmIHVzYWJsZSBzbw0KDQojIyMgRmluZCBvdXQgd2hhdCB0aGUgbWF4IG51bWJlciBvZiByZWRzLCBncmVlbnMsIGFuZCBibHVlcyBhcmUgaW4gYW55IGdhbWUNCg0KYGBge3J9DQphbnN3ZXJmcmFtZSA8LSBhbnN3ZXJmcmFtZSAlPiUgZ3JvdXBfYnkoZ2FtZSkgJT4lIHN1bW1hcmlzZShtYXhyZWQgPSBtYXgocmVkKSxtYXhncmVlbj0gbWF4KGdyZWVuKSxtYXhibHVlPW1heChibHVlKSkNCg0KYW5zd2VyZnJhbWVbMTptaW4oOCxucm93KGFuc3dlcmZyYW1lKSksXQ0KYGBgDQoNCiMjIyBGaWd1cmUgb3V0IGlmIHRoYXQncyB0b28gZGFtbiBtYW55DQoNCkluIGNhc2Ugd2UgbmVlZCB0aGUgbWF4ZXMgbGF0ZXIsIGRvbid0IGZpbHRlciwganVzdCBhZGQgYSBuZXcgY29sdW1uDQoNCmBgYHtyfQ0KYW5zd2VyZnJhbWUgPC0gYW5zd2VyZnJhbWUgJT4lIG11dGF0ZShwb3NzaWJsZSA9IGlmZWxzZShtYXhyZWQ8PTEyICYgbWF4Z3JlZW48PTEzICYgbWF4Ymx1ZTw9MTQsZ2FtZSwwKSkNCg0KDQphbnN3ZXJmcmFtZVsxOm1pbig4LG5yb3coYW5zd2VyZnJhbWUpKSxdDQpgYGANCg0KIyMjIEFkZCBnYW1lIG51bWJlcnMNCg0KV2hpY2ggaXMgdGhlIHN1bSBvZiBwb3NzaWJsZQ0KYGBge3J9DQpwYXJ0MTwtc3VtKGFuc3dlcmZyYW1lJHBvc3NpYmxlKQ0KcGFydDENCmBgYA0KIyMgUGFydCAyDQoNClRvIGdldCAicG93ZXIiIHRha2UgdGhlIG1heCBvZiBlYWNoIGNvbG9yIGFuZCBtdWx0aXBseSB0aGVtIHRvZ2V0aGVyDQpgYGB7cn0NCmFuc3dlcmZyYW1lPC1hbnN3ZXJmcmFtZSAlPiUgbXV0YXRlKHBvd2VyPW1heHJlZCptYXhibHVlKm1heGdyZWVuKQ0KcGFydDI8LXN1bShhbnN3ZXJmcmFtZSRwb3dlcikNCmFuc3dlcmZyYW1lWzE6bWluKDgsbnJvdyhhbnN3ZXJmcmFtZSkpLF0NCnBhcnQyDQpgYGANCk9yIHRvIHB1dCBpdCBhbGwgaW4gYSBzaW5nbGUgZnVuY3Rpb24gKHdpdGggYSBoZWxwZXIgZnVuY3Rpb24gLSByZ2IoKSBhYm92ZSwgc28gdHdvIGZ1bmN0aW9ucyAtIGJ1dCB5b3Uga25vdyB3aGF0IEkgbWVhbik6ICANCg0KDQpgYGB7cn0NCiMjIyBzdGFydHMgd2l0aCB0aGUgZGF0YSBhbHJlYWR5IHJlYWQgaW4gdXNpbmcgcmVhZF9saW5lcygpDQpkYXkyYW5zd2VyczwtZnVuY3Rpb24oaW5wdXQpew0KICAjIyMgcmVmb3JtYXQgaW5wdXQgaW50byBsaXN0IG9mIGxpc3RzDQogIGxpc3RkYXRhIDwtIHNhcHBseShpbnB1dCxmdW5jdGlvbih4KXsNCiAgICBnYW1lIDwtIGFzLm51bWVyaWMoc3RyX3NwbGl0X2koc3RyX3JlbW92ZSh4LCJHYW1lICIpLCI6ICIsMSkpDQogICAgdHJpZXMgPC0gc3RyX3NwbGl0KHN0cl9zcGxpdF9pKHgsIjogIiwyKSwiOyAiKQ0KICAgIHRyaWVzIDwtIGxhcHBseSh1bmxpc3QodHJpZXMpLHJnYikNCiAgICB0cmllcyA8LSBsYXBwbHkodHJpZXMsZnVuY3Rpb24oeCl7YXBwZW5kKGdhbWUseCl9KQ0KICAgIHRyaWVzfSkNCg0KICAjIyMgZW50ZXIgaW50byBhIGRhdGEgZnJhbWUNCiAgYW5zd2VyZnJhbWUgPC0gYXMuZGF0YS5mcmFtZShtYXRyaXgobmNvbD00LG5yb3c9MCkpDQogIA0KICBmb3IoaSBpbiAxOmxlbmd0aChsaXN0ZGF0YSkpew0KICAgIGZvcihqIGluIDE6bGVuZ3RoKGxpc3RkYXRhW1tpXV0pKXsNCiAgICAgIHg8LWxpc3RkYXRhW1tpXV1bW2pdXQ0KICAgICAgYW5zd2VyZnJhbWUgPC0gcmJpbmQoYW5zd2VyZnJhbWUseCl9fQ0KICBjb2xuYW1lcyhhbnN3ZXJmcmFtZSk8LWMoImdhbWUiLCJyZWQiLCJncmVlbiIsImJsdWUiKQ0KICANCiAgIyMjIGdldCBtYXggcmdiDQogIGFuc3dlcmZyYW1lIDwtIGFuc3dlcmZyYW1lICU+JSBncm91cF9ieShnYW1lKSAlPiUNCiAgICBzdW1tYXJpc2UobWF4cmVkID0gbWF4KHJlZCksbWF4Z3JlZW4gPSBtYXgoZ3JlZW4pLG1heGJsdWUgPSBtYXgoYmx1ZSkpDQogIA0KICAjIyMgZ2V0IHBvc3NpYmxlIGFuZCBwb3dlcg0KICBhbnN3ZXJmcmFtZSA8LSBhbnN3ZXJmcmFtZSAlPiUNCiAgICBtdXRhdGUocG9zc2libGUgPSBpZmVsc2UobWF4cmVkPD0xMiAmIG1heGdyZWVuPD0xMyAmIG1heGJsdWU8PTE0LGdhbWUsMCksDQogICAgICAgICAgIHBvd2VyID0gbWF4cmVkKm1heGdyZWVuKm1heGJsdWUpDQogIHBhcnQxIDwtc3VtKGFuc3dlcmZyYW1lJHBvc3NpYmxlKQ0KICBwYXJ0MiA8LXN1bShhbnN3ZXJmcmFtZSRwb3dlcikNCiAgcmV0dXJuKGMocGFydDEscGFydDIpKX0NCg0KYGBgDQoNCg0KYGBge3J9DQpkYXkyYW5zd2VycyhteWRhdGEpDQpgYGANCg0K</div>
 
 
 
@@ -2072,7 +2072,7 @@ $(document).ready(function () {
 <!-- code folding -->
 <script>
 $(document).ready(function () {
-  window.initializeSourceEmbed("Day3.Rmd");
+  window.initializeSourceEmbed("Day2.Rmd");
   window.initializeCodeFolding("show" === "show");
 });
 </script>

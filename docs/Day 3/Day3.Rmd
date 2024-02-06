@@ -1,7 +1,7 @@
 ---
 title: "Day 3 Notebook"
 output:
-  html_document:
+  html_notebook:
     df_print: paged
 ---
 
@@ -35,7 +35,7 @@ I'm also making a slight change - if I find a number, I'm checking the next two 
 
 ...934...
 would become
-| . | . | . |1~4;934|1~4;934|1~4;934| . | . | . |
+| . | . | . | 1~4;934 | 1~4;934 | 1~4;934 | . | . | . |
 
 That way, I know that the number "934" stretches across those three spaces, starting at row 1, column 4.  This is useful later. I swear
 
