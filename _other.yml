@@ -58,5 +58,5 @@ navbar:
     - text: "Day 25"
       href: Day-25.nb.html
 output:
-  html_document:
+  html_notebook:
     theme: cosmo
