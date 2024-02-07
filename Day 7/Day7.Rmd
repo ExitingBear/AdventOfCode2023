@@ -1,0 +1,203 @@
+---
+title: "Day 7 Notebook"
+output: html_notebook
+---
+```{r setup, include=FALSE}
+library(knitr)
+library(dplyr)
+library(stringr)
+library(tidyverse)
+library(igraph)
+library(ggplot2)
+library(rgl)
+library(ggraph)
+library(readr)
+library(ds4psy)
+options(scipen = 999)
+```
+
+Rule 1 is always read the damn problem.  And I didn't and it's my own fault. And because of that, this took forever and a day while I kept solving the wrong problem.  For this - just sort poker hands. A-2. Standard poker hands (no flushes or straights) but, with two matching hands, they're sorted from the *first* card (not the highest card - but first. Guess what I misread?) to the fifth until there's finally a winner.
+
+So - starting with the cards:
+
+
+```{r}
+### Read in time and distances
+input <- read_lines("Day7Sample.txt")
+
+hands<-c()
+bids<-c()
+for(i in 1:length(input)){
+  x<-input[i]
+  x<-str_split(x," ")
+  hands<-c(hands,x[[1]][1])
+  bids<-c(bids,x[[1]][2])}
+bids<-as.numeric(bids)
+```
+
+find out the frequency for type of cards
+```{r}
+### split the hands from a single string into a list of characters
+cardfrequency <- sapply(hands,function(x){
+  paste(sort(table(str_split(x,pattern=""))),collapse="")})
+#data frame it (this later becomes a tibble.  I need to learn more about that - but I'm not complaining)
+cardframe <- data.frame(bids, hands, cardfrequency)
+cardframe
+```
+And then rank the hands. 5 of a kind at 7, 4 of a kind at 6 down to high card at 1.
+```{r message=FALSE}
+#### 5 of a kind - 7, 4 of a kind - 6, FullHouse - 5, Three of a Kind - 4, 2 pair -3 1 pair 2 - high card 1.  The default is there so that I can scan later and make sure I didn't mess anything up.  Nothing should be 0.
+
+cardframe <- cardframe %>% mutate(handrank = case_when(cardfrequency==5 ~ 7, cardfrequency==14 ~ 6,
+                                                  cardfrequency==23 ~ 5, cardfrequency==113 ~ 4,
+                                                  cardfrequency==122 ~ 3, cardfrequency==1112 ~ 2,
+                                                  cardfrequency==11111 ~ 1, .default=0))
+```
+
+Turn the hand (group of five cards) into single cards.  Then replace face cards with numerical values so I can sort by numbers than try to do it by something special
+
+```{r}
+cardframe <- cardframe %>% mutate(cards = (str_split(hands,pattern="")))
+### replace T, J, Q, K, A with 10, 11, 12, 13, 14
+
+cardframe <- cardframe %>% mutate(cards  = lapply(cards, function(x) replace(x,x=="T",10))) %>%
+  mutate(cards = lapply(cards, function(x) replace(x,x=="J",11))) %>%
+  mutate(cards = lapply(cards, function(x) replace(x,x=="Q",12))) %>%
+  mutate(cards = lapply(cards, function(x) replace(x,x=="K",13))) %>%
+  mutate(cards = lapply(cards, function(x) replace(x,x=="A",14))) %>%
+  mutate(cards = lapply(cards,as.numeric))
+
+cardframe <- cardframe %>% rowwise() %>% mutate(cards = list(cards))
+
+cardframe
+```
+
+Then finally, rank & re-order the cards. The hand-rank is the first digit, then every card from the first to last has two digits.  It makes it easier to just look and see if the cards are ranked an the hands are in the correct order.  Sorting from lowest to highest makes it easy to just multiply by the bid.
+
+```{r}
+cardframe <- cardframe %>% mutate(sortrank=handrank*10000000000+cards[1]*100000000+cards[2]*1000000+
+                                cards[3]*10000+cards[4]*100+cards[5])
+cardframe <- arrange(cardframe,sortrank)
+cardframe <- cardframe %>%ungroup%>% mutate(finalrank=row_number()) %>% mutate(P1Answer=finalrank*bids)
+cardframe
+
+part1<- sum(cardframe$P1Answer)
+part1
+```
+
+## Part 2
+For part 2 - the jacks become jokers.  And are worth only 1 point.  But they're also wild.
+
+So first - count them explicitly.
+
+```{r}
+cardframe <- cardframe %>% mutate(jokers = str_count(hands,"J") )
+cardframe
+```
+Then, refigure out what the hands are with wild cards.
+A four of a kind becomes a 5 of a kind, so do full houses; three of a kinds become four of a kinds; two pair either becomes a full house or four of a kind, depending on the number of jokers; one pair becomes three of a kind; high card is a pair.
+```{r}
+cardframe <- cardframe %>% mutate(newrank = case_when(handrank==6&jokers>0~7,
+                                                      handrank==5&jokers>0~7,
+                                                      handrank==4&jokers>0~6,
+                                                      handrank==3&jokers==1~5,
+                                                      handrank==3&jokers==2~6,
+                                                      handrank==2&jokers>0~4,
+                                                      handrank==1&jokers>0~2,
+                                                      .default=handrank))
+cardframe
+```
+This (obviously) changes some of the hands.
+Redo the substitution, math, and ranking - this time with J=1.
+```{r}
+cardframe <- cardframe %>%mutate(wildcards = (str_split(hands,pattern="")))
+### replace T, J, Q, K, A with 10, 11, 12, 13, 14
+
+cardframe <- cardframe %>%mutate(wildcards  = lapply(wildcards, function(x) replace(x,x=="T",10))) %>%
+  mutate(wildcards = lapply(wildcards, function(x) replace(x,x=="J",1))) %>%
+  mutate(wildcards = lapply(wildcards, function(x) replace(x,x=="Q",12))) %>%
+  mutate(wildcards = lapply(wildcards, function(x) replace(x,x=="K",13))) %>%
+  mutate(wildcards = lapply(wildcards, function(x) replace(x,x=="A",14))) %>%
+  mutate(wildcards = lapply(wildcards,as.numeric))
+
+cardframe <- cardframe %>% rowwise() %>% mutate(wildcards = list(wildcards))
+
+cardframe <- cardframe %>% mutate(wildrank=newrank*10000000000+wildcards[1]*100000000+wildcards[2]*1000000+
+                                wildcards[3]*10000+wildcards[4]*100+wildcards[5])
+cardframe <- arrange(cardframe, wildrank)
+cardframe <- cardframe %>%ungroup%>% mutate(finalwild=row_number()) %>% mutate(P2Answer=finalwild*bids)
+
+select(cardframe,bids,hands,jokers,handrank,newrank,finalrank,finalwild,P1Answer,P2Answer)
+
+part2<-sum(cardframe$P2Answer)
+part2
+```
+
+Single function
+
+```{r}
+day7answers<-function(indata){
+  hands<-c()
+  bids<-c()
+  for(i in 1:length(input)){
+    x<-input[i]
+    x<-str_split(x," ")
+    hands<-c(hands,x[[1]][1])
+    bids<-c(bids,x[[1]][2])}
+  bids<-as.numeric(bids)  
+  
+  cardfrequency <- sapply(hands,function(x){
+    paste(sort(table(str_split(x,pattern=""))),collapse="")})
+  #data frame it (this later becomes a tibble.  I need to learn more about that - but I'm not complaining)
+  cardframe <- data.frame(bids, hands, cardfrequency)
+  
+  cardframe <- cardframe %>% 
+    mutate(handrank = case_when(cardfrequency==5 ~ 7, cardfrequency==14 ~ 6,
+                                cardfrequency==23 ~ 5, cardfrequency==113 ~ 4,
+                                cardfrequency==122 ~ 3, cardfrequency==1112 ~ 2,
+                                cardfrequency==11111 ~ 1, .default=0)) %>%
+    mutate(cards = (str_split(hands,pattern=""))) %>%
+    mutate(cards = lapply(cards, function(x) replace(x,x=="T",10))) %>%
+    mutate(cards = lapply(cards, function(x) replace(x,x=="J",11))) %>%
+    mutate(cards = lapply(cards, function(x) replace(x,x=="Q",12))) %>%
+    mutate(cards = lapply(cards, function(x) replace(x,x=="K",13))) %>%
+    mutate(cards = lapply(cards, function(x) replace(x,x=="A",14))) %>%
+    mutate(cards = lapply(cards,as.numeric)) %>%
+    rowwise() %>% mutate(cards = list(cards)) %>%
+    mutate(sortrank=handrank*10000000000+cards[1]*100000000+cards[2]*1000000+
+             cards[3]*10000+cards[4]*100+cards[5]) %>%
+    arrange(sortrank) %>%
+    ungroup%>% mutate(finalrank=row_number()) %>% mutate(P1Answer=finalrank*bids) %>%
+    mutate(jokers = str_count(hands,"J") ) %>%
+    mutate(newrank = case_when(handrank==6&jokers>0~7,
+                               handrank==5&jokers>0~7,
+                               handrank==4&jokers>0~6,
+                               handrank==3&jokers==1~5,
+                               handrank==3&jokers==2~6,
+                               handrank==2&jokers>0~4,
+                               handrank==1&jokers>0~2,
+                               .default=handrank)) %>%
+    mutate(wildcards = (str_split(hands,pattern=""))) %>%
+    mutate(wildcards = lapply(wildcards, function(x) replace(x,x=="T",10))) %>%
+    mutate(wildcards = lapply(wildcards, function(x) replace(x,x=="J",1))) %>%
+    mutate(wildcards = lapply(wildcards, function(x) replace(x,x=="Q",12))) %>%
+    mutate(wildcards = lapply(wildcards, function(x) replace(x,x=="K",13))) %>%
+    mutate(wildcards = lapply(wildcards, function(x) replace(x,x=="A",14))) %>%
+    mutate(wildcards = lapply(wildcards,as.numeric)) %>%
+    rowwise %>%
+    mutate(wildcards = list(wildcards)) %>%
+    mutate(wildrank = newrank*10000000000 + wildcards[1]*100000000+wildcards[2]*1000000+
+             wildcards[3]*10000+wildcards[4]*100+wildcards[5]) %>%
+    arrange(wildrank) %>%
+    ungroup%>% mutate(finalwild=row_number()) %>% mutate(P2Answer=finalwild*bids)
+  part1<-sum(cardframe$P1Answer)
+  part2<-sum(cardframe$P2Answer)
+  
+  c(part1,part2)}
+```
+
+```{r}
+day7<-day7answers(input)
+day7
+
+```
