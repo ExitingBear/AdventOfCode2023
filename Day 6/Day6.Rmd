@@ -1,0 +1,174 @@
+---
+title: "Day 6 Notebook"
+output: html_notebook
+---
+```{r setup, include=FALSE}
+library(knitr)
+library(dplyr)
+library(stringr)
+library(tidyverse)
+library(igraph)
+library(ggplot2)
+library(rgl)
+library(ggraph)
+library(readr)
+library(ds4psy)
+options(scipen = 999)
+```
+
+
+```{r}
+### Read in time and distances
+mytimes <- read_lines("Day6Sample.txt",n_max=1)
+mydistances <- read_lines("Day6Sample.txt",n_max=1,skip=1)
+```
+
+## Part 1
+
+The goal is to make sure that the boat goes longer than the record
+
+how far is it going to go? The basic formula is distance(d) = rate(r) x time(t).
+
+$$
+d=r*t
+$$
+
+the rate will be equal to the number of seconds that the button was pressed.  And the time will be equal to the race time-button press time:
+
+$$
+d=b*(T-b)
+$$
+
+So for the first of the examples (a seven second race - T=7; record of 9 (d=9)), the plot of the distance looks like this:
+
+```{r echo=FALSE}
+curve(7*x-x^2, from=0, to=7,n=100,xlab="Button Press", ylab="Distance")
+```
+
+
+But no one cares about the whole thing - all that matters is the part where the distance is more than 9.  So this is the curve that really matters:
+
+```{r echo=FALSE}
+curve(7*x-x^2-9, from=0, to=7,n=100,xlab="Button Press", ylab="Distance")
+axis(1,pos=0)
+```
+
+And the integers between the 0s (where the curve crosses the axis) are the ones that count - for this one, 2, 3, 4, and 5 - are all valid button press times.  So the answer would be 4.
+
+To find where the curve crosses the line, subtract the distance and solve for b using the quadratic equation
+
+$$
+-b^2+Tb-d=0
+$$
+
+$$
+b=\frac{-T\pm\sqrt(T^2-4d)}{-2}
+$$
+
+So starting with taking in the times and distances and putting them nicely into a data frame
+
+```{r}
+
+mytimes <- as.numeric(unlist(str_split(str_squish(str_trim(str_split_i(mytimes,":",2)))," ")))
+mydistances <- as.numeric(unlist(str_split(str_squish(str_trim(str_split_i(mydistances,":",2)))," ")))
+
+findoptions <-data.frame(mytimes,mydistances)
+colnames(findoptions)<-c("times", "distances")
+findoptions
+```
+
+From there, use the earlier former to find the upper and lower 0
+```{r}
+findoptions <- findoptions %>% mutate(lowzero=.5*(times-sqrt(times^2-(4*distances))),
+                                      upzero=.5*(times+sqrt(times^2-(4*distances))))
+findoptions
+```
+
+And now, find the next the integer below the upzero and the integer above the lowzero (warning, take note if the zero is itself an integer!  It doesn't count, that's where the boat is just as fast as record, not faster)
+
+```{r}
+findoptions <- findoptions %>% mutate(lowint=ifelse(is_wholenumber(lowzero),lowzero+1,ceiling(lowzero)),
+                                      upint=ifelse(is_wholenumber(upzero),upzero-1,floor(upzero)))
+findoptions
+```
+finally, find the number of integers between the upper and lower integers (inclusive):
+```{r}
+findoptions <- findoptions %>% mutate(recordbeating=upint-lowint+1)
+findoptions
+```
+
+
+```{r}
+part1<-prod(findoptions$recordbeating)
+part1
+```
+
+
+## Part 2
+
+Apparently, there weren't supposed to be spaces?  So - do it all again, just as one giant number?
+so start by concatenating the numbers
+```{r echo=FALSE}
+mytimes<-as.numeric(str_flatten(as.character(mytimes),collapse=""))
+mydistances <-as.numeric(str_flatten(as.character(mydistances),collapse=""))
+
+```
+then do the same thing
+```{r}
+findoptions <-data.frame(mytimes,mydistances)
+colnames(findoptions)<-c("times", "distances")
+findoptions <- findoptions %>% mutate(lowzero=.5*(times-sqrt(times^2-(4*distances))),
+                                      upzero=.5*(times+sqrt(times^2-(4*distances))))
+findoptions <- findoptions %>% mutate(lowint=ifelse(is_wholenumber(lowzero),lowzero+1,ceiling(lowzero)),
+                                      upint=ifelse(is_wholenumber(upzero),upzero-1,floor(upzero)))
+findoptions <- findoptions %>% mutate(recordbeating=upint-lowint+1)
+```
+
+```{r}
+part2 <- findoptions$recordbeating
+part2
+```
+
+Finally - single function (from the file)
+
+```{r}
+day6answers<-function(infile){
+  mytimes <- read_lines(infile,n_max=1)
+  mydistances <- read_lines(infile,n_max=1,skip=1)
+  ##transform
+  mytimes <- as.numeric(unlist(str_split(str_squish(str_trim(str_split_i(mytimes,":",2)))," ")))
+  mydistances <- as.numeric(unlist(str_split(str_squish(str_trim(str_split_i(mydistances,":",2)))," ")))
+  
+  ##create dataframe
+  findoptions <-data.frame(mytimes,mydistances)
+  colnames(findoptions)<-c("times", "distances")
+  findoptions <- findoptions %>%
+    ## do the math  
+    mutate(lowzero=.5*(times-sqrt(times^2-(4*distances))),
+           upzero=.5*(times+sqrt(times^2-(4*distances)))) %>%
+    mutate(lowint=ifelse(is_wholenumber(lowzero),lowzero+1,ceiling(lowzero)),
+           upint=ifelse(is_wholenumber(upzero),upzero-1,floor(upzero))) %>%
+    mutate(recordbeating=upint-lowint+1)
+  part1<-prod(findoptions$recordbeating)
+  
+  ## transform again
+  mytimes<-as.numeric(str_flatten(as.character(mytimes),collapse=""))
+  mydistances <-as.numeric(str_flatten(as.character(mydistances),collapse=""))
+  findoptions <-data.frame(mytimes,mydistances)
+  colnames(findoptions)<-c("times", "distances")
+  findoptions <- findoptions %>%
+    mutate(lowzero=.5*(times-sqrt(times^2-(4*distances))),
+           upzero=.5*(times+sqrt(times^2-(4*distances)))) %>%
+    mutate(lowint=ifelse(is_wholenumber(lowzero),lowzero+1,ceiling(lowzero)),
+           upint=ifelse(is_wholenumber(upzero),upzero-1,floor(upzero))) %>%
+    mutate(recordbeating=upint-lowint+1)
+  part2 <- findoptions$recordbeating
+  
+  c(part1,part2)
+}
+```
+
+```{r}
+day6<-day6answers("Day6Sample.txt")
+day6
+```
