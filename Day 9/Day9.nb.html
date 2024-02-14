@@ -1757,21 +1757,18 @@ display: none;
 <div id="part-1" class="section level2">
 <h2>Part 1</h2>
 <p>The goal is to find the next value in each sequence then add them
-together - First, create a tibble, column 1 is a vector of the history
-values</p>
+together - First, create a list of vectors (each vector is a history
+list)</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyMjIFJlYWQgaW4gaGlzdG9yaWVzXG5pbnB1dCA8LSByZWFkX2xpbmVzKFwiRGF5OVNhbXBsZS50eHRcIilcblxuaGlzdG9yaWVzPC1jKClcbmZvcihpIGluIDE6bGVuZ3RoKGlucHV0KSl7XG4gIG9hc2lzPC1hcy5udW1lcmljKHVubGlzdChzdHJfc3BsaXQoaW5wdXRbaV0sXCIgXCIpKSlcbiAgaGlzdG9yaWVzIDwtIGFwcGVuZChoaXN0b3JpZXMsbGlzdChvYXNpcykpfVxuXG5oaXN0b3JpZXMgPC0gdGliYmxlKGhpc3RvcmllcywwKVxuY29sbmFtZXMoaGlzdG9yaWVzKTwtYyhcImhpc3RvcnlcIixcImV4dHJhcG9sYXRlXCIpXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyMjIFJlYWQgaW4gaGlzdG9yaWVzXG5pbnB1dCA8LSByZWFkX2xpbmVzKFwiRGF5OVNhbXBsZS50eHRcIilcblxuaGlzdG9yaWVzPC1jKClcbmZvcihpIGluIDE6bGVuZ3RoKGlucHV0KSl7b2FzaXM8LWFzLm51bWVyaWModW5saXN0KHN0cl9zcGxpdChpbnB1dFtpXSxcIiBcIikpKVxuICBoaXN0b3JpZXMgPC0gYXBwZW5kKGhpc3RvcmllcyxsaXN0KG9hc2lzKSl9XG5oaXN0b3J5bGVuZ3RoIDwtIGxlbmd0aChvYXNpcylcbmBgYCJ9 -->
 <pre class="r"><code>### Read in histories
 input &lt;- read_lines(&quot;Day9Sample.txt&quot;)
 
 histories&lt;-c()
-for(i in 1:length(input)){
-  oasis&lt;-as.numeric(unlist(str_split(input[i],&quot; &quot;)))
+for(i in 1:length(input)){oasis&lt;-as.numeric(unlist(str_split(input[i],&quot; &quot;)))
   histories &lt;- append(histories,list(oasis))}
-
-histories &lt;- tibble(histories,0)
-colnames(histories)&lt;-c(&quot;history&quot;,&quot;extrapolate&quot;)</code></pre>
+historylength &lt;- length(oasis)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -1800,34 +1797,20 @@ onedown(c(0,3,6,9,12,15))</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>With that function, first apply it over and over until there’s only
-one value left in the line.</p>
+<p>Add the number on the right and then apply the function over and over
+until there are no values left in the line.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZm9yIChpIGluIDE6KGxlbmd0aChvYXNpcyktMSkpe1xuaGlzdG9yaWVzIDwtIGhpc3RvcmllcyAlPiUgcm93d2lzZSAlPiVcbiAgbXV0YXRlKGV4dHJhcG9sYXRlPXRhaWwoaGlzdG9yeVtbbGVuZ3RoKGhpc3RvcnkpXV1bWzFdXSkrZXh0cmFwb2xhdGUpICU+JVxuICBtdXRhdGUoaGlzdG9yeT1saXN0KG9uZWRvd24odW5saXN0KGhpc3RvcnkpKSkpfVxuYGBgIn0= -->
-<pre class="r"><code>for (i in 1:(length(oasis)-1)){
-histories &lt;- histories %&gt;% rowwise %&gt;%
-  mutate(extrapolate=tail(history[[length(history)]][[1]])+extrapolate) %&gt;%
-  mutate(history=list(onedown(unlist(history))))}</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>and then, just in case there’s a final value, add it to extrapolate
-(again, it will just add 0 if the differences have already reduced
-out)</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaGlzdG9yaWVzIDwtIGhpc3RvcmllcyAlPiUgcm93d2lzZSAlPiVcbiAgbXV0YXRlKGV4dHJhcG9sYXRlPWV4dHJhcG9sYXRlK2hpc3RvcnlbWzFdXSlcbmBgYCJ9 -->
-<pre class="r"><code>histories &lt;- histories %&gt;% rowwise %&gt;%
-  mutate(extrapolate=extrapolate+history[[1]])</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>finally, add the extrapolations to get the answer to part 1</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGFydDEgPC0gc3VtKGhpc3RvcmllcyRleHRyYXBvbGF0ZSlcbnBhcnQxXG5gYGAifQ== -->
-<pre class="r"><code>part1 &lt;- sum(histories$extrapolate)
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5wYXJ0MTwtMFxuaiA8LSBoaXN0b3J5bGVuZ3RoXG5mb3IgKGkgaW4gMTpoaXN0b3J5bGVuZ3RoKXtcbiAgbGFzdG51bXMgPC0gc2FwcGx5KGhpc3RvcmllcyxmdW5jdGlvbih4KXt4W2pdfSlcbiAgcGFydDEgPC0gcGFydDErc3VtKGxhc3RudW1zKVxuICBoaXN0b3JpZXMgPC0gbGFwcGx5KGhpc3RvcmllcyxvbmVkb3duKVxuICBqPC1qLTF9XG5cbnBhcnQxXG5gYGAifQ== -->
+<pre class="r"><code>
+part1&lt;-0
+j &lt;- historylength
+for (i in 1:historylength){
+  lastnums &lt;- sapply(histories,function(x){x[j]})
+  part1 &lt;- part1+sum(lastnums)
+  histories &lt;- lapply(histories,onedown)
+  j&lt;-j-1}
+
 part1</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-output-begin eyJkYXRhIjoiWzFdIDExNFxuIn0= -->
@@ -1844,33 +1827,19 @@ working its way down. So it will be add, subtract, add, subtract, etc…
 down to 0.</p>
 <!-- rnb-text-end -->
 <!-- rnb-text-begin -->
-<p>Still use onedown(), but this time, change the previous value</p>
+<p>This time, we go back and forth between adding and subtracting the
+number on the left</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZm9yIChpIGluIDI6bGVuZ3RoKG9hc2lzKSl7XG5oaXN0b3JpZXMgPC0gaGlzdG9yaWVzICU+JSByb3d3aXNlICU+JVxuICBtdXRhdGUocHJldmlvdXM9KGhpc3RvcnlbWzFdXVtbMV1dKSooKC0xKV5pKStwcmV2aW91cykgJT4lXG4gIG11dGF0ZShoaXN0b3J5PWxpc3Qob25lZG93bih1bmxpc3QoaGlzdG9yeSkpKSl9XG5gYGAifQ== -->
-<pre class="r"><code>for (i in 2:length(oasis)){
-histories &lt;- histories %&gt;% rowwise %&gt;%
-  mutate(previous=(history[[1]][[1]])*((-1)^i)+previous) %&gt;%
-  mutate(history=list(onedown(unlist(history))))}</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>then either add or subtract the last number (just in case it isn’t
-0)</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaTwtaSsxXG5oaXN0b3JpZXMgPC0gaGlzdG9yaWVzICU+JSByb3d3aXNlICU+JVxuICBtdXRhdGUocHJldmlvdXM9KGhpc3RvcnlbWzFdXSooKC0xKV5pKStwcmV2aW91cykpXG5gYGAifQ== -->
-<pre class="r"><code>i&lt;-i+1
-histories &lt;- histories %&gt;% rowwise %&gt;%
-  mutate(previous=(history[[1]]*((-1)^i)+previous))</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>And finally part2 is the sum of previous</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGFydDIgPC0gc3VtKGhpc3RvcmllcyRwcmV2aW91cylcbnBhcnQyXG5gYGAifQ== -->
-<pre class="r"><code>part2 &lt;- sum(histories$previous)
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5wYXJ0MjwtMFxuZm9yIChpIGluIDE6aGlzdG9yeWxlbmd0aCl7XG4gIGZpcnN0bnVtcyA8LSBzYXBwbHkoaGlzdG9yaWVzLGZ1bmN0aW9uKHgpe3hbMV19KVxuICBpZihpICUlIDI9PTEpe3BhcnQyIDwtIHBhcnQyK3N1bShmaXJzdG51bXMpXG4gIH1lbHNle3BhcnQyIDwtIHBhcnQyLXN1bShmaXJzdG51bXMpfVxuICBoaXN0b3JpZXMgPC0gbGFwcGx5KGhpc3RvcmllcyxvbmVkb3duKX1cblxucGFydDJcbmBgYCJ9 -->
+<pre class="r"><code>
+part2&lt;-0
+for (i in 1:historylength){
+  firstnums &lt;- sapply(histories,function(x){x[1]})
+  if(i %% 2==1){part2 &lt;- part2+sum(firstnums)
+  }else{part2 &lt;- part2-sum(firstnums)}
+  histories &lt;- lapply(histories,onedown)}
+
 part2</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-output-begin eyJkYXRhIjoiWzFdIDJcbiJ9 -->
@@ -1881,37 +1850,36 @@ part2</code></pre>
 <p>Single function (which needs onedown())</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF5OWFuc3dlcnMgPC0gZnVuY3Rpb24oaW5wdXQpe1xuaGlzdG9yaWVzPC1jKClcbmZvcihpIGluIDE6bGVuZ3RoKGlucHV0KSl7XG4gIG9hc2lzPC1hcy5udW1lcmljKHVubGlzdChzdHJfc3BsaXQoaW5wdXRbaV0sXCIgXCIpKSlcbiAgaGlzdG9yaWVzIDwtIGFwcGVuZChoaXN0b3JpZXMsbGlzdChvYXNpcykpfVxuXG5oaXN0b3JpZXMgPC0gdGliYmxlKGhpc3RvcmllcywwKVxuaGlzdG9yaWVzIDwtIGNiaW5kKGhpc3RvcmllcywwKVxuY29sbmFtZXMoaGlzdG9yaWVzKTwtYyhcImhpc3RvcnlcIixcImV4dHJhcG9sYXRlXCIsXCJwcmV2aW91c1wiKVxuXG5mb3IgKGkgaW4gMjpsZW5ndGgob2FzaXMpKXtcbmhpc3RvcmllcyA8LSBoaXN0b3JpZXMgJT4lIHJvd3dpc2UgJT4lXG4gIG11dGF0ZShleHRyYXBvbGF0ZT10YWlsKGhpc3RvcnlbW2xlbmd0aChoaXN0b3J5KV1dW1sxXV0pK2V4dHJhcG9sYXRlLFxuICAgICAgICAgcHJldmlvdXM9KGhpc3RvcnlbWzFdXVtbMV1dKSooKC0xKV5pKStwcmV2aW91cykgJT4lXG4gIG11dGF0ZShoaXN0b3J5PWxpc3Qob25lZG93bih1bmxpc3QoaGlzdG9yeSkpKSl9XG5cbmhpc3RvcmllcyA8LSBoaXN0b3JpZXMgJT4lIHJvd3dpc2UgJT4lXG4gIG11dGF0ZShleHRyYXBvbGF0ZT1leHRyYXBvbGF0ZStoaXN0b3J5W1sxXV0pICU+JVxuICBtdXRhdGUocHJldmlvdXM9KGhpc3RvcnlbWzFdXSooKC0xKV5pKStwcmV2aW91cykpXG5cbnBhcnQxIDwtIHN1bShoaXN0b3JpZXMkZXh0cmFwb2xhdGUpXG5wYXJ0MiA8LSBzdW0oaGlzdG9yaWVzJHByZXZpb3VzKVxuYyhwYXJ0MSxwYXJ0Mil9XG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF5OWFuc3dlcnMgPC0gZnVuY3Rpb24oaW5wdXQpe1xuICBoaXN0b3JpZXM8LWMoKVxuICBmb3IoaSBpbiAxOmxlbmd0aChpbnB1dCkpe1xuICAgIG9hc2lzPC1hcy5udW1lcmljKHVubGlzdChzdHJfc3BsaXQoaW5wdXRbaV0sXCIgXCIpKSlcbiAgICBoaXN0b3JpZXMgPC0gYXBwZW5kKGhpc3RvcmllcyxsaXN0KG9hc2lzKSl9XG4gIFxuICBwYXJ0MTwtMFxuICBwYXJ0MjwtMFxuICBqIDwtIGhpc3RvcnlsZW5ndGhcbiAgZm9yIChpIGluIDE6aGlzdG9yeWxlbmd0aCl7XG4gICAgIyMgZ2V0IHRoZSBsYXN0IG51bWJlcnMsIHRoZW4gZmlyc3QgbnVtYmVyc1xuICAgIGxhc3RudW1zIDwtIHNhcHBseShoaXN0b3JpZXMsZnVuY3Rpb24oeCl7eFtqXX0pXG4gICAgZmlyc3RudW1zIDwtIHNhcHBseShoaXN0b3JpZXMsZnVuY3Rpb24oeCl7eFsxXX0pXG4gICAgIyMgYWRkIChvciBzdWJ0cmFjdCkgdGhlIHN1bXMgb2YgdGhlIGxhc3QgYW5kIGZpcnN0cyB0byBvdXIgYW5zd2Vyc1xuICAgIHBhcnQxIDwtIHBhcnQxK3N1bShsYXN0bnVtcylcbiAgICBpZihpICUlIDI9PTEpe3BhcnQyIDwtIHBhcnQyK3N1bShmaXJzdG51bXMpXG4gICAgfWVsc2V7cGFydDIgPC0gcGFydDItc3VtKGZpcnN0bnVtcyl9XG4gICAgIyNzaG9ydGVuIHRoZSBsaXN0c1xuICAgIGhpc3RvcmllcyA8LSBsYXBwbHkoaGlzdG9yaWVzLG9uZWRvd24pXG4gICAgIyMgZGVjcmVtZW50IGogdG8gZmluZCB0aGUgbGFzdCBudW1iZXIgbmV4dCB0aW1lLlxuICAgIGo8LWotMX1cbiAgYyhwYXJ0MSxwYXJ0Mil9XG5gYGAifQ== -->
 <pre class="r"><code>day9answers &lt;- function(input){
-histories&lt;-c()
-for(i in 1:length(input)){
-  oasis&lt;-as.numeric(unlist(str_split(input[i],&quot; &quot;)))
-  histories &lt;- append(histories,list(oasis))}
-
-histories &lt;- tibble(histories,0)
-histories &lt;- cbind(histories,0)
-colnames(histories)&lt;-c(&quot;history&quot;,&quot;extrapolate&quot;,&quot;previous&quot;)
-
-for (i in 2:length(oasis)){
-histories &lt;- histories %&gt;% rowwise %&gt;%
-  mutate(extrapolate=tail(history[[length(history)]][[1]])+extrapolate,
-         previous=(history[[1]][[1]])*((-1)^i)+previous) %&gt;%
-  mutate(history=list(onedown(unlist(history))))}
-
-histories &lt;- histories %&gt;% rowwise %&gt;%
-  mutate(extrapolate=extrapolate+history[[1]]) %&gt;%
-  mutate(previous=(history[[1]]*((-1)^i)+previous))
-
-part1 &lt;- sum(histories$extrapolate)
-part2 &lt;- sum(histories$previous)
-c(part1,part2)}</code></pre>
+  histories&lt;-c()
+  for(i in 1:length(input)){
+    oasis&lt;-as.numeric(unlist(str_split(input[i],&quot; &quot;)))
+    histories &lt;- append(histories,list(oasis))}
+  
+  part1&lt;-0
+  part2&lt;-0
+  j &lt;- historylength
+  for (i in 1:historylength){
+    ## get the last numbers, then first numbers
+    lastnums &lt;- sapply(histories,function(x){x[j]})
+    firstnums &lt;- sapply(histories,function(x){x[1]})
+    ## add (or subtract) the sums of the last and firsts to our answers
+    part1 &lt;- part1+sum(lastnums)
+    if(i %% 2==1){part2 &lt;- part2+sum(firstnums)
+    }else{part2 &lt;- part2-sum(firstnums)}
+    ##shorten the lists
+    histories &lt;- lapply(histories,onedown)
+    ## decrement j to find the last number next time.
+    j&lt;-j-1}
+  c(part1,part2)}</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF5OTwtIGRheTlhbnN3ZXJzKGlucHV0KVxuZGF5OVxuYGBgIn0= -->
-<pre class="r"><code>day9&lt;- day9answers(input)
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF5OSA8LSBkYXk5YW5zd2VycyhpbnB1dClcbmRheTlcbmBgYCJ9 -->
+<pre class="r"><code>day9 &lt;- day9answers(input)
 day9</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-output-begin eyJkYXRhIjoiWzFdIDExNCAgIDJcbiJ9 -->
@@ -1920,7 +1888,7 @@ day9</code></pre>
 <!-- rnb-chunk-end -->
 </div>
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIkRheSA5Ig0Kb3V0cHV0OiBodG1sX25vdGVib29rDQotLS0NCmBgYHtyIHNldHVwLCBpbmNsdWRlPUZBTFNFfQ0KbGlicmFyeShrbml0cikNCmxpYnJhcnkoZHBseXIpDQpsaWJyYXJ5KHN0cmluZ3IpDQpsaWJyYXJ5KHRpZHl2ZXJzZSkNCmxpYnJhcnkoZ2dwbG90MikNCmxpYnJhcnkocmVhZHIpDQpvcHRpb25zKHNjaXBlbiA9IDk5OSkNCmBgYA0KDQojIyBQYXJ0IDENCg0KVGhlIGdvYWwgaXMgdG8gZmluZCB0aGUgbmV4dCB2YWx1ZSBpbiBlYWNoIHNlcXVlbmNlIHRoZW4gYWRkIHRoZW0gdG9nZXRoZXIgLSANCkZpcnN0LCBjcmVhdGUgYSB0aWJibGUsIGNvbHVtbiAxIGlzIGEgdmVjdG9yIG9mIHRoZSBoaXN0b3J5IHZhbHVlcyANCg0KYGBge3J9DQojIyMgUmVhZCBpbiBoaXN0b3JpZXMNCmlucHV0IDwtIHJlYWRfbGluZXMoIkRheTlTYW1wbGUudHh0IikNCg0KaGlzdG9yaWVzPC1jKCkNCmZvcihpIGluIDE6bGVuZ3RoKGlucHV0KSl7DQogIG9hc2lzPC1hcy5udW1lcmljKHVubGlzdChzdHJfc3BsaXQoaW5wdXRbaV0sIiAiKSkpDQogIGhpc3RvcmllcyA8LSBhcHBlbmQoaGlzdG9yaWVzLGxpc3Qob2FzaXMpKX0NCg0KaGlzdG9yaWVzIDwtIHRpYmJsZShoaXN0b3JpZXMsMCkNCmNvbG5hbWVzKGhpc3Rvcmllcyk8LWMoImhpc3RvcnkiLCJleHRyYXBvbGF0ZSIpDQpgYGANCg0KQXQgZWFjaCBsZXZlbCwgdGhlIHZhbHVlIG9mIGV4dHJhcG9sYXRpb24gZXF1YWxzIHRoZSB2YWx1ZSB0byBpdHMgbGVmdCwgcGx1cyB0aGUgcHJldmlvdXMgdmFsdWUgb2YgZXh0cmFwb2xhdGlvbiBhbmQgZXZlbnR1YWxseSB0aGUgdmFsdWVzIG9mIGV4dHJhcG9sYXRpb24gPSAwLCBhbGwgeW91IHJlYWxseSBuZWVkIHRvIGRvIGlzIGFkZCBhbGwgdGhlIHZhbHVlcyB0byB0aGUgbGVmdC4gKG9yIGFsbCBvZiB0aGUgZmluYWwgdmFsdWVzIG9mIHRoZSBpbnB1dCB2ZWN0b3IpDQpTbyBmaXJzdCwgYSBmdW5jdGlvbiB0aGF0IHRha2VzIGluIGEgbnVtZXJpYyB2ZWN0b3IgYW5kIG91dHB1dHMgYSB2ZWN0b3Igb2YgdGhlIGRpZmZlcmVuY2VzIGJldHdlZW4gdGhlIG51bWJlcnM6DQoNCmBgYHtyfQ0Kb25lZG93bjwtZnVuY3Rpb24oaGlzdG9yeSl7DQogIG5leHRsaW5lPC1jKCkNCiAgZm9yKGkgaW4gMjpsZW5ndGgoaGlzdG9yeSkpew0KICAgIG5leHRsaW5lPC1jKG5leHRsaW5lLChoaXN0b3J5W2ldLWhpc3RvcnlbaS0xXSkpfQ0KICBuZXh0bGluZX0NCg0Kb25lZG93bihjKDAsMyw2LDksMTIsMTUpKQ0KI29uZWRvd24odW5saXN0KGhpc3Rvcmllc1sxLDFdW1sxXV0pKQ0KYGBgDQpXaXRoIHRoYXQgZnVuY3Rpb24sIGZpcnN0IGFwcGx5IGl0IG92ZXIgYW5kIG92ZXIgdW50aWwgdGhlcmUncyBvbmx5IG9uZSB2YWx1ZSBsZWZ0IGluIHRoZSBsaW5lLg0KDQpgYGB7cn0NCmZvciAoaSBpbiAxOihsZW5ndGgob2FzaXMpLTEpKXsNCmhpc3RvcmllcyA8LSBoaXN0b3JpZXMgJT4lIHJvd3dpc2UgJT4lDQogIG11dGF0ZShleHRyYXBvbGF0ZT10YWlsKGhpc3RvcnlbW2xlbmd0aChoaXN0b3J5KV1dW1sxXV0pK2V4dHJhcG9sYXRlKSAlPiUNCiAgbXV0YXRlKGhpc3Rvcnk9bGlzdChvbmVkb3duKHVubGlzdChoaXN0b3J5KSkpKX0NCmBgYA0KYW5kIHRoZW4sIGp1c3QgaW4gY2FzZSB0aGVyZSdzIGEgZmluYWwgdmFsdWUsIGFkZCBpdCB0byBleHRyYXBvbGF0ZSAoYWdhaW4sIGl0IHdpbGwganVzdCBhZGQgMCBpZiB0aGUgZGlmZmVyZW5jZXMgaGF2ZSBhbHJlYWR5IHJlZHVjZWQgb3V0KQ0KDQpgYGB7cn0NCmhpc3RvcmllcyA8LSBoaXN0b3JpZXMgJT4lIHJvd3dpc2UgJT4lDQogIG11dGF0ZShleHRyYXBvbGF0ZT1leHRyYXBvbGF0ZStoaXN0b3J5W1sxXV0pDQpgYGANCmZpbmFsbHksIGFkZCB0aGUgZXh0cmFwb2xhdGlvbnMgdG8gZ2V0IHRoZSBhbnN3ZXIgdG8gcGFydCAxDQoNCmBgYHtyfQ0KcGFydDEgPC0gc3VtKGhpc3RvcmllcyRleHRyYXBvbGF0ZSkNCnBhcnQxDQpgYGANCiMjIFBhcnQgMg0KDQpOb3csIHRvIGV4dHJhcG9sYXRlIHRoZSBvdGhlciBzaWRlIC0gDQpGb3IgdGhpcywgIGVxdWFscyB0aGUgdmFsdWUgdG8gaXRzIGxlZnQsICptaW51cyogdGhlIHByZXZpb3VzIHZhbHVlIG9mIGV4dHJhcG9sYXRpb24gLSBzbyB3b3JraW5nIGl0cyB3YXkgZG93bi4gIFNvIGl0IHdpbGwgYmUgYWRkLCBzdWJ0cmFjdCwgYWRkLCBzdWJ0cmFjdCwgZXRjLi4uIGRvd24gdG8gMC4NCg0KDQpgYGB7ciwgaW5jbHVkZT1GQUxTRX0NCmhpc3RvcmllczwtYygpDQpmb3IoaSBpbiAxOmxlbmd0aChpbnB1dCkpew0KICBvYXNpczwtYXMubnVtZXJpYyh1bmxpc3Qoc3RyX3NwbGl0KGlucHV0W2ldLCIgIikpKQ0KICBoaXN0b3JpZXMgPC0gYXBwZW5kKGhpc3RvcmllcyxsaXN0KG9hc2lzKSl9DQoNCmhpc3RvcmllcyA8LSB0aWJibGUoaGlzdG9yaWVzLDApDQpjb2xuYW1lcyhoaXN0b3JpZXMpPC1jKCJoaXN0b3J5IiwicHJldmlvdXMiKQ0KYGBgDQoNClN0aWxsIHVzZSBvbmVkb3duKCksIGJ1dCB0aGlzIHRpbWUsIGNoYW5nZSB0aGUgcHJldmlvdXMgdmFsdWUNCg0KYGBge3J9DQpmb3IgKGkgaW4gMjpsZW5ndGgob2FzaXMpKXsNCmhpc3RvcmllcyA8LSBoaXN0b3JpZXMgJT4lIHJvd3dpc2UgJT4lDQogIG11dGF0ZShwcmV2aW91cz0oaGlzdG9yeVtbMV1dW1sxXV0pKigoLTEpXmkpK3ByZXZpb3VzKSAlPiUNCiAgbXV0YXRlKGhpc3Rvcnk9bGlzdChvbmVkb3duKHVubGlzdChoaXN0b3J5KSkpKX0NCmBgYA0KdGhlbiBlaXRoZXIgYWRkIG9yIHN1YnRyYWN0IHRoZSBsYXN0IG51bWJlciAoanVzdCBpbiBjYXNlIGl0IGlzbid0IDApDQpgYGB7cn0NCmk8LWkrMQ0KaGlzdG9yaWVzIDwtIGhpc3RvcmllcyAlPiUgcm93d2lzZSAlPiUNCiAgbXV0YXRlKHByZXZpb3VzPShoaXN0b3J5W1sxXV0qKCgtMSleaSkrcHJldmlvdXMpKQ0KYGBgDQpBbmQgZmluYWxseSBwYXJ0MiBpcyB0aGUgc3VtIG9mIHByZXZpb3VzDQpgYGB7cn0NCnBhcnQyIDwtIHN1bShoaXN0b3JpZXMkcHJldmlvdXMpDQpwYXJ0Mg0KYGBgDQpTaW5nbGUgZnVuY3Rpb24gKHdoaWNoIG5lZWRzIG9uZWRvd24oKSkNCg0KYGBge3J9DQpkYXk5YW5zd2VycyA8LSBmdW5jdGlvbihpbnB1dCl7DQpoaXN0b3JpZXM8LWMoKQ0KZm9yKGkgaW4gMTpsZW5ndGgoaW5wdXQpKXsNCiAgb2FzaXM8LWFzLm51bWVyaWModW5saXN0KHN0cl9zcGxpdChpbnB1dFtpXSwiICIpKSkNCiAgaGlzdG9yaWVzIDwtIGFwcGVuZChoaXN0b3JpZXMsbGlzdChvYXNpcykpfQ0KDQpoaXN0b3JpZXMgPC0gdGliYmxlKGhpc3RvcmllcywwKQ0KaGlzdG9yaWVzIDwtIGNiaW5kKGhpc3RvcmllcywwKQ0KY29sbmFtZXMoaGlzdG9yaWVzKTwtYygiaGlzdG9yeSIsImV4dHJhcG9sYXRlIiwicHJldmlvdXMiKQ0KDQpmb3IgKGkgaW4gMjpsZW5ndGgob2FzaXMpKXsNCmhpc3RvcmllcyA8LSBoaXN0b3JpZXMgJT4lIHJvd3dpc2UgJT4lDQogIG11dGF0ZShleHRyYXBvbGF0ZT10YWlsKGhpc3RvcnlbW2xlbmd0aChoaXN0b3J5KV1dW1sxXV0pK2V4dHJhcG9sYXRlLA0KICAgICAgICAgcHJldmlvdXM9KGhpc3RvcnlbWzFdXVtbMV1dKSooKC0xKV5pKStwcmV2aW91cykgJT4lDQogIG11dGF0ZShoaXN0b3J5PWxpc3Qob25lZG93bih1bmxpc3QoaGlzdG9yeSkpKSl9DQoNCmhpc3RvcmllcyA8LSBoaXN0b3JpZXMgJT4lIHJvd3dpc2UgJT4lDQogIG11dGF0ZShleHRyYXBvbGF0ZT1leHRyYXBvbGF0ZStoaXN0b3J5W1sxXV0pICU+JQ0KICBtdXRhdGUocHJldmlvdXM9KGhpc3RvcnlbWzFdXSooKC0xKV5pKStwcmV2aW91cykpDQoNCnBhcnQxIDwtIHN1bShoaXN0b3JpZXMkZXh0cmFwb2xhdGUpDQpwYXJ0MiA8LSBzdW0oaGlzdG9yaWVzJHByZXZpb3VzKQ0KYyhwYXJ0MSxwYXJ0Mil9DQpgYGANCg0KDQpgYGB7cn0NCmRheTk8LSBkYXk5YW5zd2VycyhpbnB1dCkNCmRheTkNCmBgYA==</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIkRheSA5Ig0Kb3V0cHV0OiBodG1sX25vdGVib29rDQotLS0NCmBgYHtyIHNldHVwLCBpbmNsdWRlPUZBTFNFfQ0KbGlicmFyeShrbml0cikNCmxpYnJhcnkoZHBseXIpDQpsaWJyYXJ5KHN0cmluZ3IpDQpsaWJyYXJ5KHRpZHl2ZXJzZSkNCmxpYnJhcnkoZ2dwbG90MikNCmxpYnJhcnkocmVhZHIpDQpvcHRpb25zKHNjaXBlbiA9IDk5OSkNCmBgYA0KDQojIyBQYXJ0IDENCg0KVGhlIGdvYWwgaXMgdG8gZmluZCB0aGUgbmV4dCB2YWx1ZSBpbiBlYWNoIHNlcXVlbmNlIHRoZW4gYWRkIHRoZW0gdG9nZXRoZXIgLSANCkZpcnN0LCBjcmVhdGUgYSBsaXN0IG9mIHZlY3RvcnMgKGVhY2ggdmVjdG9yIGlzIGEgaGlzdG9yeSBsaXN0KQ0KDQpgYGB7cn0NCiMjIyBSZWFkIGluIGhpc3Rvcmllcw0KaW5wdXQgPC0gcmVhZF9saW5lcygiRGF5OVNhbXBsZS50eHQiKQ0KDQpoaXN0b3JpZXM8LWMoKQ0KZm9yKGkgaW4gMTpsZW5ndGgoaW5wdXQpKXtvYXNpczwtYXMubnVtZXJpYyh1bmxpc3Qoc3RyX3NwbGl0KGlucHV0W2ldLCIgIikpKQ0KICBoaXN0b3JpZXMgPC0gYXBwZW5kKGhpc3RvcmllcyxsaXN0KG9hc2lzKSl9DQpoaXN0b3J5bGVuZ3RoIDwtIGxlbmd0aChvYXNpcykNCmBgYA0KDQpBdCBlYWNoIGxldmVsLCB0aGUgdmFsdWUgb2YgZXh0cmFwb2xhdGlvbiBlcXVhbHMgdGhlIHZhbHVlIHRvIGl0cyBsZWZ0LCBwbHVzIHRoZSBwcmV2aW91cyB2YWx1ZSBvZiBleHRyYXBvbGF0aW9uIGFuZCBldmVudHVhbGx5IHRoZSB2YWx1ZXMgb2YgZXh0cmFwb2xhdGlvbiA9IDAsIGFsbCB5b3UgcmVhbGx5IG5lZWQgdG8gZG8gaXMgYWRkIGFsbCB0aGUgdmFsdWVzIHRvIHRoZSBsZWZ0LiAob3IgYWxsIG9mIHRoZSBmaW5hbCB2YWx1ZXMgb2YgdGhlIGlucHV0IHZlY3RvcikNClNvIGZpcnN0LCBhIGZ1bmN0aW9uIHRoYXQgdGFrZXMgaW4gYSBudW1lcmljIHZlY3RvciBhbmQgb3V0cHV0cyBhIHZlY3RvciBvZiB0aGUgZGlmZmVyZW5jZXMgYmV0d2VlbiB0aGUgbnVtYmVyczoNCg0KYGBge3J9DQpvbmVkb3duPC1mdW5jdGlvbihoaXN0b3J5KXsNCiAgbmV4dGxpbmU8LWMoKQ0KICBmb3IoaSBpbiAyOmxlbmd0aChoaXN0b3J5KSl7DQogICAgbmV4dGxpbmU8LWMobmV4dGxpbmUsKGhpc3RvcnlbaV0taGlzdG9yeVtpLTFdKSl9DQogIG5leHRsaW5lfQ0KDQpvbmVkb3duKGMoMCwzLDYsOSwxMiwxNSkpDQojb25lZG93bih1bmxpc3QoaGlzdG9yaWVzWzEsMV1bWzFdXSkpDQpgYGANCkFkZCB0aGUgbnVtYmVyIG9uIHRoZSByaWdodCBhbmQgdGhlbiBhcHBseSB0aGUgZnVuY3Rpb24gb3ZlciBhbmQgb3ZlciB1bnRpbCB0aGVyZSBhcmUgbm8gdmFsdWVzIGxlZnQgaW4gdGhlIGxpbmUuDQoNCmBgYHtyfQ0KDQpwYXJ0MTwtMA0KaiA8LSBoaXN0b3J5bGVuZ3RoDQpmb3IgKGkgaW4gMTpoaXN0b3J5bGVuZ3RoKXsNCiAgbGFzdG51bXMgPC0gc2FwcGx5KGhpc3RvcmllcyxmdW5jdGlvbih4KXt4W2pdfSkNCiAgcGFydDEgPC0gcGFydDErc3VtKGxhc3RudW1zKQ0KICBoaXN0b3JpZXMgPC0gbGFwcGx5KGhpc3RvcmllcyxvbmVkb3duKQ0KICBqPC1qLTF9DQoNCnBhcnQxDQpgYGANCg0KIyMgUGFydCAyDQoNCk5vdywgdG8gZXh0cmFwb2xhdGUgdGhlIG90aGVyIHNpZGUgLSANCkZvciB0aGlzLCAgZXF1YWxzIHRoZSB2YWx1ZSB0byBpdHMgbGVmdCwgKm1pbnVzKiB0aGUgcHJldmlvdXMgdmFsdWUgb2YgZXh0cmFwb2xhdGlvbiAtIHNvIHdvcmtpbmcgaXRzIHdheSBkb3duLiAgU28gaXQgd2lsbCBiZSBhZGQsIHN1YnRyYWN0LCBhZGQsIHN1YnRyYWN0LCBldGMuLi4gZG93biB0byAwLg0KDQoNCmBgYHtyLCBpbmNsdWRlPUZBTFNFfQ0KIyMjIHRoaXMgcmVzZXRzIGhpc3RvcmllcyBhZnRlciBydW5uaW5nIHBhcnQgMQ0KDQpoaXN0b3JpZXM8LWMoKQ0KZm9yKGkgaW4gMTpsZW5ndGgoaW5wdXQpKXsNCiAgb2FzaXM8LWFzLm51bWVyaWModW5saXN0KHN0cl9zcGxpdChpbnB1dFtpXSwiICIpKSkNCiAgaGlzdG9yaWVzIDwtIGFwcGVuZChoaXN0b3JpZXMsbGlzdChvYXNpcykpfQ0KYGBgDQoNClRoaXMgdGltZSwgd2UgZ28gYmFjayBhbmQgZm9ydGggYmV0d2VlbiBhZGRpbmcgYW5kIHN1YnRyYWN0aW5nIHRoZSBudW1iZXIgb24gdGhlIGxlZnQNCg0KYGBge3J9DQoNCnBhcnQyPC0wDQpmb3IgKGkgaW4gMTpoaXN0b3J5bGVuZ3RoKXsNCiAgZmlyc3RudW1zIDwtIHNhcHBseShoaXN0b3JpZXMsZnVuY3Rpb24oeCl7eFsxXX0pDQogIGlmKGkgJSUgMj09MSl7cGFydDIgPC0gcGFydDIrc3VtKGZpcnN0bnVtcykNCiAgfWVsc2V7cGFydDIgPC0gcGFydDItc3VtKGZpcnN0bnVtcyl9DQogIGhpc3RvcmllcyA8LSBsYXBwbHkoaGlzdG9yaWVzLG9uZWRvd24pfQ0KDQpwYXJ0Mg0KYGBgDQpTaW5nbGUgZnVuY3Rpb24gKHdoaWNoIG5lZWRzIG9uZWRvd24oKSkNCg0KYGBge3J9DQpkYXk5YW5zd2VycyA8LSBmdW5jdGlvbihpbnB1dCl7DQogIGhpc3RvcmllczwtYygpDQogIGZvcihpIGluIDE6bGVuZ3RoKGlucHV0KSl7DQogICAgb2FzaXM8LWFzLm51bWVyaWModW5saXN0KHN0cl9zcGxpdChpbnB1dFtpXSwiICIpKSkNCiAgICBoaXN0b3JpZXMgPC0gYXBwZW5kKGhpc3RvcmllcyxsaXN0KG9hc2lzKSl9DQogIA0KICBwYXJ0MTwtMA0KICBwYXJ0MjwtMA0KICBqIDwtIGhpc3RvcnlsZW5ndGgNCiAgZm9yIChpIGluIDE6aGlzdG9yeWxlbmd0aCl7DQogICAgIyMgZ2V0IHRoZSBsYXN0IG51bWJlcnMsIHRoZW4gZmlyc3QgbnVtYmVycw0KICAgIGxhc3RudW1zIDwtIHNhcHBseShoaXN0b3JpZXMsZnVuY3Rpb24oeCl7eFtqXX0pDQogICAgZmlyc3RudW1zIDwtIHNhcHBseShoaXN0b3JpZXMsZnVuY3Rpb24oeCl7eFsxXX0pDQogICAgIyMgYWRkIChvciBzdWJ0cmFjdCkgdGhlIHN1bXMgb2YgdGhlIGxhc3QgYW5kIGZpcnN0cyB0byBvdXIgYW5zd2Vycw0KICAgIHBhcnQxIDwtIHBhcnQxK3N1bShsYXN0bnVtcykNCiAgICBpZihpICUlIDI9PTEpe3BhcnQyIDwtIHBhcnQyK3N1bShmaXJzdG51bXMpDQogICAgfWVsc2V7cGFydDIgPC0gcGFydDItc3VtKGZpcnN0bnVtcyl9DQogICAgIyNzaG9ydGVuIHRoZSBsaXN0cw0KICAgIGhpc3RvcmllcyA8LSBsYXBwbHkoaGlzdG9yaWVzLG9uZWRvd24pDQogICAgIyMgZGVjcmVtZW50IGogdG8gZmluZCB0aGUgbGFzdCBudW1iZXIgbmV4dCB0aW1lLg0KICAgIGo8LWotMX0NCiAgYyhwYXJ0MSxwYXJ0Mil9DQpgYGANCg0KDQpgYGB7cn0NCmRheTkgPC0gZGF5OWFuc3dlcnMoaW5wdXQpDQpkYXk5DQpgYGA=</div>
 
 
 
