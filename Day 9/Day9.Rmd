@@ -38,7 +38,6 @@ onedown<-function(history){
   nextline}
 
 onedown(c(0,3,6,9,12,15))
-#onedown(unlist(histories[1,1][[1]]))
 ```
 Add the number on the right and then apply the function over and over until there are no values left in the line.
 
