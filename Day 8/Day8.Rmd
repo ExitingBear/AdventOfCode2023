@@ -1,0 +1,216 @@
+---
+title: "Day 8 Notebook"
+output: html_notebook
+---
+```{r setup, include=FALSE}
+library(knitr)
+library(dplyr)
+library(stringr)
+library(tidyverse)
+library(igraph)
+library(ggplot2)
+library(rgl)
+library(ggraph)
+library(readr)
+library(ds4psy)
+library(numbers)
+options(scipen = 999)
+```
+
+## Part 1
+There's a list of nodes and the directions to the next possible node and how to traverse from one to the next.  Using the data, bring in the directions into one vector and the map into three vectors - starters, lefts, rights.
+
+```{r}
+### Read in time and distances
+nodefile <- "Day8Sample2.txt"
+
+dirs <- read_lines(nodefile,n_max=1)
+dirs<-unlist(str_split(dirs,""))
+
+nodes<-read_lines(nodefile,skip=2)
+starters <- sapply(nodes,function(x){str_split_i(x," =",1)})
+lefts <- sapply(nodes,function(x){str_sub(x,8,10)})
+rights<- sapply(nodes,function(x){str_sub(x,13,15)})
+```
+
+
+From there - set up a starter node ("AAA") and count the steps until reaching ("ZZZ"), cycling around the directions as needed.
+Knowing that there is a part 2, this will be a function:
+
+```{r}
+
+stepcount<-function(startnode="AAA",endnode="ZZZ"){
+  currentnode<-startnode
+  counter <-0
+  while(!(currentnode==endnode)){
+    counter<-counter+1
+    place <- which(starters==currentnode)
+    ## deal with the inconvenience of starting with 1 rather than with 0 to find the right place in the direction array
+    dirno <- if (counter%%length(dirs)==0){length(dirs)} else {counter%%length(dirs)}
+    if (dirs[dirno]=="L"){currentnode<-lefts[place]}else{currentnode<-rights[place]}}
+  counter}
+
+part1 <- stepcount()
+part1
+```
+## Part 2
+For part 2, instead of going from "AAA" to "ZZZ" instead go from any ??A to any ??Z all at once.
+
+So for example, in sample3:
+11A = (11B, XXX)
+11B = (XXX, 11Z)
+11Z = (11B, XXX)
+22A = (22B, XXX)
+22B = (22C, 22C)
+22C = (22Z, 22Z)
+22Z = (22B, 22B)
+XXX = (XXX, XXX)
+
+the goal is to see when things make it from 11A & 22A  to the ones that end in Z - and then when all of them end on z at the same time.
+However - it might (just might) behoove us to graph this:
+
+```{r,echo=FALSE}
+### Read in time and distances
+nodefile <- "Day8Sample3.txt"
+
+dirs <- read_lines(nodefile,n_max=1)
+dirs<-unlist(str_split(dirs,""))
+
+nodes<-read_lines(nodefile,skip=2)
+starters <- sapply(nodes,function(x){str_split_i(x," =",1)})
+lefts <- sapply(nodes,function(x){str_sub(x,8,10)})
+rights<- sapply(nodes,function(x){str_sub(x,13,15)})
+```
+
+
+
+```{r, echo=FALSE}
+el<-matrix(nrow=0,ncol=2)
+for (i in 1:length(nodes)){
+  el<-rbind(el,c(starters[i],lefts[i]))
+  el<-rbind(el,c(starters[i],rights[i]))}
+
+gr<-graph_from_edgelist(el)
+
+x<-ggraph(gr,layout="mds") + 
+  geom_edge_diagonal(arrow=arrow(length=unit(3,"mm")),
+                     end_cap = circle(5,"mm"),
+                     start_cap=circle(5,"mm")) +
+  geom_node_label(aes(label=name))
+
+
+x
+```
+
+And from there, it's obvious that there are cycles. One around 22A to 22Z.  The other is 11A to 11Z.
+
+In fact, the real input graph looks like this:
+
+```{r, echo=FALSE}
+
+realnodefile <- "../../Advent2023/Day 8/Day8.txt"
+
+realnodes<-read_lines(realnodefile,skip=2)
+realstarters <- sapply(realnodes,function(x){str_split_i(x," =",1)})
+reallefts <- sapply(realnodes,function(x){str_sub(x,8,10)})
+realrights<- sapply(realnodes,function(x){str_sub(x,13,15)})
+
+
+el<-matrix(nrow=0,ncol=2)
+for (i in 1:length(realnodes)){
+  el<-rbind(el,c(realstarters[i],reallefts[i]))
+  el<-rbind(el,c(realstarters[i],realrights[i]))}
+
+gr<-graph_from_edgelist(el)
+
+ggraph(gr,layout="mds") + 
+  geom_edge_diagonal(arrow=arrow(length=unit(3,"mm")),
+                     end_cap = circle(5,"mm"),
+                     start_cap=circle(5,"mm")) +
+  geom_node_label(aes(label=name),size=.8, label.padding=unit(.05,"lines"))
+```
+
+So we need a slight change to stepcount, so that instead of a single endnode, it can end at any of many endnodes AND to make sure we're going through the whole cycle - it isn't necessarily true that the first ??A to the first ??Z is a whole cycle, we need to measure from the first ??Z to the second ??Z
+
+```{r}
+stepcountcycle<-function(startnode="AAA",endnode=c("ZZZ")){
+  currentnode<-startnode
+  counter <-0
+  zstep<-c()
+  while(length(zstep)<2){
+    counter<-counter+1
+    place <- which(starters==currentnode)
+    ## deal with the inconvenience of starting with 1 rather than with 0 to find the right place in the direction array
+    dirno <- if (counter%%length(dirs)==0){length(dirs)} else {counter%%length(dirs)}
+    if (dirs[dirno]=="L"){currentnode<-lefts[place]}else{currentnode<-rights[place]}
+    if (currentnode %in% endnode){zstep<-c(zstep,counter)}}
+  return(zstep[2]-zstep[1])}
+```
+
+get the vectors of nodes that end in A & nodes that end in Z
+
+```{r}
+as <- c(starters[which(str_detect(starters,"..A"))],
+        rights[which(str_detect(rights,"..A"))],
+        lefts[which(str_detect(lefts,"..A"))])
+
+as <- unique(as)
+
+zs <- c(starters[which(str_detect(starters,"..Z"))],
+        rights[which(str_detect(rights,"..Z"))],
+        lefts[which(str_detect(lefts,"..Z"))])
+
+zs<- unique(zs)
+```
+
+then find the cyclelength for all of the as
+
+```{r}
+
+allcycles <- unname(sapply(as,function(x){stepcountcycle(x,zs)}))
+allcycles
+```
+and then finally, the answer will be the least common multiple of allcycles
+
+```{r}
+part2 <- mLCM(allcycles)
+part2
+```
+And the single function - starting from directions & nodes
+
+```{r}
+day8answers <- function(dirs,nodes){
+  starters <- sapply(nodes,function(x){str_split_i(x," =",1)})
+  lefts <- sapply(nodes,function(x){str_sub(x,8,10)})
+  rights<- sapply(nodes,function(x){str_sub(x,13,15)})
+  as <- unique(c(starters[which(str_detect(starters,"..A"))],
+                 rights[which(str_detect(rights,"..A"))],
+                 lefts[which(str_detect(lefts,"..A"))]))
+  zs <- unique(c(starters[which(str_detect(starters,"..Z"))],
+                 rights[which(str_detect(rights,"..Z"))],
+                 lefts[which(str_detect(lefts,"..Z"))]))
+  
+  stepcountcycle<-function(startnode="AAA",endnode=c("ZZZ")){
+    currentnode<-startnode
+    counter <-0
+    zstep<-c()
+    while(length(zstep)<2){
+      counter<-counter+1
+      place <- which(starters==currentnode)
+      ## deal with the inconvenience of starting with 1 rather than with 0 to find the right place in the direction array
+      dirno <- if (counter%%length(dirs)==0){length(dirs)} else {counter%%length(dirs)}
+      if (dirs[dirno]=="L"){currentnode<-lefts[place]}else{currentnode<-rights[place]}
+      if (currentnode %in% endnode){zstep<-c(zstep,counter)}}
+    return(c(zstep[1],zstep[2]-zstep[1]))}
+  part1 <- stepcountcycle()[1]
+  part2 <- unname(mLCM(sapply(as,function(x){stepcountcycle(x,zs)[2]})))
+  c(part1,part2)}
+```
+
+
+```{r,eval=FALSE}
+### because the sample inputs are either good for part 1 OR part 2, but not both, they're suppressed here.
+day8<-day8answers(dirs,nodes)
+day8
+```
+

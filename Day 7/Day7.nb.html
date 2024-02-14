@@ -1790,13 +1790,6 @@ cardfrequency &lt;- sapply(hands,function(x){
 cardframe &lt;- data.frame(bids, hands, cardfrequency)
 cardframe</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibnJvdyI6NSwibmNvbCI6Mywic3VtbWFyeSI6eyJEZXNjcmlwdGlvbiI6WyJkZiBbNSDDlyAzXSJdfX0sInJkZiI6Ikg0c0lBQUFBQUFBQUJxMVJ5MDZEUUJTOVpRQlRrbFlUdndNaUVLd0xGelV4TG1DRndhUkxwekJ0U1hGQUhqNDJwaHZqci9vVjFSbVlJUzF4S2Nua25uTTU1OHpjbWZ2YmhXc3NEQUJBb0NJRmtNWWdhQS9SblhrRm9DcU1qRUNGTWE5dlRIVGVLZ0dtWERYLyt1WnFtSDgrZHZVYXVycmRkZlhqQXNSM3h2VWlTSE9keUEwa2lUelA5eVFKZ3N2WnJDZVI3MGVTaEdIbzN3eUNWTnUySFlHUmJiczlkSnkvSUJNY1Q2UlIvRVFxRVlwazZESk5LaW5ZWU5xVFNZekxaRldTNTRiUStIMFFOUzd6VitzdzdqK0dQVDVzbk9GS3BzdW1rZUFhVzZ1U2JjellmbUE1eVlzNnpTa3pLZnpkOUlGNVZBNGFwdzNsSXlSbXZHbm8xblFHdjFGQjEzelB0dFd0aWFqYUFVYmRLWlFmWWRlRlhTZDBuVklpeDhud2ttUXlPU0V2QWs3WlJiYjNhQlZsU21zNUordFdWcDNYV0ZxTU9NOWtwNTBjOXI5aVNIMER6QUlBQUE9PSJ9 -->
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["bids"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["hands"],"name":[2],"type":["chr"],"align":["left"]},{"label":["cardfrequency"],"name":[3],"type":["chr"],"align":["left"]}],"data":[{"1":"765","2":"32T3K","3":"1112","_rn_":"32T3K"},{"1":"684","2":"T55J5","3":"113","_rn_":"T55J5"},{"1":"28","2":"KK677","3":"122","_rn_":"KK677"},{"1":"220","2":"KTJJT","3":"122","_rn_":"KTJJT"},{"1":"483","2":"QQQJA","3":"113","_rn_":"QQQJA"}],"options":{"columns":{"min":{},"max":[10],"total":[3]},"rows":{"min":[10],"max":[10],"total":[5]},"pages":{}}}
-  </script>
-</div>
-<!-- rnb-frame-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>And then rank the hands. 5 of a kind at 7, 4 of a kind at 6 down to
@@ -1833,13 +1826,6 @@ cardframe &lt;- cardframe %&gt;% rowwise() %&gt;% mutate(cards = list(cards))
 
 cardframe</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInJvd3dpc2VfZGYiLCJ0YmxfZGYiLCJ0YmwiLCJkYXRhLmZyYW1lIl0sIm5yb3ciOjUsIm5jb2wiOjUsInN1bW1hcnkiOnsiQSB0aWJibGUiOlsiNSDDlyA1Il0sIlJvd3dpc2UiOlsiIl19fSwicmRmIjoiSDRzSUFBQUFBQUFBQm0xU1FVL2JNQlIyNHlSQXBiSktjTmhoUjRRbXRFWkx1OElPSElxRWRtaFBSVUhpMXJsSldxSm1UbkJjQnBlSnk3Uy95bjlBSXRpTm41ZVlSbksrOTU2Lzk1N2ZaMTlkM2d6YU4yMkVFRVkydGhCMmhJbWM2K0JIN3p0Q3RpV2NGckxSbnNRSFFUcVF1Mkx0U3h6OWU1WnNOUHI3czhKelZPSHFxY0kvWDVINnVwdThxcEF6NkFlRENUakJjRGdlZ2pPWm5KNmRhU2NZandOd3B0UHArTUlvWlB1KzMxYzI5djJCTnZ2OWJhWWd3TUhWcVVaZGhic0dkdUhjcURrdzdFUCtrWkYzb3ZNcVB1d2ZHbmpjOURYL3BGbG45RkhocHlhKzQwT2ZZd09QRFA1bkZUY1IrRitBM3JqNVBaYjk5aWo1RlJmQzZZaGxQWWxmV1pZdkJ0RUJVaGZWYm1tZVJBVVFiZ25WVGlja0xGcXcrRzRkMC9CUkJYY2xneEc2Z2d4Sktvdys3cEpsNjd4UTc3RlZlNWVkeXQ4c3NLMmFqV3UyWGJNZGM1S2NQK2F4SXBoNk9HRktDaGdUd3pUM0lXZkZMRTBLUHNzV0t0aXVndklQYWtpQ3dOZXFKaTVWR1YzYkUyS3JlYTF5dTk1dWFmUjIrVHlkUmRBVUN3LzZSNFFUYjhIRXRmenY2Wm85dDdMMDdrNlc4eVNqNGt5V1ZOazFrbHZNQ0h4WVUva01vbDU0dTZhcjNqZGpHK2QwS1hzcTRWSHpFc3dMMGZxNE1HcE1sd21OUWEyVXpHTVlGa2Z4dlRMM2hZaWJ0K2psTEtFYzVwVFNlanpqUk9zVFppbEVOcE9qMXpmSG1EcTBFZ1VBQUE9PSJ9 -->
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["bids"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["hands"],"name":[2],"type":["chr"],"align":["left"]},{"label":["cardfrequency"],"name":[3],"type":["chr"],"align":["left"]},{"label":["handrank"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["cards"],"name":[5],"type":["list"],"align":["right"]}],"data":[{"1":"765","2":"32T3K","3":"1112","4":"2","5":"<dbl [5]>"},{"1":"684","2":"T55J5","3":"113","4":"4","5":"<dbl [5]>"},{"1":"28","2":"KK677","3":"122","4":"3","5":"<dbl [5]>"},{"1":"220","2":"KTJJT","3":"122","4":"3","5":"<dbl [5]>"},{"1":"483","2":"QQQJA","3":"113","4":"4","5":"<dbl [5]>"}],"options":{"columns":{"min":{},"max":[10],"total":[5]},"rows":{"min":[10],"max":[10],"total":[5]},"pages":{}}}
-  </script>
-</div>
-<!-- rnb-frame-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>Then finally, rank &amp; re-order the cards. The hand-rank is the
@@ -1849,28 +1835,16 @@ hands are in the correct order. Sorting from lowest to highest makes it
 easy to just multiply by the bid.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2FyZGZyYW1lIDwtIGNhcmRmcmFtZSAlPiUgbXV0YXRlKHNvcnRyYW5rPWhhbmRyYW5rKjEwMDAwMDAwMDAwK2NhcmRzWzFdKjEwMDAwMDAwMCtjYXJkc1syXSoxMDAwMDAwK1xuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjYXJkc1szXSoxMDAwMCtjYXJkc1s0XSoxMDArY2FyZHNbNV0pXG5jYXJkZnJhbWUgPC0gYXJyYW5nZShjYXJkZnJhbWUsc29ydHJhbmspXG5jYXJkZnJhbWUgPC0gY2FyZGZyYW1lICU+JXVuZ3JvdXAlPiUgbXV0YXRlKGZpbmFscmFuaz1yb3dfbnVtYmVyKCkpICU+JSBtdXRhdGUoUDFBbnN3ZXI9ZmluYWxyYW5rKmJpZHMpXG5jYXJkZnJhbWVcbmBgYCJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2FyZGZyYW1lIDwtIGNhcmRmcmFtZSAlPiUgbXV0YXRlKHNvcnRyYW5rPWhhbmRyYW5rKjEwMDAwMDAwMDAwK2NhcmRzWzFdKjEwMDAwMDAwMCtjYXJkc1syXSoxMDAwMDAwK1xuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjYXJkc1szXSoxMDAwMCtjYXJkc1s0XSoxMDArY2FyZHNbNV0pXG5jYXJkZnJhbWUgPC0gYXJyYW5nZShjYXJkZnJhbWUsc29ydHJhbmspXG5jYXJkZnJhbWUgPC0gY2FyZGZyYW1lICU+JXVuZ3JvdXAlPiUgbXV0YXRlKGZpbmFscmFuaz1yb3dfbnVtYmVyKCkpICU+JSBtdXRhdGUoUDFBbnN3ZXI9ZmluYWxyYW5rKmJpZHMpXG5jYXJkZnJhbWVcblxucGFydDE8LSBzdW0oY2FyZGZyYW1lJFAxQW5zd2VyKVxucGFydDFcbmBgYCJ9 -->
 <pre class="r"><code>cardframe &lt;- cardframe %&gt;% mutate(sortrank=handrank*10000000000+cards[1]*100000000+cards[2]*1000000+
                                 cards[3]*10000+cards[4]*100+cards[5])
 cardframe &lt;- arrange(cardframe,sortrank)
 cardframe &lt;- cardframe %&gt;%ungroup%&gt;% mutate(finalrank=row_number()) %&gt;% mutate(P1Answer=finalrank*bids)
-cardframe</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibnJvdyI6NSwibmNvbCI6OCwic3VtbWFyeSI6eyJBIHRpYmJsZSI6WyI1IMOXIDgiXX19LCJyZGYiOiJINHNJQUFBQUFBQUFCblZTd1U3YlFCQ2QyRTdxUklJaTZDRUhLaUdCRUVXTmhaTUdldWdoSU1RaHVUU1ZrVGl5MkJ1d1l0Wmg3UlNxU2hXWDBrdjdDYjFVNm8vMEwzb29aL2dHSk5MZGVNZUtWKzFLcXpjeis5N3V6TTY4Mno5cTFZNXFBR0NDWlJwZ2xvVUo1VVB2b1BFYXdES0VVd0lMcWhLdkJHbEpHTGJZODVMVitYSW4yZEFaWG1mNEJqTDhmSnpocHkxUWEwSHkxVVhsVnROcjlkRHBlZDJ1bHp1OTdaMGRkTHgydTl0R3A5L3ZkM2UxaXl6WGRadktOdDNtUDAyM05XdGk0aXFyanEzaFFoSEZXcHEraHpya29YNU4wMi9tdW95L3FmSFdOVno3RHgreHJuQzVpRGtmNzMybTRYclJ6L2tiS3E0ajhsOFcrWHVMZC9SUEFMRDNmT1ArcGk3eHhmZHZYd1d1MXAzZnZ5UnUzYTY4bXZMbjFEK1Z4SlpUWTRwdHdlemY0YkI4dk03d1VMMzU4empESDdmcTZjTFVsUms1cHdsa2piZXg4U2Roa0NEaGpMRGNtZk1KRHdhY1hvd3A4eitvb0MwWm5MQWhLaVFKRlhZUzgzVG1zRG9JR1lsbUF2WmJkNWNsbDVScmlWVjVmT2xnY3JKNlE5WTFtVXdlOUFyOGlDUllBUVpyQVVtSk0rQkNMN3hIVGZJa0hxVmh6SVRJa1BOWDBjUWxyZ1dlanBuTUpHajRaMk0yYkxTMVkzUEVUdVdicWozWXJwSnFEOXAybG9VeFVmS0trbGNvT3cwWnhYSWlja0lqdkRtZzc1VTVMLzVqK2gzT2lJY3N4VHBGTkhIU09DVW9xZmx4aEpGcDVmRDRGMk9HWjRHRkJBQUEifQ== -->
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["bids"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["hands"],"name":[2],"type":["chr"],"align":["left"]},{"label":["cardfrequency"],"name":[3],"type":["chr"],"align":["left"]},{"label":["handrank"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["cards"],"name":[5],"type":["list"],"align":["right"]},{"label":["sortrank"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["finalrank"],"name":[7],"type":["int"],"align":["right"]},{"label":["P1Answer"],"name":[8],"type":["dbl"],"align":["right"]}],"data":[{"1":"765","2":"32T3K","3":"1112","4":"2","5":"<dbl [5]>","6":"20302100313","7":"1","8":"765"},{"1":"220","2":"KTJJT","3":"122","4":"3","5":"<dbl [5]>","6":"31310111110","7":"2","8":"440"},{"1":"28","2":"KK677","3":"122","4":"3","5":"<dbl [5]>","6":"31313060707","7":"3","8":"84"},{"1":"684","2":"T55J5","3":"113","4":"4","5":"<dbl [5]>","6":"41005051105","7":"4","8":"2736"},{"1":"483","2":"QQQJA","3":"113","4":"4","5":"<dbl [5]>","6":"41212121114","7":"5","8":"2415"}],"options":{"columns":{"min":{},"max":[10],"total":[8]},"rows":{"min":[10],"max":[10],"total":[5]},"pages":{}}}
-  </script>
-</div>
-<!-- rnb-frame-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5wYXJ0MTwtIHN1bShjYXJkZnJhbWUkUDFBbnN3ZXIpXG5wYXJ0MVxuYGBgIn0= -->
-<pre class="r"><code>
+cardframe
+
 part1&lt;- sum(cardframe$P1Answer)
 part1</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDY0NDBcbiJ9 -->
-<pre><code>[1] 6440</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <div id="part-2" class="section level2">
@@ -1884,13 +1858,6 @@ they’re also wild.</p>
 <pre class="r"><code>cardframe &lt;- cardframe %&gt;% mutate(jokers = str_count(hands,&quot;J&quot;) )
 cardframe</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibnJvdyI6NSwibmNvbCI6OSwic3VtbWFyeSI6eyJBIHRpYmJsZSI6WyI1IMOXIDkiXX19LCJyZGYiOiJINHNJQUFBQUFBQUFCblZTelU3YlFCQWUveVNOSTBGUjRaQkRrWkNLRUVXTmhSTUNQZlFRVU1VaHVUU1ZrVGl5MkJzd2NkZnAyaW10S2xWYzJsN0tJL1JTcVMvQ1czQW9aL29NbFVoMzR4MHJXWUdsMVRjei9yN1ptZGw1Ky9xd1dUMnNBb0FGdG1XQ1ZSSW1sQTc4L2ZwTEFOc1VqZ0UyT0JJL0N0S2lNS1F6TDFudDc3ZVNEZTNCUlk2dklNZXZSemwrMlFUMUxVaStTbFJxTnZ4bUY1MnUzK240aGRQZDN0bEJ4MisxT2kxMGVyMWVaMWRMWkh1ZTExQzI1VFh1TmIzbXRJbUZxNnJhRlEwWFpsRjhpNVA3VUljODFLOXErbzFDbC9NM05ONmFocXNQOEJGckNwL09Zc0hIdkVzYXJzMzZCWDlkeFhWRS9vdFovdDZUVy9vbkJOaGJYdi83clNieCtjL0xId0tmMWR6cks0bWJOeXRiRS82Y21wTWhqdHdhU3h3YnBtZUh5L0w1SXNjRGRlZnZveHgvM2VEZG1BdFVMbEI1RFcwalM0eThveW5rUytIZ1VoeEhZWXFFVThJS1p5NGdQT3h6K241RVdmQkpCU3VTd1FrYm9FS1NVRkZKRTU1Ti9YVDZFU1B4VktEeXh0dGw2VG5seWkrZkpRUEtVNjFNaHlmbkxwWXFlelBsQk1iajhUKzlueUFtS2ZhRHdXcElNdUwydWRBTDcwNlRQRXFHV1pRd0lUTGxwcFkxc2NHMXdPTVJrNVdFOWVCMHhBYjFiZTIzTldRbjhrNDFjSHdNUXowSTJrNWVoVGxXOGpMMlQ5bEp4Q2kyRTVOakdtUG1rSDVRNXJ5WXgyUWM3cEJITE1NK1JUUjFzeVFqS0trR1NZeVJTZWR3OXg4U2d5MkRyd1FBQUE9PSJ9 -->
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["bids"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["hands"],"name":[2],"type":["chr"],"align":["left"]},{"label":["cardfrequency"],"name":[3],"type":["chr"],"align":["left"]},{"label":["handrank"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["cards"],"name":[5],"type":["list"],"align":["right"]},{"label":["sortrank"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["finalrank"],"name":[7],"type":["int"],"align":["right"]},{"label":["P1Answer"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["jokers"],"name":[9],"type":["int"],"align":["right"]}],"data":[{"1":"765","2":"32T3K","3":"1112","4":"2","5":"<dbl [5]>","6":"20302100313","7":"1","8":"765","9":"0"},{"1":"220","2":"KTJJT","3":"122","4":"3","5":"<dbl [5]>","6":"31310111110","7":"2","8":"440","9":"2"},{"1":"28","2":"KK677","3":"122","4":"3","5":"<dbl [5]>","6":"31313060707","7":"3","8":"84","9":"0"},{"1":"684","2":"T55J5","3":"113","4":"4","5":"<dbl [5]>","6":"41005051105","7":"4","8":"2736","9":"1"},{"1":"483","2":"QQQJA","3":"113","4":"4","5":"<dbl [5]>","6":"41212121114","7":"5","8":"2415","9":"1"}],"options":{"columns":{"min":{},"max":[10],"total":[9]},"rows":{"min":[10],"max":[10],"total":[5]},"pages":{}}}
-  </script>
-</div>
-<!-- rnb-frame-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>Then, refigure out what the hands are with wild cards. A four of a
@@ -1911,20 +1878,13 @@ high card is a pair.</p>
                                                       .default=handrank))
 cardframe</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibnJvdyI6NSwibmNvbCI6MTAsInN1bW1hcnkiOnsiQSB0aWJibGUiOlsiNSDDlyAxMCJdfX0sInJkZiI6Ikg0c0lBQUFBQUFBQUJuVlV3VzdUUUJBZDIwbnFXR3FwYUE4NWdJUkVWWldLV0hWQ0NBY09hWVU0SkJlQ1hLbkh1dmFtZFdQV1llMDBJQ1RVQzNDQlQrQ0N4SS93Rnh6b3VYd0RVc091dldQWks3Qmt2Wm54ZTdNenN5Ty9mSGJVdFk0c0FEQ2dadWhnMUxrSjlVUDNlZnNKUUUzbmpnWTFhQXA4dzBrYjNCRHNOY0VhZkxvV2JCaE1MM044Q2psK09NN3gvUjdJWjEzd1phSjZ0K04yUitpTTNPSFFMWnpSNDM0ZkhiZlhHL2JRR1kvSHczMGxVYzF4bkk2MERhZnpUOVBwbGswc1hGWTFNQlZjcnlKL05yTHpVSWM4MUc4cCt0MUNsL04zRmQ2Mmdsdi80U08ySk42cFlzSEh2SnNLYmxmOWdyOGo0eW9pLzJHVmYzRDdtdndLQUE3dTd2eisyQkw0NE91WHp4enZ0K3lmUHdUdVhkMTdsUEZYNVp3MC9vcXRNZmhiZy9Mc2NGbmVYZVo0S00vOGZwemp0eXM4RzNPQnpBVXlyd2JxL2VGOFRNVnZZYXJLQnRlcDk0b2trQytSaFV0MEVnWUpFczQ4V2ppcnZzZUNDU092NTRUNmIyWFFGQXptMFNrcUJBa1ZaaEt6dFBTeE9RbXBGNVVDNWd0bm55WUx3cVRmT0krbmhLRjhoWkpGUnE1VzNXVHh3c2JLeFdoME1jRGxjdmxIYmMrUHZBVGJ3NkFWZUtsblR4alhjKzlHa2F6RXN6U01LUmZwWXRFYmlsaGpTdURXbklwS2dyWi9OcWZUZGwvNWJNem9LZVEvQ0sxMGw1cThUN1N0dkFwOUtlVU5IQWVocHlFbDJFN2tuWkFJTXdma1FwcHJmQjdaT093WkMybUtmZkpvWXFkeDZxSEU4dU1JSTFubmNQTVhCUkNYRk80RUFBQT0ifQ== -->
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["bids"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["hands"],"name":[2],"type":["chr"],"align":["left"]},{"label":["cardfrequency"],"name":[3],"type":["chr"],"align":["left"]},{"label":["handrank"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["cards"],"name":[5],"type":["list"],"align":["right"]},{"label":["sortrank"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["finalrank"],"name":[7],"type":["int"],"align":["right"]},{"label":["P1Answer"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["jokers"],"name":[9],"type":["int"],"align":["right"]},{"label":["newrank"],"name":[10],"type":["dbl"],"align":["right"]}],"data":[{"1":"765","2":"32T3K","3":"1112","4":"2","5":"<dbl [5]>","6":"20302100313","7":"1","8":"765","9":"0","10":"2"},{"1":"220","2":"KTJJT","3":"122","4":"3","5":"<dbl [5]>","6":"31310111110","7":"2","8":"440","9":"2","10":"6"},{"1":"28","2":"KK677","3":"122","4":"3","5":"<dbl [5]>","6":"31313060707","7":"3","8":"84","9":"0","10":"3"},{"1":"684","2":"T55J5","3":"113","4":"4","5":"<dbl [5]>","6":"41005051105","7":"4","8":"2736","9":"1","10":"6"},{"1":"483","2":"QQQJA","3":"113","4":"4","5":"<dbl [5]>","6":"41212121114","7":"5","8":"2415","9":"1","10":"6"}],"options":{"columns":{"min":{},"max":[10],"total":[10]},"rows":{"min":[10],"max":[10],"total":[5]},"pages":{}}}
-  </script>
-</div>
-<!-- rnb-frame-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>This (obviously) changes some of the hands. Redo the substitution,
 math, and ranking - this time with J=1.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2FyZGZyYW1lIDwtIGNhcmRmcmFtZSAlPiVtdXRhdGUod2lsZGNhcmRzID0gKHN0cl9zcGxpdChoYW5kcyxwYXR0ZXJuPVwiXCIpKSlcbiMjIyByZXBsYWNlIFQsIEosIFEsIEssIEEgd2l0aCAxMCwgMTEsIDEyLCAxMywgMTRcblxuY2FyZGZyYW1lIDwtIGNhcmRmcmFtZSAlPiVtdXRhdGUod2lsZGNhcmRzICA9IGxhcHBseSh3aWxkY2FyZHMsIGZ1bmN0aW9uKHgpIHJlcGxhY2UoeCx4PT1cIlRcIiwxMCkpKSAlPiVcbiAgbXV0YXRlKHdpbGRjYXJkcyA9IGxhcHBseSh3aWxkY2FyZHMsIGZ1bmN0aW9uKHgpIHJlcGxhY2UoeCx4PT1cIkpcIiwxKSkpICU+JVxuICBtdXRhdGUod2lsZGNhcmRzID0gbGFwcGx5KHdpbGRjYXJkcywgZnVuY3Rpb24oeCkgcmVwbGFjZSh4LHg9PVwiUVwiLDEyKSkpICU+JVxuICBtdXRhdGUod2lsZGNhcmRzID0gbGFwcGx5KHdpbGRjYXJkcywgZnVuY3Rpb24oeCkgcmVwbGFjZSh4LHg9PVwiS1wiLDEzKSkpICU+JVxuICBtdXRhdGUod2lsZGNhcmRzID0gbGFwcGx5KHdpbGRjYXJkcywgZnVuY3Rpb24oeCkgcmVwbGFjZSh4LHg9PVwiQVwiLDE0KSkpICU+JVxuICBtdXRhdGUod2lsZGNhcmRzID0gbGFwcGx5KHdpbGRjYXJkcyxhcy5udW1lcmljKSlcblxuY2FyZGZyYW1lIDwtIGNhcmRmcmFtZSAlPiUgcm93d2lzZSgpICU+JSBtdXRhdGUod2lsZGNhcmRzID0gbGlzdCh3aWxkY2FyZHMpKVxuXG5jYXJkZnJhbWUgPC0gY2FyZGZyYW1lICU+JSBtdXRhdGUod2lsZHJhbms9bmV3cmFuayoxMDAwMDAwMDAwMCt3aWxkY2FyZHNbMV0qMTAwMDAwMDAwK3dpbGRjYXJkc1syXSoxMDAwMDAwK1xuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB3aWxkY2FyZHNbM10qMTAwMDArd2lsZGNhcmRzWzRdKjEwMCt3aWxkY2FyZHNbNV0pXG5jYXJkZnJhbWUgPC0gYXJyYW5nZShjYXJkZnJhbWUsIHdpbGRyYW5rKVxuY2FyZGZyYW1lIDwtIGNhcmRmcmFtZSAlPiV1bmdyb3VwJT4lIG11dGF0ZShmaW5hbHdpbGQ9cm93X251bWJlcigpKSAlPiUgbXV0YXRlKFAyQW5zd2VyPWZpbmFsd2lsZCpiaWRzKVxuXG5zZWxlY3QoY2FyZGZyYW1lLGJpZHMsaGFuZHMsam9rZXJzLGhhbmRyYW5rLG5ld3JhbmssZmluYWxyYW5rLGZpbmFsd2lsZCxQMUFuc3dlcixQMkFuc3dlcilcbmBgYCJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2FyZGZyYW1lIDwtIGNhcmRmcmFtZSAlPiVtdXRhdGUod2lsZGNhcmRzID0gKHN0cl9zcGxpdChoYW5kcyxwYXR0ZXJuPVwiXCIpKSlcbiMjIyByZXBsYWNlIFQsIEosIFEsIEssIEEgd2l0aCAxMCwgMTEsIDEyLCAxMywgMTRcblxuY2FyZGZyYW1lIDwtIGNhcmRmcmFtZSAlPiVtdXRhdGUod2lsZGNhcmRzICA9IGxhcHBseSh3aWxkY2FyZHMsIGZ1bmN0aW9uKHgpIHJlcGxhY2UoeCx4PT1cIlRcIiwxMCkpKSAlPiVcbiAgbXV0YXRlKHdpbGRjYXJkcyA9IGxhcHBseSh3aWxkY2FyZHMsIGZ1bmN0aW9uKHgpIHJlcGxhY2UoeCx4PT1cIkpcIiwxKSkpICU+JVxuICBtdXRhdGUod2lsZGNhcmRzID0gbGFwcGx5KHdpbGRjYXJkcywgZnVuY3Rpb24oeCkgcmVwbGFjZSh4LHg9PVwiUVwiLDEyKSkpICU+JVxuICBtdXRhdGUod2lsZGNhcmRzID0gbGFwcGx5KHdpbGRjYXJkcywgZnVuY3Rpb24oeCkgcmVwbGFjZSh4LHg9PVwiS1wiLDEzKSkpICU+JVxuICBtdXRhdGUod2lsZGNhcmRzID0gbGFwcGx5KHdpbGRjYXJkcywgZnVuY3Rpb24oeCkgcmVwbGFjZSh4LHg9PVwiQVwiLDE0KSkpICU+JVxuICBtdXRhdGUod2lsZGNhcmRzID0gbGFwcGx5KHdpbGRjYXJkcyxhcy5udW1lcmljKSlcblxuY2FyZGZyYW1lIDwtIGNhcmRmcmFtZSAlPiUgcm93d2lzZSgpICU+JSBtdXRhdGUod2lsZGNhcmRzID0gbGlzdCh3aWxkY2FyZHMpKVxuXG5jYXJkZnJhbWUgPC0gY2FyZGZyYW1lICU+JSBtdXRhdGUod2lsZHJhbms9bmV3cmFuayoxMDAwMDAwMDAwMCt3aWxkY2FyZHNbMV0qMTAwMDAwMDAwK3dpbGRjYXJkc1syXSoxMDAwMDAwK1xuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB3aWxkY2FyZHNbM10qMTAwMDArd2lsZGNhcmRzWzRdKjEwMCt3aWxkY2FyZHNbNV0pXG5jYXJkZnJhbWUgPC0gYXJyYW5nZShjYXJkZnJhbWUsIHdpbGRyYW5rKVxuY2FyZGZyYW1lIDwtIGNhcmRmcmFtZSAlPiV1bmdyb3VwJT4lIG11dGF0ZShmaW5hbHdpbGQ9cm93X251bWJlcigpKSAlPiUgbXV0YXRlKFAyQW5zd2VyPWZpbmFsd2lsZCpiaWRzKVxuXG5zZWxlY3QoY2FyZGZyYW1lLGJpZHMsaGFuZHMsam9rZXJzLGhhbmRyYW5rLG5ld3JhbmssZmluYWxyYW5rLGZpbmFsd2lsZCxQMUFuc3dlcixQMkFuc3dlcilcblxucGFydDI8LXN1bShjYXJkZnJhbWUkUDJBbnN3ZXIpXG5wYXJ0MlxuYGBgIn0= -->
 <pre class="r"><code>cardframe &lt;- cardframe %&gt;%mutate(wildcards = (str_split(hands,pattern=&quot;&quot;)))
 ### replace T, J, Q, K, A with 10, 11, 12, 13, 14
 
@@ -1942,23 +1902,11 @@ cardframe &lt;- cardframe %&gt;% mutate(wildrank=newrank*10000000000+wildcards[1
 cardframe &lt;- arrange(cardframe, wildrank)
 cardframe &lt;- cardframe %&gt;%ungroup%&gt;% mutate(finalwild=row_number()) %&gt;% mutate(P2Answer=finalwild*bids)
 
-select(cardframe,bids,hands,jokers,handrank,newrank,finalrank,finalwild,P1Answer,P2Answer)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibnJvdyI6NSwibmNvbCI6OSwic3VtbWFyeSI6eyJBIHRpYmJsZSI6WyI1IMOXIDkiXX19LCJyZGYiOiJINHNJQUFBQUFBQUFCbTFTd1U3Q1FCRGRsaFpvRTVIRWl6OUJneERFZzRlU0dBL2dRVXhKT0xyUUFwVzZKVzJ4SmliR2kvSHNEeGhqNG05NTloOU13RjA2VTJtbFNUUHpadDdNenJ6ZHE3TmhVeC9xaEpBQ1VRb3lLYWpjSmVyQU9xK2RFS0xJSEVoRUlacXc5NXgwd0IwQktvSmx2bndMTmpGUFNXS2ZyeFA3V0Uvcy9JbkFWeFY4YUtRMkcxYXpoNkRYTzI2M0VWaXRWcmVGb04vdmR6c3B6ZXAyTGU3c2JScjlmUkw4Y2pvVUpNd3kyR3JPbHRQYTNmekQzWGJyYkdrakY1Y0hzSnpMeWJsOFZxd0I5UDBFc1Q2K0V2dVFpcFhsWHdEL1BSblFmS3NuOXJVTzlNd3RxWXplT2lGSkZOY2dxSXhjTzBUQ2pMSVVGRy84dVJNZ0tvdFVRTmtjY0lrNThSYlVKaTZqM3I5QTdIbzJOcmc4NnJBd2RvSVVOd0JuaDlRQ1B6WndVS0djTEhaZnI5Yy8rVzNHSGcxeEd3enFObzJvTVFsNFBVZXJYRW5KWDBTdXozaVJMQjVyTVZjc0JibkEvcEtKU2V6YWVMWmtjL0hxTStuQ2drM0ZtWEMxK0F3a3VGcjB0V1FLZVEzbFJSVFlZVk9YT2JpT1IwZU9oNTF0NXc3Y0N0ZGpJNGV4Q0Z3VzRaNDhHaHFSSDFFczBjZStoNUhONW1UMUMvcWRuTHJCQXdBQSJ9 -->
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["bids"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["hands"],"name":[2],"type":["chr"],"align":["left"]},{"label":["jokers"],"name":[3],"type":["int"],"align":["right"]},{"label":["handrank"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["newrank"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["finalrank"],"name":[6],"type":["int"],"align":["right"]},{"label":["finalwild"],"name":[7],"type":["int"],"align":["right"]},{"label":["P1Answer"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["P2Answer"],"name":[9],"type":["dbl"],"align":["right"]}],"data":[{"1":"765","2":"32T3K","3":"0","4":"2","5":"2","6":"1","7":"1","8":"765","9":"765"},{"1":"28","2":"KK677","3":"0","4":"3","5":"3","6":"3","7":"2","8":"84","9":"56"},{"1":"684","2":"T55J5","3":"1","4":"4","5":"6","6":"4","7":"3","8":"2736","9":"2052"},{"1":"483","2":"QQQJA","3":"1","4":"4","5":"6","6":"5","7":"4","8":"2415","9":"1932"},{"1":"220","2":"KTJJT","3":"2","4":"3","5":"6","6":"2","7":"5","8":"440","9":"1100"}],"options":{"columns":{"min":{},"max":[10],"total":[9]},"rows":{"min":[10],"max":[10],"total":[5]},"pages":{}}}
-  </script>
-</div>
-<!-- rnb-frame-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5wYXJ0Mjwtc3VtKGNhcmRmcmFtZSRQMkFuc3dlcilcbnBhcnQyXG5gYGAifQ== -->
-<pre class="r"><code>
+select(cardframe,bids,hands,jokers,handrank,newrank,finalrank,finalwild,P1Answer,P2Answer)
+
 part2&lt;-sum(cardframe$P2Answer)
 part2</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDU5MDVcbiJ9 -->
-<pre><code>[1] 5905</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>Single function</p>
