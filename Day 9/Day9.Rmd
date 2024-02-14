@@ -15,19 +15,16 @@ options(scipen = 999)
 ## Part 1
 
 The goal is to find the next value in each sequence then add them together - 
-First, create a tibble, column 1 is a vector of the history values 
+First, create a list of vectors (each vector is a history list)
 
 ```{r}
 ### Read in histories
 input <- read_lines("Day9Sample.txt")
 
 histories<-c()
-for(i in 1:length(input)){
-  oasis<-as.numeric(unlist(str_split(input[i]," ")))
+for(i in 1:length(input)){oasis<-as.numeric(unlist(str_split(input[i]," ")))
   histories <- append(histories,list(oasis))}
-
-histories <- tibble(histories,0)
-colnames(histories)<-c("history","extrapolate")
+historylength <- length(oasis)
 ```
 
 At each level, the value of extrapolation equals the value to its left, plus the previous value of extrapolation and eventually the values of extrapolation = 0, all you really need to do is add all the values to the left. (or all of the final values of the input vector)
@@ -43,26 +40,21 @@ onedown<-function(history){
 onedown(c(0,3,6,9,12,15))
 #onedown(unlist(histories[1,1][[1]]))
 ```
-With that function, first apply it over and over until there's only one value left in the line.
+Add the number on the right and then apply the function over and over until there are no values left in the line.
 
 ```{r}
-for (i in 1:(length(oasis)-1)){
-histories <- histories %>% rowwise %>%
-  mutate(extrapolate=tail(history[[length(history)]][[1]])+extrapolate) %>%
-  mutate(history=list(onedown(unlist(history))))}
-```
-and then, just in case there's a final value, add it to extrapolate (again, it will just add 0 if the differences have already reduced out)
 
-```{r}
-histories <- histories %>% rowwise %>%
-  mutate(extrapolate=extrapolate+history[[1]])
-```
-finally, add the extrapolations to get the answer to part 1
+part1<-0
+j <- historylength
+for (i in 1:historylength){
+  lastnums <- sapply(histories,function(x){x[j]})
+  part1 <- part1+sum(lastnums)
+  histories <- lapply(histories,onedown)
+  j<-j-1}
 
-```{r}
-part1 <- sum(histories$extrapolate)
 part1
 ```
+
 ## Part 2
 
 Now, to extrapolate the other side - 
@@ -70,64 +62,56 @@ For this,  equals the value to its left, *minus* the previous value of extrapola
 
 
 ```{r, include=FALSE}
+### this resets histories after running part 1
+
 histories<-c()
 for(i in 1:length(input)){
   oasis<-as.numeric(unlist(str_split(input[i]," ")))
   histories <- append(histories,list(oasis))}
-
-histories <- tibble(histories,0)
-colnames(histories)<-c("history","previous")
 ```
 
-Still use onedown(), but this time, change the previous value
+This time, we go back and forth between adding and subtracting the number on the left
 
 ```{r}
-for (i in 2:length(oasis)){
-histories <- histories %>% rowwise %>%
-  mutate(previous=(history[[1]][[1]])*((-1)^i)+previous) %>%
-  mutate(history=list(onedown(unlist(history))))}
-```
-then either add or subtract the last number (just in case it isn't 0)
-```{r}
-i<-i+1
-histories <- histories %>% rowwise %>%
-  mutate(previous=(history[[1]]*((-1)^i)+previous))
-```
-And finally part2 is the sum of previous
-```{r}
-part2 <- sum(histories$previous)
+
+part2<-0
+for (i in 1:historylength){
+  firstnums <- sapply(histories,function(x){x[1]})
+  if(i %% 2==1){part2 <- part2+sum(firstnums)
+  }else{part2 <- part2-sum(firstnums)}
+  histories <- lapply(histories,onedown)}
+
 part2
 ```
 Single function (which needs onedown())
 
 ```{r}
 day9answers <- function(input){
-histories<-c()
-for(i in 1:length(input)){
-  oasis<-as.numeric(unlist(str_split(input[i]," ")))
-  histories <- append(histories,list(oasis))}
-
-histories <- tibble(histories,0)
-histories <- cbind(histories,0)
-colnames(histories)<-c("history","extrapolate","previous")
-
-for (i in 2:length(oasis)){
-histories <- histories %>% rowwise %>%
-  mutate(extrapolate=tail(history[[length(history)]][[1]])+extrapolate,
-         previous=(history[[1]][[1]])*((-1)^i)+previous) %>%
-  mutate(history=list(onedown(unlist(history))))}
-
-histories <- histories %>% rowwise %>%
-  mutate(extrapolate=extrapolate+history[[1]]) %>%
-  mutate(previous=(history[[1]]*((-1)^i)+previous))
-
-part1 <- sum(histories$extrapolate)
-part2 <- sum(histories$previous)
-c(part1,part2)}
+  histories<-c()
+  for(i in 1:length(input)){
+    oasis<-as.numeric(unlist(str_split(input[i]," ")))
+    histories <- append(histories,list(oasis))}
+  
+  part1<-0
+  part2<-0
+  j <- historylength
+  for (i in 1:historylength){
+    ## get the last numbers, then first numbers
+    lastnums <- sapply(histories,function(x){x[j]})
+    firstnums <- sapply(histories,function(x){x[1]})
+    ## add (or subtract) the sums of the last and firsts to our answers
+    part1 <- part1+sum(lastnums)
+    if(i %% 2==1){part2 <- part2+sum(firstnums)
+    }else{part2 <- part2-sum(firstnums)}
+    ##shorten the lists
+    histories <- lapply(histories,onedown)
+    ## decrement j to find the last number next time.
+    j<-j-1}
+  c(part1,part2)}
 ```
 
 
 ```{r}
-day9<- day9answers(input)
+day9 <- day9answers(input)
 day9
 ```
