@@ -1761,7 +1761,7 @@ together - First, create a tibble, column 1 is a vector of the history
 values</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbIiMjIyBSZWFkIGluIGhpc3RvcmllcyIsImlucHV0IDwtIHJlYWRfbGluZXMoXCJEYXk5U2FtcGxlLnR4dFwiKSIsIiIsImhpc3RvcmllczwtYygpIiwiZm9yKGkgaW4gMTpsZW5ndGgoaW5wdXQpKXtcbiAgb2FzaXM8LWFzLm51bWVyaWModW5saXN0KHN0cl9zcGxpdChpbnB1dFtpXSxcIiBcIikpKVxuICBoaXN0b3JpZXMgPC0gYXBwZW5kKGhpc3RvcmllcyxsaXN0KG9hc2lzKSl9IiwiIiwiaGlzdG9yaWVzIDwtIHRpYmJsZShoaXN0b3JpZXMsMCkiLCJjb2xuYW1lcyhoaXN0b3JpZXMpPC1jKFwiaGlzdG9yeVwiLFwiZXh0cmFwb2xhdGVcIikiXX0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyMjIFJlYWQgaW4gaGlzdG9yaWVzXG5pbnB1dCA8LSByZWFkX2xpbmVzKFwiRGF5OVNhbXBsZS50eHRcIilcblxuaGlzdG9yaWVzPC1jKClcbmZvcihpIGluIDE6bGVuZ3RoKGlucHV0KSl7XG4gIG9hc2lzPC1hcy5udW1lcmljKHVubGlzdChzdHJfc3BsaXQoaW5wdXRbaV0sXCIgXCIpKSlcbiAgaGlzdG9yaWVzIDwtIGFwcGVuZChoaXN0b3JpZXMsbGlzdChvYXNpcykpfVxuXG5oaXN0b3JpZXMgPC0gdGliYmxlKGhpc3RvcmllcywwKVxuY29sbmFtZXMoaGlzdG9yaWVzKTwtYyhcImhpc3RvcnlcIixcImV4dHJhcG9sYXRlXCIpXG5gYGAifQ== -->
 <pre class="r"><code>### Read in histories
 input &lt;- read_lines(&quot;Day9Sample.txt&quot;)
 
@@ -1783,7 +1783,7 @@ function that takes in a numeric vector and outputs a vector of the
 differences between the numbers:</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbIm9uZWRvd248LWZ1bmN0aW9uKGhpc3Rvcnkpe1xuICBuZXh0bGluZTwtYygpXG4gIGZvcihpIGluIDI6bGVuZ3RoKGhpc3RvcnkpKXtcbiAgICBuZXh0bGluZTwtYyhuZXh0bGluZSwoaGlzdG9yeVtpXS1oaXN0b3J5W2ktMV0pKX1cbiAgbmV4dGxpbmV9IiwiIiwib25lZG93bihjKDAsMyw2LDksMTIsMTUpKSJdfQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxub25lZG93bjwtZnVuY3Rpb24oaGlzdG9yeSl7XG4gIG5leHRsaW5lPC1jKClcbiAgZm9yKGkgaW4gMjpsZW5ndGgoaGlzdG9yeSkpe1xuICAgIG5leHRsaW5lPC1jKG5leHRsaW5lLChoaXN0b3J5W2ldLWhpc3RvcnlbaS0xXSkpfVxuICBuZXh0bGluZX1cblxub25lZG93bihjKDAsMyw2LDksMTIsMTUpKVxuYGBgIn0= -->
 <pre class="r"><code>onedown&lt;-function(history){
   nextline&lt;-c()
   for(i in 2:length(history)){
@@ -1795,7 +1795,7 @@ onedown(c(0,3,6,9,12,15))</code></pre>
 <!-- rnb-output-begin eyJkYXRhIjoiWzFdIDMgMyAzIDMgM1xuIn0= -->
 <pre><code>[1] 3 3 3 3 3</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiI29uZWRvd24odW5saXN0KGhpc3Rvcmllc1sxLDFdW1sxXV0pKSJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI29uZWRvd24odW5saXN0KGhpc3Rvcmllc1sxLDFdW1sxXV0pKVxuYGBgIn0= -->
 <pre class="r"><code>#onedown(unlist(histories[1,1][[1]]))</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
@@ -1804,7 +1804,7 @@ onedown(c(0,3,6,9,12,15))</code></pre>
 one value left in the line.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiZm9yIChpIGluIDE6KGxlbmd0aChvYXNpcyktMSkpe1xuaGlzdG9yaWVzIDwtIGhpc3RvcmllcyAlPiUgcm93d2lzZSAlPiVcbiAgbXV0YXRlKGV4dHJhcG9sYXRlPXRhaWwoaGlzdG9yeVtbbGVuZ3RoKGhpc3RvcnkpXV1bWzFdXSkrZXh0cmFwb2xhdGUpICU+JVxuICBtdXRhdGUoaGlzdG9yeT1saXN0KG9uZWRvd24odW5saXN0KGhpc3RvcnkpKSkpfSJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZm9yIChpIGluIDE6KGxlbmd0aChvYXNpcyktMSkpe1xuaGlzdG9yaWVzIDwtIGhpc3RvcmllcyAlPiUgcm93d2lzZSAlPiVcbiAgbXV0YXRlKGV4dHJhcG9sYXRlPXRhaWwoaGlzdG9yeVtbbGVuZ3RoKGhpc3RvcnkpXV1bWzFdXSkrZXh0cmFwb2xhdGUpICU+JVxuICBtdXRhdGUoaGlzdG9yeT1saXN0KG9uZWRvd24odW5saXN0KGhpc3RvcnkpKSkpfVxuYGBgIn0= -->
 <pre class="r"><code>for (i in 1:(length(oasis)-1)){
 histories &lt;- histories %&gt;% rowwise %&gt;%
   mutate(extrapolate=tail(history[[length(history)]][[1]])+extrapolate) %&gt;%
@@ -1817,7 +1817,7 @@ histories &lt;- histories %&gt;% rowwise %&gt;%
 out)</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiaGlzdG9yaWVzIDwtIGhpc3RvcmllcyAlPiUgcm93d2lzZSAlPiVcbiAgbXV0YXRlKGV4dHJhcG9sYXRlPWV4dHJhcG9sYXRlK2hpc3RvcnlbWzFdXSkifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaGlzdG9yaWVzIDwtIGhpc3RvcmllcyAlPiUgcm93d2lzZSAlPiVcbiAgbXV0YXRlKGV4dHJhcG9sYXRlPWV4dHJhcG9sYXRlK2hpc3RvcnlbWzFdXSlcbmBgYCJ9 -->
 <pre class="r"><code>histories &lt;- histories %&gt;% rowwise %&gt;%
   mutate(extrapolate=extrapolate+history[[1]])</code></pre>
 <!-- rnb-source-end -->
@@ -1826,7 +1826,7 @@ out)</p>
 <p>finally, add the extrapolations to get the answer to part 1</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbInBhcnQxIDwtIHN1bShoaXN0b3JpZXMkZXh0cmFwb2xhdGUpIiwicGFydDEiXX0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGFydDEgPC0gc3VtKGhpc3RvcmllcyRleHRyYXBvbGF0ZSlcbnBhcnQxXG5gYGAifQ== -->
 <pre class="r"><code>part1 &lt;- sum(histories$extrapolate)
 part1</code></pre>
 <!-- rnb-source-end -->
@@ -1847,7 +1847,7 @@ down to 0.</p>
 <p>Still use onedown(), but this time, change the previous value</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiZm9yIChpIGluIDI6bGVuZ3RoKG9hc2lzKSl7XG5oaXN0b3JpZXMgPC0gaGlzdG9yaWVzICU+JSByb3d3aXNlICU+JVxuICBtdXRhdGUocHJldmlvdXM9KGhpc3RvcnlbWzFdXVtbMV1dKSooKC0xKV5pKStwcmV2aW91cykgJT4lXG4gIG11dGF0ZShoaXN0b3J5PWxpc3Qob25lZG93bih1bmxpc3QoaGlzdG9yeSkpKSl9In0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZm9yIChpIGluIDI6bGVuZ3RoKG9hc2lzKSl7XG5oaXN0b3JpZXMgPC0gaGlzdG9yaWVzICU+JSByb3d3aXNlICU+JVxuICBtdXRhdGUocHJldmlvdXM9KGhpc3RvcnlbWzFdXVtbMV1dKSooKC0xKV5pKStwcmV2aW91cykgJT4lXG4gIG11dGF0ZShoaXN0b3J5PWxpc3Qob25lZG93bih1bmxpc3QoaGlzdG9yeSkpKSl9XG5gYGAifQ== -->
 <pre class="r"><code>for (i in 2:length(oasis)){
 histories &lt;- histories %&gt;% rowwise %&gt;%
   mutate(previous=(history[[1]][[1]])*((-1)^i)+previous) %&gt;%
@@ -1859,7 +1859,7 @@ histories &lt;- histories %&gt;% rowwise %&gt;%
 0)</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbImk8LWkrMSIsImhpc3RvcmllcyA8LSBoaXN0b3JpZXMgJT4lIHJvd3dpc2UgJT4lXG4gIG11dGF0ZShwcmV2aW91cz0oaGlzdG9yeVtbMV1dKigoLTEpXmkpK3ByZXZpb3VzKSkiXX0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaTwtaSsxXG5oaXN0b3JpZXMgPC0gaGlzdG9yaWVzICU+JSByb3d3aXNlICU+JVxuICBtdXRhdGUocHJldmlvdXM9KGhpc3RvcnlbWzFdXSooKC0xKV5pKStwcmV2aW91cykpXG5gYGAifQ== -->
 <pre class="r"><code>i&lt;-i+1
 histories &lt;- histories %&gt;% rowwise %&gt;%
   mutate(previous=(history[[1]]*((-1)^i)+previous))</code></pre>
@@ -1869,7 +1869,7 @@ histories &lt;- histories %&gt;% rowwise %&gt;%
 <p>And finally part2 is the sum of previous</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbInBhcnQyIDwtIHN1bShoaXN0b3JpZXMkcHJldmlvdXMpIiwicGFydDIiXX0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGFydDIgPC0gc3VtKGhpc3RvcmllcyRwcmV2aW91cylcbnBhcnQyXG5gYGAifQ== -->
 <pre class="r"><code>part2 &lt;- sum(histories$previous)
 part2</code></pre>
 <!-- rnb-source-end -->
@@ -1881,7 +1881,7 @@ part2</code></pre>
 <p>Single function (which needs onedown())</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiZGF5OWFuc3dlcnMgPC0gZnVuY3Rpb24oaW5wdXQpe1xuaGlzdG9yaWVzPC1jKClcbmZvcihpIGluIDE6bGVuZ3RoKGlucHV0KSl7XG4gIG9hc2lzPC1hcy5udW1lcmljKHVubGlzdChzdHJfc3BsaXQoaW5wdXRbaV0sXCIgXCIpKSlcbiAgaGlzdG9yaWVzIDwtIGFwcGVuZChoaXN0b3JpZXMsbGlzdChvYXNpcykpfVxuXG5oaXN0b3JpZXMgPC0gdGliYmxlKGhpc3RvcmllcywwKVxuaGlzdG9yaWVzIDwtIGNiaW5kKGhpc3RvcmllcywwKVxuY29sbmFtZXMoaGlzdG9yaWVzKTwtYyhcImhpc3RvcnlcIixcImV4dHJhcG9sYXRlXCIsXCJwcmV2aW91c1wiKVxuXG5mb3IgKGkgaW4gMjpsZW5ndGgob2FzaXMpKXtcbmhpc3RvcmllcyA8LSBoaXN0b3JpZXMgJT4lIHJvd3dpc2UgJT4lXG4gIG11dGF0ZShleHRyYXBvbGF0ZT10YWlsKGhpc3RvcnlbW2xlbmd0aChoaXN0b3J5KV1dW1sxXV0pK2V4dHJhcG9sYXRlLFxuICAgICAgICAgcHJldmlvdXM9KGhpc3RvcnlbWzFdXVtbMV1dKSooKC0xKV5pKStwcmV2aW91cykgJT4lXG4gIG11dGF0ZShoaXN0b3J5PWxpc3Qob25lZG93bih1bmxpc3QoaGlzdG9yeSkpKSl9XG5cbmhpc3RvcmllcyA8LSBoaXN0b3JpZXMgJT4lIHJvd3dpc2UgJT4lXG4gIG11dGF0ZShleHRyYXBvbGF0ZT1leHRyYXBvbGF0ZStoaXN0b3J5W1sxXV0pICU+JVxuICBtdXRhdGUocHJldmlvdXM9KGhpc3RvcnlbWzFdXSooKC0xKV5pKStwcmV2aW91cykpXG5cbnBhcnQxIDwtIHN1bShoaXN0b3JpZXMkZXh0cmFwb2xhdGUpXG5wYXJ0MiA8LSBzdW0oaGlzdG9yaWVzJHByZXZpb3VzKVxuYyhwYXJ0MSxwYXJ0Mil9In0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF5OWFuc3dlcnMgPC0gZnVuY3Rpb24oaW5wdXQpe1xuaGlzdG9yaWVzPC1jKClcbmZvcihpIGluIDE6bGVuZ3RoKGlucHV0KSl7XG4gIG9hc2lzPC1hcy5udW1lcmljKHVubGlzdChzdHJfc3BsaXQoaW5wdXRbaV0sXCIgXCIpKSlcbiAgaGlzdG9yaWVzIDwtIGFwcGVuZChoaXN0b3JpZXMsbGlzdChvYXNpcykpfVxuXG5oaXN0b3JpZXMgPC0gdGliYmxlKGhpc3RvcmllcywwKVxuaGlzdG9yaWVzIDwtIGNiaW5kKGhpc3RvcmllcywwKVxuY29sbmFtZXMoaGlzdG9yaWVzKTwtYyhcImhpc3RvcnlcIixcImV4dHJhcG9sYXRlXCIsXCJwcmV2aW91c1wiKVxuXG5mb3IgKGkgaW4gMjpsZW5ndGgob2FzaXMpKXtcbmhpc3RvcmllcyA8LSBoaXN0b3JpZXMgJT4lIHJvd3dpc2UgJT4lXG4gIG11dGF0ZShleHRyYXBvbGF0ZT10YWlsKGhpc3RvcnlbW2xlbmd0aChoaXN0b3J5KV1dW1sxXV0pK2V4dHJhcG9sYXRlLFxuICAgICAgICAgcHJldmlvdXM9KGhpc3RvcnlbWzFdXVtbMV1dKSooKC0xKV5pKStwcmV2aW91cykgJT4lXG4gIG11dGF0ZShoaXN0b3J5PWxpc3Qob25lZG93bih1bmxpc3QoaGlzdG9yeSkpKSl9XG5cbmhpc3RvcmllcyA8LSBoaXN0b3JpZXMgJT4lIHJvd3dpc2UgJT4lXG4gIG11dGF0ZShleHRyYXBvbGF0ZT1leHRyYXBvbGF0ZStoaXN0b3J5W1sxXV0pICU+JVxuICBtdXRhdGUocHJldmlvdXM9KGhpc3RvcnlbWzFdXSooKC0xKV5pKStwcmV2aW91cykpXG5cbnBhcnQxIDwtIHN1bShoaXN0b3JpZXMkZXh0cmFwb2xhdGUpXG5wYXJ0MiA8LSBzdW0oaGlzdG9yaWVzJHByZXZpb3VzKVxuYyhwYXJ0MSxwYXJ0Mil9XG5gYGAifQ== -->
 <pre class="r"><code>day9answers &lt;- function(input){
 histories&lt;-c()
 for(i in 1:length(input)){
@@ -1910,7 +1910,7 @@ c(part1,part2)}</code></pre>
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbImRheTk8LSBkYXk5YW5zd2VycyhpbnB1dCkiLCJkYXk5Il19 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF5OTwtIGRheTlhbnN3ZXJzKGlucHV0KVxuZGF5OVxuYGBgIn0= -->
 <pre class="r"><code>day9&lt;- day9answers(input)
 day9</code></pre>
 <!-- rnb-source-end -->
