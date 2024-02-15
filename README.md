@@ -14,3 +14,4 @@ Code and notebooks from [Advent of Code 2023](https://adventofcode.com/2023).
 | 7 | [HTML](https://exitingbear.github.io/AdventOfCode2023/Day-7.nb.html) | [Notebook](<Day 7/Day7.Rmd>) | [Files](<Day 7>) |
 | 8 | [HTML](https://exitingbear.github.io/AdventOfCode2023/Day-8.nb.html) | [Notebook](<Day 8/Day8.Rmd>) | [Files](<Day 8>) |
 | 9 | [HTML](https://exitingbear.github.io/AdventOfCode2023/Day-9.nb.html) | [Notebook](<Day 9/Day9.Rmd>) | [Files](<Day 9>) |
+| 10 | [HTML](https://exitingbear.github.io/AdventOfCode2023/Day-10.nb.html) | [Notebook](<Day 10/Day10.Rmd>) | [Files](<Day 10>) |

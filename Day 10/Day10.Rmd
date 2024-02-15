@@ -1,0 +1,292 @@
+---
+title: "Day 10 Notebook"
+output: html_notebook
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(dplyr)
+library(stringr)
+library(tidyverse)
+library(igraph)
+library(ggplot2)
+library(rgl)
+library(ggraph)
+library(readr)
+library(ds4psy)
+library(numbers)
+options(scipen = 999)
+```
+
+## Part 1
+Find the furthest point from the start.
+```{r}
+input <- read_lines("Day10Sample2.txt")
+#input <- read_lines("../../Advent2023/Day 10/Day10.txt")
+rownum<-length(input)
+colnum<-nchar(input[1])
+```
+
+First, split into pieces.
+```{r}
+prep <- lapply(input,function(x){str_split(x,"")})
+```
+Then read each piece. Create an edge from that piece to the pieces it adjoins:
+
+```{r}
+edgestarts<-c()
+edgeends<-c()
+for(i in 1:rownum){
+  for(j in 1:colnum){
+    x<-prep[[i]][[1]][j]
+    if(x != "."){
+    edgestarts<-c(edgestarts,paste0(i,"~",j),paste0(i,"~",j))
+    switch(x,
+      "|"=edgeends<-c(edgeends,paste0(i-1,"~",j),paste0(i+1,"~",j)),
+      "-"=edgeends<-c(edgeends,paste0(i,"~",j-1),paste0(i,"~",j+1)),
+      "F"=edgeends<-c(edgeends,paste0(i+1,"~",j),paste0(i,"~",j+1)),
+      "7"=edgeends<-c(edgeends,paste0(i+1,"~",j),paste0(i,"~",j-1)),
+      "L"=edgeends<-c(edgeends,paste0(i-1,"~",j),paste0(i,"~",j+1)),
+      "J"=edgeends<-c(edgeends,paste0(i-1,"~",j),paste0(i,"~",j-1)),
+      ### as we don't know S's shape, no directions out. note the startpoint
+      "S"={edgeends<-c(edgeends,paste0(i,"~",j),paste0(i,"~",j))
+                       startpoint<-paste0(i,"~",j)},
+      message("something went wrong"," ",i," ",j," ",x,"\n"))}}}
+```
+Then turn this into a graph:
+```{r}
+pipegraph<-simplify(graph_from_edgelist(cbind(edgestarts,edgeends),directed=TRUE),remove.loops=TRUE)
+
+```
+Now, find the adjacent vertices and the shortest path between them
+```{r}
+toStarts <- neighbors(pipegraph,startpoint,mode=c("in"))
+pipelinelength<-distances(pipegraph, v=toStarts, to=toStarts,mode=c("out"))
+```
+Assuming that the info we have is correct and there's only 1 full path all the way around - pipeline should be a matrix of 0s and the length of that path from right next to start to right next to start.
+So the answer to part 1 should be half of the length + 1
+```{r}
+part1 <- (max(pipelinelength)/2)+1
+part1
+```
+Visualization - the path goes from white to black as it gets further away from the blue starting point
+```{r, include=FALSE}
+plotedges <- shortest_paths(pipegraph,from=toStarts[1],to=toStarts[2],mode=c("out"),output=c("vpath"))
+plotedges <- names(plotedges$vpath[[1]])
+plotdf<-data.frame(matrix(ncol=4,nrow=0))
+for(i in 1:(length(plotedges)-1)){
+  x<-c(str_split_i(plotedges[i],"~",2), str_split_i(plotedges[i],"~",1), str_split_i(plotedges[i+1],"~",2),str_split_i(plotedges[i+1],"~",1))
+  x<-as.numeric(x)
+  plotdf<-rbind(plotdf,x)}
+colnames(plotdf)<-c("x1","y1","x2","y2")
+mypalette <- colorRampPalette(c("#FFFFFF","#000000","#FFFFFF"))
+color<-mypalette(max(pipelinelength))
+plotdf<-cbind(plotdf,color)
+```
+
+
+```{r,echo=FALSE}
+startcoord<-as.numeric(unlist(str_split(startpoint,"~")))
+outplot<-ggplot(plotdf)+
+  geom_segment(aes(x=x1,y=y1,xend=x2,yend=y2),colour=color)+
+  geom_point(aes(x=startcoord[2],y=startcoord[1]),colour="blue")+
+  scale_y_reverse()+
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.title.y = element_blank(),
+        axis.title.x = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())
+
+outplot
+```
+
+
+
+## Part 2
+Find the number of points in the path.
+
+I wish I could say I thought of this, but I didn't. Start at the beginning of the row and count the number of times you cross the path.  If you have crossed the path once (or any odd number of times) you are inside the loop.  If you have crossed the path an even number of times, outside
+
+```{r}
+#set counters for the total number of times inside and for the list of inside points
+inside <-0
+insidelist <-c()
+for(i in 1:rownum){
+## at each row, set the "left" counter to 0
+  totheleft <-0
+  ## go through column by column
+  for(j in 1:colnum){
+    isit <- paste0(i,"~",j)
+    ## if it is not the plot edge, then add it to the inside list and add one to the counter.
+    if (!(isit %in% plotedges)){
+      if(totheleft%%2==1){
+        inside <- inside+1
+        insidelist<-c(insidelist,isit)}}else{
+    ## if it is in the plot edge, it is only "crossed" if it is a |,L, or J.  if so, add one to the left counter
+    if(prep[[i]][[1]][j]=="L"||prep[[i]][[1]][j]=="J"||prep[[i]][[1]][j]=="|"){
+      totheleft<-totheleft+1}}}}
+
+part2<-inside
+part2
+```
+More visualization of the inside points in red:
+
+```{r, echo=FALSE}
+
+insidelist <- as.data.frame(insidelist)
+
+insidelist <- insidelist %>%
+  mutate(x=as.numeric(str_split_i(insidelist,"~",2)),y=as.numeric(str_split_i(insidelist,"~",1))) %>%
+  select(x,y)
+
+ outplot+
+   geom_point(data = insidelist, aes(x=x,y=y),colour="red")
+```
+Single function here:
+
+```{r}
+day10answers <- function(input){
+  rownum<-length(input)
+  colnum<-nchar(input[1])
+  prep <- lapply(input,function(x){str_split(x,"")})
+  ### make the graph
+  edgestarts<-c()
+  edgeends<-c()
+  for(i in 1:rownum){
+    for(j in 1:colnum){
+      x<-prep[[i]][[1]][j]
+      if(x != "."){
+        edgestarts<-c(edgestarts,paste0(i,"~",j),paste0(i,"~",j))
+        switch(x,
+               "|"=edgeends<-c(edgeends,paste0(i-1,"~",j),paste0(i+1,"~",j)),
+               "-"=edgeends<-c(edgeends,paste0(i,"~",j-1),paste0(i,"~",j+1)),
+               "F"=edgeends<-c(edgeends,paste0(i+1,"~",j),paste0(i,"~",j+1)),
+               "7"=edgeends<-c(edgeends,paste0(i+1,"~",j),paste0(i,"~",j-1)),
+               "L"=edgeends<-c(edgeends,paste0(i-1,"~",j),paste0(i,"~",j+1)),
+               "J"=edgeends<-c(edgeends,paste0(i-1,"~",j),paste0(i,"~",j-1)),
+               ### as we don't know S's shape, no directions out. note the startpoint
+               "S"={edgeends<-c(edgeends,paste0(i,"~",j),paste0(i,"~",j))
+               startpoint<-paste0(i,"~",j)},
+               message("something went wrong"))}}}
+  pipegraph<-simplify(graph_from_edgelist(cbind(edgestarts,edgeends),directed=TRUE),remove.loops=TRUE)
+  ## find the points next to Start
+  toStarts <- neighbors(pipegraph,startpoint,mode=c("in"))
+  ## find the path between them - because I need the edges for part 2, using them rather than the distance.
+  plotedges <- shortest_paths(pipegraph,from=toStarts[1],to=toStarts[2],mode=c("out"),output=c("vpath"))
+  plotedges <- names(plotedges$vpath[[1]])
+  part1 <- (length(plotedges)+1)/2
+  
+  #set counters for the total number of times inside
+  part2 <-0
+  for(i in 1:rownum){
+    ## at each row, set the "left" counter to 0
+    totheleft <-0
+    ## go through column by column
+    for(j in 1:colnum){
+      isit <- paste0(i,"~",j)
+      ## if it is not the plot edge, then add it to the inside list and add one to the counter.
+      if (!(isit %in% plotedges)){
+        if(totheleft%%2==1){
+          part2 <- part2+1}}else{
+            ## if it is in the plot edge, it is only "crossed" if it is a |,L, or J.  if so, add one to the left counter
+            if(prep[[i]][[1]][j]=="L"||prep[[i]][[1]][j]=="J"||prep[[i]][[1]][j]=="|"){
+              totheleft<-totheleft+1}}}}
+  c(part1,part2)}
+```
+
+
+```{r}
+day10<-day10answers(input)
+day10
+```
+
+Finally - a visualization of the real data:
+```{r, echo=FALSE}
+input <- read_lines("../../Advent2023/Day 10/Day10.txt")
+rownum<-length(input)
+colnum<-nchar(input[1])
+prep <- lapply(input,function(x){str_split(x,"")})
+
+edgestarts<-c()
+edgeends<-c()
+
+for(i in 1:rownum){
+  for(j in 1:colnum){
+    x<-prep[[i]][[1]][j]
+    if(x != "."){
+      edgestarts<-c(edgestarts,paste0(i,"~",j),paste0(i,"~",j))
+      switch(x,
+             "|"=edgeends<-c(edgeends,paste0(i-1,"~",j),paste0(i+1,"~",j)),
+             "-"=edgeends<-c(edgeends,paste0(i,"~",j-1),paste0(i,"~",j+1)),
+             "F"=edgeends<-c(edgeends,paste0(i+1,"~",j),paste0(i,"~",j+1)),
+             "7"=edgeends<-c(edgeends,paste0(i+1,"~",j),paste0(i,"~",j-1)),
+             "L"=edgeends<-c(edgeends,paste0(i-1,"~",j),paste0(i,"~",j+1)),
+             "J"=edgeends<-c(edgeends,paste0(i-1,"~",j),paste0(i,"~",j-1)),
+             ### as we don't know S's shape, no directions out. note the startpoint
+             "S"={edgeends<-c(edgeends,paste0(i,"~",j),paste0(i,"~",j))
+             startpoint<-paste0(i,"~",j)},
+             message("something went wrong"," ",i," ",j," ",x,"\n"))}}}
+pipegraph<-simplify(graph_from_edgelist(cbind(edgestarts,edgeends),directed=TRUE),remove.loops=TRUE)
+toStarts <- neighbors(pipegraph,startpoint,mode=c("in"))
+
+### create the edges
+plotedges <- shortest_paths(pipegraph,from=toStarts[1],to=toStarts[2],mode=c("out"),output=c("vpath"))
+plotedges <- names(plotedges$vpath[[1]])
+
+### plot setup
+plotdf<-data.frame(matrix(ncol=4,nrow=0))
+for(i in 1:(length(plotedges)-1)){
+  x<-c(str_split_i(plotedges[i],"~",2), str_split_i(plotedges[i],"~",1), str_split_i(plotedges[i+1],"~",2),str_split_i(plotedges[i+1],"~",1))
+  x<-as.numeric(x)
+  plotdf<-rbind(plotdf,x)}
+colnames(plotdf)<-c("x1","y1","x2","y2")
+mypalette <- colorRampPalette(c("#FFFFFF","#000000","#FFFFFF"))
+pipelinelength<-distances(pipegraph, v=toStarts, to=toStarts,mode=c("out"))
+color<-mypalette(max(pipelinelength))
+plotdf<-cbind(plotdf,color)
+
+
+
+insidelist <-c()
+for(i in 1:rownum){
+  ## at each row, set the "left" counter to 0
+  totheleft <-0
+  ## go through column by column
+  for(j in 1:colnum){
+    isit <- paste0(i,"~",j)
+    ## if it is not the plot edge, then add it to the inside list and add one to the counter.
+    if (!(isit %in% plotedges)){
+      if(totheleft%%2==1){
+        insidelist<-c(insidelist,isit)}}else{
+          ## if it is in the plot edge, it is only "crossed" if it is a |,L, or J.  if so, add one to the left counter
+          if(prep[[i]][[1]][j]=="L"||prep[[i]][[1]][j]=="J"||prep[[i]][[1]][j]=="|"){
+            totheleft<-totheleft+1}}}}
+
+#### plot
+startcoord<-as.numeric(unlist(str_split(startpoint,"~")))
+outplot<-ggplot(plotdf)+
+  geom_segment(aes(x=x1,y=y1,xend=x2,yend=y2),colour=color)+
+  geom_point(aes(x=startcoord[2],y=startcoord[1]),colour="blue")+
+  scale_y_reverse()+
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.title.y = element_blank(),
+        axis.title.x = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())
+
+insidelist <- as.data.frame(insidelist)
+
+insidelist <- insidelist %>%
+  mutate(x=as.numeric(str_split_i(insidelist,"~",2)),y=as.numeric(str_split_i(insidelist,"~",1))) %>%
+  select(x,y)
+
+outplot+
+  geom_point(data = insidelist, aes(x=x,y=y),colour="red",size=.75)
+
+```
