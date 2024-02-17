@@ -1,0 +1,223 @@
+---
+title: "Day  Notebook"
+output: html_notebook
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(dplyr)
+library(stringr)
+library(tidyverse)
+library(igraph)
+library(ggplot2)
+library(rgl)
+library(ggraph)
+library(readr)
+library(ds4psy)
+library(numbers)
+options(scipen = 999)
+```
+
+
+## Part 1
+
+Add an extra line at every blank row (or blank column), then calculate the taxi distance.  Because I've done part 2, I'm using what I know for part 1.
+
+Start by reading in and then put everything into a data.frame  
+```{r}
+input <- read_lines("Day11Sample.txt")
+
+starchart <- data.frame(matrix(ncol=nchar(input[1]),nrow=0))
+
+for (i in 1:length(input)){
+  starchart <- rbind(starchart,str_split(input[i],"")[[1]])}
+```
+
+From here, we label the columns and rows.  If the column/row has at least 1 "#" it gets a number. If not, it gets a range showing its new value.
+
+starchartcolumns<-c()
+for(i in 1:(ncol(starchart))){
+if(any)
+```{r}
+##we're adding 1 extra column or row, so the offset is 1
+offset=1
+
+# create new column names
+starchartcolumns<-c()
+currentcol<-1
+for(i in 1:(ncol(starchart))){
+  if(any(starchart[,i]=="#")){
+    starchartcolumns<-c(starchartcolumns,currentcol)
+    currentcol<-currentcol+1}else{
+      starchartcolumns<-c(starchartcolumns,paste0(currentcol,"-",currentcol+offset))
+      currentcol<-currentcol+1+offset}}
+
+# create new row names
+starchartrows<-c()
+currentrow<-1
+for(i in 1:(ncol(starchart))){
+  if(any(starchart[i,]=="#")){
+    starchartrows<-c(starchartrows,currentrow)
+    currentrow<-currentrow+1}else{
+      starchartrows<-c(starchartrows,paste0(currentrow,"-",currentrow+offset))
+      currentrow<-currentrow+1+offset}}
+
+
+starchartcolumns
+starchartrows
+### this really isn't necessary, but it makes it easier to read
+colnames(starchart) <-starchartcolumns
+rownames(starchart) <-starchartrows
+```
+From there find (and number, though not really necessary, all the points)
+```{r}
+star<-1
+x<-c()
+y<-c()
+
+for(i in 1:ncol(starchart)){
+  for(j in 1:nrow(starchart)){
+    if(starchart[i,j]=="#"){
+      x<-c(x,as.numeric(starchartcolumns[j]))
+      y<-c(y,as.numeric(starchartrows[i]))
+      ## this is alson not necessary, but it makes a nice graph
+      starchart[i,j]<-as.character(star)
+      star<-star+1}}}
+```
+
+Now calculate the manhattan distances for the stars (x & y can be done separately)
+
+```{r}
+manhattan<-function(vec){
+  d<-0
+  for(i in 1:(length(vec)-1)){
+    for(j in i:length(vec)){
+      d<-d+abs(vec[i]-vec[j])}}
+  d}
+
+part1 <- manhattan(x)+manhattan(y)
+part1
+```
+## Part 2
+Part 2 is the same - just the offset is now 999,999
+
+Start by reading in and then put everything into a data.frame  
+```{r}
+## recreate the starchart because in part 1, the #'s were replaced by numbers
+starchart <- data.frame(matrix(ncol=nchar(input[i]),nrow=0))
+
+for (i in 1:length(input)){
+  starchart <- rbind(starchart,str_split(input[i],"")[[1]])}
+
+##we're adding 1 extra column or row, so the offset is 1
+offset=9
+
+# create new column names
+starchartcolumns<-c()
+currentcol<-1
+for(i in 1:(ncol(starchart))){
+  if(any(starchart[,i]=="#")){
+    starchartcolumns<-c(starchartcolumns,currentcol)
+    currentcol<-currentcol+1}else{
+      starchartcolumns<-c(starchartcolumns,paste0(currentcol,"-",currentcol+offset))
+      currentcol<-currentcol+1+offset}}
+
+# create new row names
+starchartrows<-c()
+currentrow<-1
+for(i in 1:(ncol(starchart))){
+  if(any(starchart[i,]=="#")){
+    starchartrows<-c(starchartrows,currentrow)
+    currentrow<-currentrow+1}else{
+      starchartrows<-c(starchartrows,paste0(currentrow,"-",currentrow+offset))
+      currentrow<-currentrow+1+offset}}
+
+starchartcolumns
+starchartrows
+### this really isn't necessary, but it makes it easier to read
+colnames(starchart) <-starchartcolumns
+rownames(starchart) <-starchartrows
+
+star<-1
+x<-c()
+y<-c()
+
+for(i in 1:ncol(starchart)){
+  for(j in 1:nrow(starchart)){
+    if(starchart[i,j]=="#"){
+      x<-c(x,as.numeric(starchartcolumns[j]))
+      y<-c(y,as.numeric(starchartrows[i]))
+      ## this is alson not necessary, but it makes a nice graph
+      starchart[i,j]<-as.character(star)
+      star<-star+1}}}
+
+part2 <- manhattan(x)+manhattan(y)
+part2
+
+```
+
+
+
+Single function (and manhattan)
+
+
+```{r}
+day11answers <-function(input,p1offset=1,p2offset=2){
+  starchart <- data.frame(matrix(ncol=nchar(input[i]),nrow=0))
+  for (i in 1:length(input)){
+    starchart <- rbind(starchart,str_split(input[i],"")[[1]])}
+  ### get new columns
+  p1cols<-c()
+  p2cols<-c()
+  curcol1<-1
+  curcol2<-1
+  for(i in 1:(ncol(starchart))){
+    if(any(starchart[,i]=="#")){
+      p1cols<-c(p1cols,curcol1)
+      p2cols<-c(p2cols,curcol2)
+      curcol1<-curcol1+1
+      curcol2<-curcol2+1}else{
+        p1cols<-c(p1cols,paste0(curcol1,"-",curcol1+p1offset))
+        p2cols<-c(p2cols,paste0(curcol2,"-",curcol2+p2offset))
+        curcol1<-curcol1+1+p1offset
+        curcol2<-curcol2+1+p2offset}}
+  
+  ### get new rows
+  p1rows<-c()
+  p2rows<-c()
+  currow1<-1
+  currow2<-1
+  for(i in 1:(nrow(starchart))){
+    if(any(starchart[i,]=="#")){
+      p1rows<-c(p1rows,currow1)
+      p2rows<-c(p2rows,currow2)
+      currow1<-currow1+1
+      currow2<-currow2+1}else{
+        p1rows<-c(p1rows,paste0(currow1,"-",currow1+p1offset))
+        p2rows<-c(p2rows,paste0(currow2,"-",currow2+p2offset))
+        currow1<-currow1+1+p1offset
+        currow2<-currow2+1+p2offset}}
+  
+  x1<-c()
+  y1<-c()
+  x2<-c()
+  y2<-c()
+  for(i in 1:ncol(starchart)){
+    for(j in 1:nrow(starchart)){
+      if(starchart[i,j]=="#"){
+        x1<-c(x1,as.numeric(p1cols[j]))
+        y1<-c(y1,as.numeric(p1rows[i]))
+        x2<-c(x2,as.numeric(p2cols[j]))
+        y2<-c(y2,as.numeric(p2rows[i]))}}}
+  
+  part1<-manhattan(x1)+manhattan(y1)
+  part2<-manhattan(x2)+manhattan(y2)
+  
+  c(part1,part2)}
+```
+
+```{r}
+day11 <- day11answers(input,1,9)
+day11
+```
+

@@ -1762,7 +1762,7 @@ know for part 1.</p>
 <p>Start by reading in and then put everything into a data.frame</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbImlucHV0IDwtIHJlYWRfbGluZXMoXCJEYXkxMVNhbXBsZS50eHRcIikiLCIiLCJzdGFyY2hhcnQgPC0gZGF0YS5mcmFtZShtYXRyaXgobmNvbD1uY2hhcihpbnB1dFsxXSksbnJvdz0wKSkiLCIiLCJmb3IgKGkgaW4gMTpsZW5ndGgoaW5wdXQpKXtcbiAgc3RhcmNoYXJ0IDwtIHJiaW5kKHN0YXJjaGFydCxzdHJfc3BsaXQoaW5wdXRbaV0sXCJcIilbWzFdXSl9Il19 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaW5wdXQgPC0gcmVhZF9saW5lcyhcIkRheTExU2FtcGxlLnR4dFwiKVxuXG5zdGFyY2hhcnQgPC0gZGF0YS5mcmFtZShtYXRyaXgobmNvbD1uY2hhcihpbnB1dFsxXSksbnJvdz0wKSlcblxuZm9yIChpIGluIDE6bGVuZ3RoKGlucHV0KSl7XG4gIHN0YXJjaGFydCA8LSByYmluZChzdGFyY2hhcnQsc3RyX3NwbGl0KGlucHV0W2ldLFwiXCIpW1sxXV0pfVxuYGBgIn0= -->
 <pre class="r"><code>input &lt;- read_lines(&quot;Day11Sample.txt&quot;)
 
 starchart &lt;- data.frame(matrix(ncol=nchar(input[1]),nrow=0))
@@ -1778,7 +1778,7 @@ value.</p>
 <p>starchartcolumns&lt;-c() for(i in 1:(ncol(starchart))){ if(any)</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbIiMjd2UncmUgYWRkaW5nIDEgZXh0cmEgY29sdW1uIG9yIHJvdywgc28gdGhlIG9mZnNldCBpcyAxIiwib2Zmc2V0PTEiLCIiLCIjIGNyZWF0ZSBuZXcgY29sdW1uIG5hbWVzIiwic3RhcmNoYXJ0Y29sdW1uczwtYygpIiwiY3VycmVudGNvbDwtMSIsImZvcihpIGluIDE6KG5jb2woc3RhcmNoYXJ0KSkpe1xuICBpZihhbnkoc3RhcmNoYXJ0WyxpXT09XCIjXCIpKXtcbiAgICBzdGFyY2hhcnRjb2x1bW5zPC1jKHN0YXJjaGFydGNvbHVtbnMsY3VycmVudGNvbClcbiAgICBjdXJyZW50Y29sPC1jdXJyZW50Y29sKzF9ZWxzZXtcbiAgICAgIHN0YXJjaGFydGNvbHVtbnM8LWMoc3RhcmNoYXJ0Y29sdW1ucyxwYXN0ZTAoY3VycmVudGNvbCxcIi1cIixjdXJyZW50Y29sK29mZnNldCkpXG4gICAgICBjdXJyZW50Y29sPC1jdXJyZW50Y29sKzErb2Zmc2V0fX0iLCIiLCIjIGNyZWF0ZSBuZXcgcm93IG5hbWVzIiwic3RhcmNoYXJ0cm93czwtYygpIiwiY3VycmVudHJvdzwtMSIsImZvcihpIGluIDE6KG5jb2woc3RhcmNoYXJ0KSkpe1xuICBpZihhbnkoc3RhcmNoYXJ0W2ksXT09XCIjXCIpKXtcbiAgICBzdGFyY2hhcnRyb3dzPC1jKHN0YXJjaGFydHJvd3MsY3VycmVudHJvdylcbiAgICBjdXJyZW50cm93PC1jdXJyZW50cm93KzF9ZWxzZXtcbiAgICAgIHN0YXJjaGFydHJvd3M8LWMoc3RhcmNoYXJ0cm93cyxwYXN0ZTAoY3VycmVudHJvdyxcIi1cIixjdXJyZW50cm93K29mZnNldCkpXG4gICAgICBjdXJyZW50cm93PC1jdXJyZW50cm93KzErb2Zmc2V0fX0iLCIiLCIiLCJzdGFyY2hhcnRjb2x1bW5zIl19 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyN3ZSdyZSBhZGRpbmcgMSBleHRyYSBjb2x1bW4gb3Igcm93LCBzbyB0aGUgb2Zmc2V0IGlzIDFcbm9mZnNldD0xXG5cbiMgY3JlYXRlIG5ldyBjb2x1bW4gbmFtZXNcbnN0YXJjaGFydGNvbHVtbnM8LWMoKVxuY3VycmVudGNvbDwtMVxuZm9yKGkgaW4gMToobmNvbChzdGFyY2hhcnQpKSl7XG4gIGlmKGFueShzdGFyY2hhcnRbLGldPT1cIiNcIikpe1xuICAgIHN0YXJjaGFydGNvbHVtbnM8LWMoc3RhcmNoYXJ0Y29sdW1ucyxjdXJyZW50Y29sKVxuICAgIGN1cnJlbnRjb2w8LWN1cnJlbnRjb2wrMX1lbHNle1xuICAgICAgc3RhcmNoYXJ0Y29sdW1uczwtYyhzdGFyY2hhcnRjb2x1bW5zLHBhc3RlMChjdXJyZW50Y29sLFwiLVwiLGN1cnJlbnRjb2wrb2Zmc2V0KSlcbiAgICAgIGN1cnJlbnRjb2w8LWN1cnJlbnRjb2wrMStvZmZzZXR9fVxuXG4jIGNyZWF0ZSBuZXcgcm93IG5hbWVzXG5zdGFyY2hhcnRyb3dzPC1jKClcbmN1cnJlbnRyb3c8LTFcbmZvcihpIGluIDE6KG5jb2woc3RhcmNoYXJ0KSkpe1xuICBpZihhbnkoc3RhcmNoYXJ0W2ksXT09XCIjXCIpKXtcbiAgICBzdGFyY2hhcnRyb3dzPC1jKHN0YXJjaGFydHJvd3MsY3VycmVudHJvdylcbiAgICBjdXJyZW50cm93PC1jdXJyZW50cm93KzF9ZWxzZXtcbiAgICAgIHN0YXJjaGFydHJvd3M8LWMoc3RhcmNoYXJ0cm93cyxwYXN0ZTAoY3VycmVudHJvdyxcIi1cIixjdXJyZW50cm93K29mZnNldCkpXG4gICAgICBjdXJyZW50cm93PC1jdXJyZW50cm93KzErb2Zmc2V0fX1cblxuXG5zdGFyY2hhcnRjb2x1bW5zXG5gYGAifQ== -->
 <pre class="r"><code>##we&#39;re adding 1 extra column or row, so the offset is 1
 offset=1
 
@@ -1808,55 +1808,13 @@ starchartcolumns</code></pre>
 <!-- rnb-output-begin eyJkYXRhIjoiIFsxXSBcIjFcIiAgICAgXCIyXCIgICAgIFwiMy00XCIgICBcIjVcIiAgICAgXCI2XCIgICAgIFwiNy04XCIgICBcIjlcIiAgICAgXCIxMFwiICAgIFwiMTEtMTJcIiBcIjEzXCIgICBcbiJ9 -->
 <pre><code> [1] &quot;1&quot;     &quot;2&quot;     &quot;3-4&quot;   &quot;5&quot;     &quot;6&quot;     &quot;7-8&quot;   &quot;9&quot;     &quot;10&quot;    &quot;11-12&quot; &quot;13&quot;   </code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjpbIjFcbiIsIjJcbiIsIjMtNFxuIiwiNVxuIiwiNlxuIiwiNy04XG4iLCI5XG4iLCIxMFxuIiwiMTEtMTJcbiIsIjEzXG4iXX0= -->
-<pre><code>1
-
-2
-
-3-4
-
-5
-
-6
-
-7-8
-
-9
-
-10
-
-11-12
-
-13</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoic3RhcmNoYXJ0cm93cyJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3RhcmNoYXJ0cm93c1xuYGBgIn0= -->
 <pre class="r"><code>starchartrows</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-output-begin eyJkYXRhIjoiIFsxXSBcIjFcIiAgICBcIjJcIiAgICBcIjNcIiAgICBcIjQtNVwiICBcIjZcIiAgICBcIjdcIiAgICBcIjhcIiAgICBcIjktMTBcIiBcIjExXCIgICBcIjEyXCIgIFxuIn0= -->
 <pre><code> [1] &quot;1&quot;    &quot;2&quot;    &quot;3&quot;    &quot;4-5&quot;  &quot;6&quot;    &quot;7&quot;    &quot;8&quot;    &quot;9-10&quot; &quot;11&quot;   &quot;12&quot;  </code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjpbIjFcbiIsIjJcbiIsIjNcbiIsIjQtNVxuIiwiNlxuIiwiN1xuIiwiOFxuIiwiOS0xMFxuIiwiMTFcbiIsIjEyXG4iXX0= -->
-<pre><code>1
-
-2
-
-3
-
-4-5
-
-6
-
-7
-
-8
-
-9-10
-
-11
-
-12</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjpbIiMjIyB0aGlzIHJlYWxseSBpc24ndCBuZWNlc3NhcnksIGJ1dCBpdCBtYWtlcyBpdCBlYXNpZXIgdG8gcmVhZCIsImNvbG5hbWVzKHN0YXJjaGFydCkgPC1zdGFyY2hhcnRjb2x1bW5zIiwicm93bmFtZXMoc3RhcmNoYXJ0KSA8LXN0YXJjaGFydHJvd3MiXX0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyMjIHRoaXMgcmVhbGx5IGlzbid0IG5lY2Vzc2FyeSwgYnV0IGl0IG1ha2VzIGl0IGVhc2llciB0byByZWFkXG5jb2xuYW1lcyhzdGFyY2hhcnQpIDwtc3RhcmNoYXJ0Y29sdW1uc1xucm93bmFtZXMoc3RhcmNoYXJ0KSA8LXN0YXJjaGFydHJvd3NcbmBgYCJ9 -->
 <pre class="r"><code>### this really isn&#39;t necessary, but it makes it easier to read
 colnames(starchart) &lt;-starchartcolumns
 rownames(starchart) &lt;-starchartrows</code></pre>
@@ -1867,7 +1825,7 @@ rownames(starchart) &lt;-starchartrows</code></pre>
 points)</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbInN0YXI8LTEiLCJ4PC1jKCkiLCJ5PC1jKCkiLCIiLCJmb3IoaSBpbiAxOm5jb2woc3RhcmNoYXJ0KSl7XG4gIGZvcihqIGluIDE6bnJvdyhzdGFyY2hhcnQpKXtcbiAgICBpZihzdGFyY2hhcnRbaSxqXT09XCIjXCIpe1xuICAgICAgeDwtYyh4LGFzLm51bWVyaWMoc3RhcmNoYXJ0Y29sdW1uc1tqXSkpXG4gICAgICB5PC1jKHksYXMubnVtZXJpYyhzdGFyY2hhcnRyb3dzW2ldKSlcbiAgICAgICMjIHRoaXMgaXMgYWxzb24gbm90IG5lY2Vzc2FyeSwgYnV0IGl0IG1ha2VzIGEgbmljZSBncmFwaFxuICAgICAgc3RhcmNoYXJ0W2ksal08LWFzLmNoYXJhY3RlcihzdGFyKVxuICAgICAgc3Rhcjwtc3RhcisxfX19Il19 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3RhcjwtMVxueDwtYygpXG55PC1jKClcblxuZm9yKGkgaW4gMTpuY29sKHN0YXJjaGFydCkpe1xuICBmb3IoaiBpbiAxOm5yb3coc3RhcmNoYXJ0KSl7XG4gICAgaWYoc3RhcmNoYXJ0W2ksal09PVwiI1wiKXtcbiAgICAgIHg8LWMoeCxhcy5udW1lcmljKHN0YXJjaGFydGNvbHVtbnNbal0pKVxuICAgICAgeTwtYyh5LGFzLm51bWVyaWMoc3RhcmNoYXJ0cm93c1tpXSkpXG4gICAgICAjIyB0aGlzIGlzIGFsc29uIG5vdCBuZWNlc3NhcnksIGJ1dCBpdCBtYWtlcyBhIG5pY2UgZ3JhcGhcbiAgICAgIHN0YXJjaGFydFtpLGpdPC1hcy5jaGFyYWN0ZXIoc3RhcilcbiAgICAgIHN0YXI8LXN0YXIrMX19fVxuYGBgIn0= -->
 <pre class="r"><code>star&lt;-1
 x&lt;-c()
 y&lt;-c()
@@ -1887,7 +1845,7 @@ for(i in 1:ncol(starchart)){
 done separately)</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbIm1hbmhhdHRhbjwtZnVuY3Rpb24odmVjKXtcbiAgZDwtMFxuICBmb3IoaSBpbiAxOihsZW5ndGgodmVjKS0xKSl7XG4gICAgZm9yKGogaW4gaTpsZW5ndGgodmVjKSl7XG4gICAgICBkPC1kK2Ficyh2ZWNbaV0tdmVjW2pdKX19XG4gIGR9IiwiIiwicGFydDEgPC0gbWFuaGF0dGFuKHgpK21hbmhhdHRhbih5KSIsInBhcnQxIl19 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubWFuaGF0dGFuPC1mdW5jdGlvbih2ZWMpe1xuICBkPC0wXG4gIGZvcihpIGluIDE6KGxlbmd0aCh2ZWMpLTEpKXtcbiAgICBmb3IoaiBpbiBpOmxlbmd0aCh2ZWMpKXtcbiAgICAgIGQ8LWQrYWJzKHZlY1tpXS12ZWNbal0pfX1cbiAgZH1cblxucGFydDEgPC0gbWFuaGF0dGFuKHgpK21hbmhhdHRhbih5KVxucGFydDFcbmBgYCJ9 -->
 <pre class="r"><code>manhattan&lt;-function(vec){
   d&lt;-0
   for(i in 1:(length(vec)-1)){
@@ -1910,7 +1868,7 @@ part1</code></pre>
 <p>Start by reading in and then put everything into a data.frame</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbIiMjIHJlY3JlYXRlIHRoZSBzdGFyY2hhcnQgYmVjYXVzZSBpbiBwYXJ0IDEsIHRoZSAjJ3Mgd2VyZSByZXBsYWNlZCBieSBudW1iZXJzIiwic3RhcmNoYXJ0IDwtIGRhdGEuZnJhbWUobWF0cml4KG5jb2w9bmNoYXIoaW5wdXRbaV0pLG5yb3c9MCkpIiwiIiwiZm9yIChpIGluIDE6bGVuZ3RoKGlucHV0KSl7XG4gIHN0YXJjaGFydCA8LSByYmluZChzdGFyY2hhcnQsc3RyX3NwbGl0KGlucHV0W2ldLFwiXCIpW1sxXV0pfSIsIiIsIiMjd2UncmUgYWRkaW5nIDEgZXh0cmEgY29sdW1uIG9yIHJvdywgc28gdGhlIG9mZnNldCBpcyAxIiwib2Zmc2V0PTkiLCIiLCIjIGNyZWF0ZSBuZXcgY29sdW1uIG5hbWVzIiwic3RhcmNoYXJ0Y29sdW1uczwtYygpIiwiY3VycmVudGNvbDwtMSIsImZvcihpIGluIDE6KG5jb2woc3RhcmNoYXJ0KSkpe1xuICBpZihhbnkoc3RhcmNoYXJ0WyxpXT09XCIjXCIpKXtcbiAgICBzdGFyY2hhcnRjb2x1bW5zPC1jKHN0YXJjaGFydGNvbHVtbnMsY3VycmVudGNvbClcbiAgICBjdXJyZW50Y29sPC1jdXJyZW50Y29sKzF9ZWxzZXtcbiAgICAgIHN0YXJjaGFydGNvbHVtbnM8LWMoc3RhcmNoYXJ0Y29sdW1ucyxwYXN0ZTAoY3VycmVudGNvbCxcIi1cIixjdXJyZW50Y29sK29mZnNldCkpXG4gICAgICBjdXJyZW50Y29sPC1jdXJyZW50Y29sKzErb2Zmc2V0fX0iLCIiLCIjIGNyZWF0ZSBuZXcgcm93IG5hbWVzIiwic3RhcmNoYXJ0cm93czwtYygpIiwiY3VycmVudHJvdzwtMSIsImZvcihpIGluIDE6KG5jb2woc3RhcmNoYXJ0KSkpe1xuICBpZihhbnkoc3RhcmNoYXJ0W2ksXT09XCIjXCIpKXtcbiAgICBzdGFyY2hhcnRyb3dzPC1jKHN0YXJjaGFydHJvd3MsY3VycmVudHJvdylcbiAgICBjdXJyZW50cm93PC1jdXJyZW50cm93KzF9ZWxzZXtcbiAgICAgIHN0YXJjaGFydHJvd3M8LWMoc3RhcmNoYXJ0cm93cyxwYXN0ZTAoY3VycmVudHJvdyxcIi1cIixjdXJyZW50cm93K29mZnNldCkpXG4gICAgICBjdXJyZW50cm93PC1jdXJyZW50cm93KzErb2Zmc2V0fX0iLCIiLCJzdGFyY2hhcnRjb2x1bW5zIl19 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyMgcmVjcmVhdGUgdGhlIHN0YXJjaGFydCBiZWNhdXNlIGluIHBhcnQgMSwgdGhlICMncyB3ZXJlIHJlcGxhY2VkIGJ5IG51bWJlcnNcbnN0YXJjaGFydCA8LSBkYXRhLmZyYW1lKG1hdHJpeChuY29sPW5jaGFyKGlucHV0W2ldKSxucm93PTApKVxuXG5mb3IgKGkgaW4gMTpsZW5ndGgoaW5wdXQpKXtcbiAgc3RhcmNoYXJ0IDwtIHJiaW5kKHN0YXJjaGFydCxzdHJfc3BsaXQoaW5wdXRbaV0sXCJcIilbWzFdXSl9XG5cbiMjd2UncmUgYWRkaW5nIDEgZXh0cmEgY29sdW1uIG9yIHJvdywgc28gdGhlIG9mZnNldCBpcyAxXG5vZmZzZXQ9OVxuXG4jIGNyZWF0ZSBuZXcgY29sdW1uIG5hbWVzXG5zdGFyY2hhcnRjb2x1bW5zPC1jKClcbmN1cnJlbnRjb2w8LTFcbmZvcihpIGluIDE6KG5jb2woc3RhcmNoYXJ0KSkpe1xuICBpZihhbnkoc3RhcmNoYXJ0WyxpXT09XCIjXCIpKXtcbiAgICBzdGFyY2hhcnRjb2x1bW5zPC1jKHN0YXJjaGFydGNvbHVtbnMsY3VycmVudGNvbClcbiAgICBjdXJyZW50Y29sPC1jdXJyZW50Y29sKzF9ZWxzZXtcbiAgICAgIHN0YXJjaGFydGNvbHVtbnM8LWMoc3RhcmNoYXJ0Y29sdW1ucyxwYXN0ZTAoY3VycmVudGNvbCxcIi1cIixjdXJyZW50Y29sK29mZnNldCkpXG4gICAgICBjdXJyZW50Y29sPC1jdXJyZW50Y29sKzErb2Zmc2V0fX1cblxuIyBjcmVhdGUgbmV3IHJvdyBuYW1lc1xuc3RhcmNoYXJ0cm93czwtYygpXG5jdXJyZW50cm93PC0xXG5mb3IoaSBpbiAxOihuY29sKHN0YXJjaGFydCkpKXtcbiAgaWYoYW55KHN0YXJjaGFydFtpLF09PVwiI1wiKSl7XG4gICAgc3RhcmNoYXJ0cm93czwtYyhzdGFyY2hhcnRyb3dzLGN1cnJlbnRyb3cpXG4gICAgY3VycmVudHJvdzwtY3VycmVudHJvdysxfWVsc2V7XG4gICAgICBzdGFyY2hhcnRyb3dzPC1jKHN0YXJjaGFydHJvd3MscGFzdGUwKGN1cnJlbnRyb3csXCItXCIsY3VycmVudHJvdytvZmZzZXQpKVxuICAgICAgY3VycmVudHJvdzwtY3VycmVudHJvdysxK29mZnNldH19XG5cbnN0YXJjaGFydGNvbHVtbnNcbmBgYCJ9 -->
 <pre class="r"><code>## recreate the starchart because in part 1, the #&#39;s were replaced by numbers
 starchart &lt;- data.frame(matrix(ncol=nchar(input[i]),nrow=0))
 
@@ -1945,55 +1903,13 @@ starchartcolumns</code></pre>
 <!-- rnb-output-begin eyJkYXRhIjoiIFsxXSBcIjFcIiAgICAgXCIyXCIgICAgIFwiMy0xMlwiICBcIjEzXCIgICAgXCIxNFwiICAgIFwiMTUtMjRcIiBcIjI1XCIgICAgXCIyNlwiICAgIFwiMjctMzZcIiBcIjM3XCIgICBcbiJ9 -->
 <pre><code> [1] &quot;1&quot;     &quot;2&quot;     &quot;3-12&quot;  &quot;13&quot;    &quot;14&quot;    &quot;15-24&quot; &quot;25&quot;    &quot;26&quot;    &quot;27-36&quot; &quot;37&quot;   </code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjpbIjFcbiIsIjJcbiIsIjMtMTJcbiIsIjEzXG4iLCIxNFxuIiwiMTUtMjRcbiIsIjI1XG4iLCIyNlxuIiwiMjctMzZcbiIsIjM3XG4iXX0= -->
-<pre><code>1
-
-2
-
-3-12
-
-13
-
-14
-
-15-24
-
-25
-
-26
-
-27-36
-
-37</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoic3RhcmNoYXJ0cm93cyJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3RhcmNoYXJ0cm93c1xuYGBgIn0= -->
 <pre class="r"><code>starchartrows</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-output-begin eyJkYXRhIjoiIFsxXSBcIjFcIiAgICAgXCIyXCIgICAgIFwiM1wiICAgICBcIjQtMTNcIiAgXCIxNFwiICAgIFwiMTVcIiAgICBcIjE2XCIgICAgXCIxNy0yNlwiIFwiMjdcIiAgICBcIjI4XCIgICBcbiJ9 -->
 <pre><code> [1] &quot;1&quot;     &quot;2&quot;     &quot;3&quot;     &quot;4-13&quot;  &quot;14&quot;    &quot;15&quot;    &quot;16&quot;    &quot;17-26&quot; &quot;27&quot;    &quot;28&quot;   </code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjpbIjFcbiIsIjJcbiIsIjNcbiIsIjQtMTNcbiIsIjE0XG4iLCIxNVxuIiwiMTZcbiIsIjE3LTI2XG4iLCIyN1xuIiwiMjhcbiJdfQ== -->
-<pre><code>1
-
-2
-
-3
-
-4-13
-
-14
-
-15
-
-16
-
-17-26
-
-27
-
-28</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjpbIiMjIyB0aGlzIHJlYWxseSBpc24ndCBuZWNlc3NhcnksIGJ1dCBpdCBtYWtlcyBpdCBlYXNpZXIgdG8gcmVhZCIsImNvbG5hbWVzKHN0YXJjaGFydCkgPC1zdGFyY2hhcnRjb2x1bW5zIiwicm93bmFtZXMoc3RhcmNoYXJ0KSA8LXN0YXJjaGFydHJvd3MiLCIiLCJzdGFyPC0xIiwieDwtYygpIiwieTwtYygpIiwiIiwiZm9yKGkgaW4gMTpuY29sKHN0YXJjaGFydCkpe1xuICBmb3IoaiBpbiAxOm5yb3coc3RhcmNoYXJ0KSl7XG4gICAgaWYoc3RhcmNoYXJ0W2ksal09PVwiI1wiKXtcbiAgICAgIHg8LWMoeCxhcy5udW1lcmljKHN0YXJjaGFydGNvbHVtbnNbal0pKVxuICAgICAgeTwtYyh5LGFzLm51bWVyaWMoc3RhcmNoYXJ0cm93c1tpXSkpXG4gICAgICAjIyB0aGlzIGlzIGFsc29uIG5vdCBuZWNlc3NhcnksIGJ1dCBpdCBtYWtlcyBhIG5pY2UgZ3JhcGhcbiAgICAgIHN0YXJjaGFydFtpLGpdPC1hcy5jaGFyYWN0ZXIoc3RhcilcbiAgICAgIHN0YXI8LXN0YXIrMX19fSIsIiIsInBhcnQyIDwtIG1hbmhhdHRhbih4KSttYW5oYXR0YW4oeSkiLCJwYXJ0MiJdfQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyMjIHRoaXMgcmVhbGx5IGlzbid0IG5lY2Vzc2FyeSwgYnV0IGl0IG1ha2VzIGl0IGVhc2llciB0byByZWFkXG5jb2xuYW1lcyhzdGFyY2hhcnQpIDwtc3RhcmNoYXJ0Y29sdW1uc1xucm93bmFtZXMoc3RhcmNoYXJ0KSA8LXN0YXJjaGFydHJvd3Ncblxuc3RhcjwtMVxueDwtYygpXG55PC1jKClcblxuZm9yKGkgaW4gMTpuY29sKHN0YXJjaGFydCkpe1xuICBmb3IoaiBpbiAxOm5yb3coc3RhcmNoYXJ0KSl7XG4gICAgaWYoc3RhcmNoYXJ0W2ksal09PVwiI1wiKXtcbiAgICAgIHg8LWMoeCxhcy5udW1lcmljKHN0YXJjaGFydGNvbHVtbnNbal0pKVxuICAgICAgeTwtYyh5LGFzLm51bWVyaWMoc3RhcmNoYXJ0cm93c1tpXSkpXG4gICAgICAjIyB0aGlzIGlzIGFsc29uIG5vdCBuZWNlc3NhcnksIGJ1dCBpdCBtYWtlcyBhIG5pY2UgZ3JhcGhcbiAgICAgIHN0YXJjaGFydFtpLGpdPC1hcy5jaGFyYWN0ZXIoc3RhcilcbiAgICAgIHN0YXI8LXN0YXIrMX19fVxuXG5wYXJ0MiA8LSBtYW5oYXR0YW4oeCkrbWFuaGF0dGFuKHkpXG5wYXJ0MlxuYGBgIn0= -->
 <pre class="r"><code>### this really isn&#39;t necessary, but it makes it easier to read
 colnames(starchart) &lt;-starchartcolumns
 rownames(starchart) &lt;-starchartrows
@@ -2022,7 +1938,7 @@ part2</code></pre>
 <p>Single function (and manhattan)</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiZGF5MTFhbnN3ZXJzIDwtZnVuY3Rpb24oaW5wdXQscDFvZmZzZXQ9MSxwMm9mZnNldD0yKXtcbiAgc3RhcmNoYXJ0IDwtIGRhdGEuZnJhbWUobWF0cml4KG5jb2w9bmNoYXIoaW5wdXRbaV0pLG5yb3c9MCkpXG4gIGZvciAoaSBpbiAxOmxlbmd0aChpbnB1dCkpe1xuICAgIHN0YXJjaGFydCA8LSByYmluZChzdGFyY2hhcnQsc3RyX3NwbGl0KGlucHV0W2ldLFwiXCIpW1sxXV0pfVxuICAjIyMgZ2V0IG5ldyBjb2x1bW5zXG4gIHAxY29sczwtYygpXG4gIHAyY29sczwtYygpXG4gIGN1cmNvbDE8LTFcbiAgY3VyY29sMjwtMVxuICBmb3IoaSBpbiAxOihuY29sKHN0YXJjaGFydCkpKXtcbiAgICBpZihhbnkoc3RhcmNoYXJ0WyxpXT09XCIjXCIpKXtcbiAgICAgIHAxY29sczwtYyhwMWNvbHMsY3VyY29sMSlcbiAgICAgIHAyY29sczwtYyhwMmNvbHMsY3VyY29sMilcbiAgICAgIGN1cmNvbDE8LWN1cmNvbDErMVxuICAgICAgY3VyY29sMjwtY3VyY29sMisxfWVsc2V7XG4gICAgICAgIHAxY29sczwtYyhwMWNvbHMscGFzdGUwKGN1cmNvbDEsXCItXCIsY3VyY29sMStwMW9mZnNldCkpXG4gICAgICAgIHAyY29sczwtYyhwMmNvbHMscGFzdGUwKGN1cmNvbDIsXCItXCIsY3VyY29sMitwMm9mZnNldCkpXG4gICAgICAgIGN1cmNvbDE8LWN1cmNvbDErMStwMW9mZnNldFxuICAgICAgICBjdXJjb2wyPC1jdXJjb2wyKzErcDJvZmZzZXR9fVxuICBcbiAgIyMjIGdldCBuZXcgcm93c1xuICBwMXJvd3M8LWMoKVxuICBwMnJvd3M8LWMoKVxuICBjdXJyb3cxPC0xXG4gIGN1cnJvdzI8LTFcbiAgZm9yKGkgaW4gMToobnJvdyhzdGFyY2hhcnQpKSl7XG4gICAgaWYoYW55KHN0YXJjaGFydFtpLF09PVwiI1wiKSl7XG4gICAgICBwMXJvd3M8LWMocDFyb3dzLGN1cnJvdzEpXG4gICAgICBwMnJvd3M8LWMocDJyb3dzLGN1cnJvdzIpXG4gICAgICBjdXJyb3cxPC1jdXJyb3cxKzFcbiAgICAgIGN1cnJvdzI8LWN1cnJvdzIrMX1lbHNle1xuICAgICAgICBwMXJvd3M8LWMocDFyb3dzLHBhc3RlMChjdXJyb3cxLFwiLVwiLGN1cnJvdzErcDFvZmZzZXQpKVxuICAgICAgICBwMnJvd3M8LWMocDJyb3dzLHBhc3RlMChjdXJyb3cyLFwiLVwiLGN1cnJvdzIrcDJvZmZzZXQpKVxuICAgICAgICBjdXJyb3cxPC1jdXJyb3cxKzErcDFvZmZzZXRcbiAgICAgICAgY3Vycm93MjwtY3Vycm93MisxK3Ayb2Zmc2V0fX1cbiAgXG4gIHgxPC1jKClcbiAgeTE8LWMoKVxuICB4MjwtYygpXG4gIHkyPC1jKClcbiAgZm9yKGkgaW4gMTpuY29sKHN0YXJjaGFydCkpe1xuICAgIGZvcihqIGluIDE6bnJvdyhzdGFyY2hhcnQpKXtcbiAgICAgIGlmKHN0YXJjaGFydFtpLGpdPT1cIiNcIil7XG4gICAgICAgIHgxPC1jKHgxLGFzLm51bWVyaWMocDFjb2xzW2pdKSlcbiAgICAgICAgeTE8LWMoeTEsYXMubnVtZXJpYyhwMXJvd3NbaV0pKVxuICAgICAgICB4MjwtYyh4Mixhcy5udW1lcmljKHAyY29sc1tqXSkpXG4gICAgICAgIHkyPC1jKHkyLGFzLm51bWVyaWMocDJyb3dzW2ldKSl9fX1cbiAgXG4gIHBhcnQxPC1tYW5oYXR0YW4oeDEpK21hbmhhdHRhbih5MSlcbiAgcGFydDI8LW1hbmhhdHRhbih4MikrbWFuaGF0dGFuKHkyKVxuICBcbiAgYyhwYXJ0MSxwYXJ0Mil9In0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF5MTFhbnN3ZXJzIDwtZnVuY3Rpb24oaW5wdXQscDFvZmZzZXQ9MSxwMm9mZnNldD0yKXtcbiAgc3RhcmNoYXJ0IDwtIGRhdGEuZnJhbWUobWF0cml4KG5jb2w9bmNoYXIoaW5wdXRbaV0pLG5yb3c9MCkpXG4gIGZvciAoaSBpbiAxOmxlbmd0aChpbnB1dCkpe1xuICAgIHN0YXJjaGFydCA8LSByYmluZChzdGFyY2hhcnQsc3RyX3NwbGl0KGlucHV0W2ldLFwiXCIpW1sxXV0pfVxuICAjIyMgZ2V0IG5ldyBjb2x1bW5zXG4gIHAxY29sczwtYygpXG4gIHAyY29sczwtYygpXG4gIGN1cmNvbDE8LTFcbiAgY3VyY29sMjwtMVxuICBmb3IoaSBpbiAxOihuY29sKHN0YXJjaGFydCkpKXtcbiAgICBpZihhbnkoc3RhcmNoYXJ0WyxpXT09XCIjXCIpKXtcbiAgICAgIHAxY29sczwtYyhwMWNvbHMsY3VyY29sMSlcbiAgICAgIHAyY29sczwtYyhwMmNvbHMsY3VyY29sMilcbiAgICAgIGN1cmNvbDE8LWN1cmNvbDErMVxuICAgICAgY3VyY29sMjwtY3VyY29sMisxfWVsc2V7XG4gICAgICAgIHAxY29sczwtYyhwMWNvbHMscGFzdGUwKGN1cmNvbDEsXCItXCIsY3VyY29sMStwMW9mZnNldCkpXG4gICAgICAgIHAyY29sczwtYyhwMmNvbHMscGFzdGUwKGN1cmNvbDIsXCItXCIsY3VyY29sMitwMm9mZnNldCkpXG4gICAgICAgIGN1cmNvbDE8LWN1cmNvbDErMStwMW9mZnNldFxuICAgICAgICBjdXJjb2wyPC1jdXJjb2wyKzErcDJvZmZzZXR9fVxuICBcbiAgIyMjIGdldCBuZXcgcm93c1xuICBwMXJvd3M8LWMoKVxuICBwMnJvd3M8LWMoKVxuICBjdXJyb3cxPC0xXG4gIGN1cnJvdzI8LTFcbiAgZm9yKGkgaW4gMToobnJvdyhzdGFyY2hhcnQpKSl7XG4gICAgaWYoYW55KHN0YXJjaGFydFtpLF09PVwiI1wiKSl7XG4gICAgICBwMXJvd3M8LWMocDFyb3dzLGN1cnJvdzEpXG4gICAgICBwMnJvd3M8LWMocDJyb3dzLGN1cnJvdzIpXG4gICAgICBjdXJyb3cxPC1jdXJyb3cxKzFcbiAgICAgIGN1cnJvdzI8LWN1cnJvdzIrMX1lbHNle1xuICAgICAgICBwMXJvd3M8LWMocDFyb3dzLHBhc3RlMChjdXJyb3cxLFwiLVwiLGN1cnJvdzErcDFvZmZzZXQpKVxuICAgICAgICBwMnJvd3M8LWMocDJyb3dzLHBhc3RlMChjdXJyb3cyLFwiLVwiLGN1cnJvdzIrcDJvZmZzZXQpKVxuICAgICAgICBjdXJyb3cxPC1jdXJyb3cxKzErcDFvZmZzZXRcbiAgICAgICAgY3Vycm93MjwtY3Vycm93MisxK3Ayb2Zmc2V0fX1cbiAgXG4gIHgxPC1jKClcbiAgeTE8LWMoKVxuICB4MjwtYygpXG4gIHkyPC1jKClcbiAgZm9yKGkgaW4gMTpuY29sKHN0YXJjaGFydCkpe1xuICAgIGZvcihqIGluIDE6bnJvdyhzdGFyY2hhcnQpKXtcbiAgICAgIGlmKHN0YXJjaGFydFtpLGpdPT1cIiNcIil7XG4gICAgICAgIHgxPC1jKHgxLGFzLm51bWVyaWMocDFjb2xzW2pdKSlcbiAgICAgICAgeTE8LWMoeTEsYXMubnVtZXJpYyhwMXJvd3NbaV0pKVxuICAgICAgICB4MjwtYyh4Mixhcy5udW1lcmljKHAyY29sc1tqXSkpXG4gICAgICAgIHkyPC1jKHkyLGFzLm51bWVyaWMocDJyb3dzW2ldKSl9fX1cbiAgXG4gIHBhcnQxPC1tYW5oYXR0YW4oeDEpK21hbmhhdHRhbih5MSlcbiAgcGFydDI8LW1hbmhhdHRhbih4MikrbWFuaGF0dGFuKHkyKVxuICBcbiAgYyhwYXJ0MSxwYXJ0Mil9XG5gYGAifQ== -->
 <pre class="r"><code>day11answers &lt;-function(input,p1offset=1,p2offset=2){
   starchart &lt;- data.frame(matrix(ncol=nchar(input[i]),nrow=0))
   for (i in 1:length(input)){
@@ -2080,7 +1996,7 @@ part2</code></pre>
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbImRheTExIDwtIGRheTExYW5zd2VycyhpbnB1dCwxLDkpIiwiZGF5MTEiXX0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF5MTEgPC0gZGF5MTFhbnN3ZXJzKGlucHV0LDEsOSlcbmRheTExXG5gYGAifQ== -->
 <pre class="r"><code>day11 &lt;- day11answers(input,1,9)
 day11</code></pre>
 <!-- rnb-source-end -->
