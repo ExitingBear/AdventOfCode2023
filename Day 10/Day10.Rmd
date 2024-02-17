@@ -22,7 +22,6 @@ options(scipen = 999)
 Find the furthest point from the start.
 ```{r}
 input <- read_lines("Day10Sample2.txt")
-#input <- read_lines("../../Advent2023/Day 10/Day10.txt")
 rownum<-length(input)
 colnum<-nchar(input[1])
 ```
