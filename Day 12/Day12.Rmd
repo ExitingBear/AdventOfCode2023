@@ -1,0 +1,183 @@
+---
+title: "Day 12 Notebook"
+output: html_notebook
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(dplyr)
+library(stringr)
+library(tidyverse)
+library(memoise)
+options(scipen = 999)
+```
+
+I really, really, really like nonograms and I don't solve them like this, so this was horrible.  Absolutely horrible. I could not wrap my head around it. Then I did.
+
+## Part 1
+Figure out how many options there are for each pattern.
+
+```{r}
+
+input <- read_lines("Day12Sample.txt")
+nonagrams<-data.frame(matrix(ncol=2,nrow=0))
+
+for(i in 1:length(input)){
+  x<-str_split_i(input[i]," ",1)
+  y<-str_split_i(input[i]," ",2)
+  nonagrams<-rbind(nonagrams,c(x,y))}
+colnames(nonagrams)<-c("pattern","numbers")
+
+nonagrams<-as_tibble(nonagrams)
+nonagrams<-nonagrams %>% rowwise %>% mutate(numbers=list(str_split(numbers,",")))
+nonagrams<-nonagrams %>% rowwise %>% mutate (numbers= list(as.numeric(unlist(numbers))))
+```
+
+
+And here's the recursive function that pulls this apart:
+
+```{r}
+match_gram <- function(numberlist,wholepath){
+  out <- 0
+  ### get rid of repeated '.'s
+  matchpath <- str_replace_all(wholepath,"\\.+","\\.")
+  ### get rid of leading/trailing '.'s
+  matchpath <- if(str_sub(matchpath,1,1)=="."){str_sub(matchpath,2)}else{matchpath}
+  matchpath <- if(str_sub(matchpath,-1)=="."){str_sub(matchpath,end=-2)}else{matchpath}
+  
+  ### if there are no numbers left, see if there are any "#"s if so, 0, if not 1
+  if(length(numberlist)==0){
+    if(str_detect(matchpath,"#")){}else{out<-1}
+    ### if the string is just too long, then 0
+  }else if((sum(numberlist)+length(numberlist)-1)>nchar(matchpath)){
+    out<-0}
+  else {
+    ### find the location of the first "." and the location of the first "#"
+    firstperiod <- replace_na(str_locate(matchpath,"\\.")[1],numberlist[1]+1)
+    firsthash <-replace_na(str_locate(matchpath,"#")[1],numberlist[1]+1)
+    ### if the number ends before the first period remove the first number and the first bit of string, rerun with the remaining
+    if(numberlist[1]<firstperiod){
+      ### ONLY IF the next character isn't a "#"
+      if(str_sub(matchpath,numberlist[1]+1,numberlist[1]+1)!="#"){
+        out <- match_gram(numberlist[-1],str_sub(matchpath,numberlist[1]+2))}
+      ### if the first character IS NOT a #, then plan on running with the next character later
+      if(firsthash!=1){
+        out <- out+match_gram(numberlist,str_sub(matchpath,2))}
+      out}
+    ### if the number after the first period
+    if(numberlist[1]>=firstperiod){
+      ### check to see if the hash comes first.
+      ### if it does - stop.  if it doesn't, run with the substring.
+      if(firsthash<firstperiod){}else{
+        out <- out+match_gram(numberlist,str_sub(matchpath,firstperiod+1))}}}
+  out}
+```
+
+and then run this on the input:
+
+```{r}
+nonagrams <- nonagrams %>% mutate(patternmatches = match_gram(numbers,pattern))
+part1 <- sum(nonagrams$patternmatches)
+
+part1
+```
+## Part 2
+For some reason, the elves who are radically incompetent with their data need to expand it and re-run.
+
+So first, get the new data:
+
+```{r}
+nonagrams <- nonagrams %>%
+  mutate(longpattern=paste0(pattern,"?",pattern,"?",pattern,"?",pattern,"?",pattern),
+         longnumbers=list(rep(unlist(numbers),5)))
+
+```
+
+Next, alter the function so that it can be memoised (because trying to run the above could take forever and a day)
+
+```{r}
+### helper, repeatable function:
+minimatch <- function(subnums,subpath){
+  miniout<-0
+  firstperiod <- replace_na(str_locate(subpath,"\\.")[1],subnums[1]+1)
+  firsthash <-replace_na(str_locate(subpath,"#")[1],subnums[1]+1)
+  ### if the number ends before the first period remove the first number and the first bit of string, rerun with the remaining
+  if(subnums[1]<firstperiod){
+    ###ONLY IF the next character isn't a "#"
+    if(str_sub(subpath,subnums[1]+1,subnums[1]+1)!="#"){
+      miniout <- memo_match(subnums[-1],str_sub(subpath,subnums[1]+2))}
+    ### if the first character IS NOT a #, then plan on running with the next character later
+    if(firsthash!=1){
+      miniout <-miniout+memo_match(subnums,str_sub(subpath,2))}
+    miniout}
+  ### if the number after the first period
+  if(subnums[1]>=firstperiod){
+    #check to see if the hash comes first.  if it does - stop.  if it doesn't, run with the substring.
+    if(firsthash<firstperiod){miniout<-0
+    }else{miniout <- miniout+memo_match(subnums,str_sub(subpath,firstperiod+1))}}
+  miniout}
+
+### memoised version
+memomini <- memoise(minimatch)
+
+### updated matching function
+memo_match <- function(nums,wholepath){
+  out <- 0
+  #get rid of repeated '.'s 
+  matchpath <- str_replace_all(wholepath,"\\.+","\\.")
+  #get rid of leading/trailing '.'s
+  matchpath <- if(str_sub(matchpath,1,1)=="."){str_sub(matchpath,2)}else{matchpath}
+  matchpath <- if(str_sub(matchpath,-1)=="."){str_sub(matchpath,end=-2)}else{matchpath}
+  ###if there are no numbers left, see if there are any "#"s if so, 0, if not 1
+  if(length(nums)==0){
+    if(str_detect(matchpath,"#")){}else{out<-1}
+    #if the string is just too long, then 0
+  }else if((sum(nums)+length(nums)-1)>nchar(matchpath)){
+    out<-0}
+  else {out <- memomini(nums,matchpath)}
+  out}
+```
+
+and run on the longer versions
+```{r}
+nonagrams <- nonagrams %>% mutate(longmatches = memo_match(longnumbers,longpattern))
+
+
+part2 <- sum(nonagrams$longmatches)
+part2
+
+```
+
+The single version (where it will use the memoized version for both part 1 & part 2 & the functions(memo_match(), minimatch(), & memomini())
+```{r}
+day12answers <-function(input){
+  
+  ## set up the tibble  
+  nonagrams<-data.frame(matrix(ncol=2,nrow=0))
+  for(i in 1:length(input)){
+    x<-str_split_i(input[i]," ",1)
+    y<-str_split_i(input[i]," ",2)
+    nonagrams<-rbind(nonagrams,c(x,y))}
+  colnames(nonagrams)<-c("pattern","numbers")
+  nonagrams<-as_tibble(nonagrams)
+  nonagrams<-nonagrams %>% rowwise %>% mutate(numbers=list(str_split(numbers,",")))
+  nonagrams<-nonagrams %>% rowwise %>% mutate (numbers= list(as.numeric(unlist(numbers))))
+  nonagrams <- nonagrams %>%
+    mutate(longpattern=paste0(pattern,"?",pattern,"?",pattern,"?",pattern,"?",pattern),
+           longnumbers=list(rep(unlist(numbers),5)))
+  
+  ### run the functions
+  nonagrams <- nonagrams %>% mutate(matches=memo_match(numbers,pattern))
+  nonagrams <- nonagrams %>% mutate(longmatches=memo_match(longnumbers,longpattern))
+  part1 <-sum(nonagrams$matches)
+  part2 <-sum(nonagrams$longmatches)
+  
+  c(part1,part2)}
+
+```
+
+```{r}
+day12 <-day12answers(input)
+day12
+
+```
