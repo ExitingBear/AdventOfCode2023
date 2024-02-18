@@ -1,0 +1,142 @@
+---
+title: "Day 15 Notebook"
+output: html_notebook
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(dplyr)
+library(stringr)
+library(tidyverse)
+library(igraph)
+library(ggplot2)
+library(rgl)
+library(ggraph)
+library(readr)
+library(ds4psy)
+library(numbers)
+options(scipen = 999)
+```
+
+## Part 1
+```{r}
+input <- read.csv("Day15Sample.txt",header=FALSE,sep=",")
+```
+First, create the hash algorithm:
+```{r}
+### take the ASCII value+any previous value, multiply by 17, mod 256
+hashchar <- function(x,currval=0) {
+  out <- currval+as.numeric(charToRaw(x))
+  out <- out*17
+  out <- out%%256
+  out}
+
+### move the previous value from character to character
+hashstring <- function(x){
+  out<-0
+  for(i in 1:nchar(x)){
+    out<-hashchar(str_split_i(x,"",i),out)}
+  out}
+```
+
+then hash the strings and add them
+
+```{r}
+part1<-sum(sapply(input,hashstring))
+part1
+```
+## Part 2
+
+Build a lens library (256 boxes numbered 0-255 (which will be annoying later, thanks R!)) 
+
+```{r}
+lenslib<-vector("list",length=256)
+names(lenslib)<- paste0("box",0:255)
+```
+
+Then treat each string as an instruction, either removing it from the box or adding it to the box with the correct focal length.  In order.
+
+```{r}
+handlelenses<-function(instruction,lenslib){
+  ### if the instruction ends in a "-" then remove the lens from the box (if it is there)
+  if(grepl("-",instruction,fixed=TRUE)){
+    the_key <- str_split_i(instruction,"-",1)
+    the_box <- paste0("box",hashstring(the_key))
+    ### if the box is empty, do nothing
+    if(is.null(lenslib[[the_box]])){
+    }else if(the_key %in% lenslib[[the_box]]$k){
+      lenslib[[the_box]] <- lenslib[[the_box]] %>% filter(k!=the_key)}
+  }else{
+  ### if the instruction has an "=" then
+    filelens<-str_split(instruction,"=")[[1]]
+    the_key<-filelens[1]
+    focallength<-filelens[2]
+    the_box<-paste0("box",hashstring(the_key))
+    ### if the box is empty, create a data.frame and enter the key/focallength pair
+    if(is.null(lenslib[[the_box]])){
+      mb<-data.frame()
+      mb<-rbind(mb,filelens)
+      colnames(mb)<-c("k","n")
+      lenslib[[the_box]]<-mb
+    ### if the key is in the box, then replace it  
+    }else if(the_key %in% lenslib[[the_box]]$k){
+      lenslib[[the_box]]<-lenslib[[the_box]]%>% mutate(n=ifelse(k==the_key,focallength,n))
+    }else{
+      ### if the key is not in the box already, add it to the end.
+      lenslib[[the_box]]<-rbind(lenslib[[the_box]],filelens)
+      colnames(lenslib[[the_box]])<-c("k","n")}}
+  lenslib}
+  
+```
+
+run this on all of the instructions:
+
+```{r}
+for (i in 1:length(input)){
+  lenslib <-handlelenses(input[i],lenslib)}
+```
+
+Then add focusing power for all of the lenses in all of the boxes:
+
+```{r}
+### this finds the focus in each box
+ boxfocus<-function(lensbox){
+   rn<-nrow(lensbox)
+   if(rn==0 || is.null(rn)){out<-0}else{
+     lensbox$n <- as.numeric(lensbox$n)
+     out<-0
+     for(i in 1:length(lensbox$n)){
+       out<-out+(i*lensbox$n[i])}}
+   out}
+### get a vector of focal points
+fp <- sapply(lenslib,boxfocus)
+###
+part2<-sum(fp*(c(1:256)))
+part2
+```
+
+Single function (that needs all of the above functions to work)
+
+```{r}
+day15answers <-function(input){
+  ###part 1
+  part1<-sum(sapply(input,hashstring))
+  
+  ###set up for part2
+  lenslib<-vector("list",length=256)
+  names(lenslib)<- paste0("box",0:255)
+  
+  ### run the instructions on the library
+  for (i in 1:length(input)){
+    lenslib <-handlelenses(input[i],lenslib)}
+  
+  part2 <- sum(sapply(lenslib,boxfocus)*c(1:256))
+  
+  c(part1,part2)}
+
+```
+
+```{r}
+day15 <- day15answers(input)
+day15
+```

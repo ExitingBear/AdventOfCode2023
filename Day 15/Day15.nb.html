@@ -1758,15 +1758,16 @@ display: none;
 <h2>Part 1</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiaW5wdXQgPC0gcmVhZC5jc3YoXCJEYXkxNVNhbXBsZS50eHRcIixoZWFkZXI9RkFMU0Usc2VwPVwiLFwiKSJ9 -->
-<pre class="r"><code>input &lt;- read.csv(&quot;Day15Sample.txt&quot;,header=FALSE,sep=&quot;,&quot;)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaW5wdXQgPC0gcmVhZC5jc3YoXCJEYXkxNVNhbXBsZS50eHRcIixoZWFkZXI9RkFMU0Usc2VwPVwiLFwiKVxuI2lucHV0IDwtIHJlYWQuY3N2KFwiLi4vLi4vQWR2ZW50MjAyMy9EYXkxNS50eHRcIixoZWFkZXI9RkFMU0Usc2VwPVwiLFwiKVxuYGBgIn0= -->
+<pre class="r"><code>input &lt;- read.csv(&quot;Day15Sample.txt&quot;,header=FALSE,sep=&quot;,&quot;)
+#input &lt;- read.csv(&quot;../../Advent2023/Day15.txt&quot;,header=FALSE,sep=&quot;,&quot;)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>First, create the hash algorithm:</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbIiMjIyB0YWtlIHRoZSBBU0NJSSB2YWx1ZSthbnkgcHJldmlvdXMgdmFsdWUsIG11bHRpcGx5IGJ5IDE3LCBtb2QgMjU2IiwiaGFzaGNoYXIgPC0gZnVuY3Rpb24oeCxjdXJydmFsPTApIHtcbiAgb3V0IDwtIGN1cnJ2YWwrYXMubnVtZXJpYyhjaGFyVG9SYXcoeCkpXG4gIG91dCA8LSBvdXQqMTdcbiAgb3V0IDwtIG91dCUlMjU2XG4gIG91dH0iLCIiLCIjIyMgbW92ZSB0aGUgcHJldmlvdXMgdmFsdWUgZnJvbSBjaGFyYWN0ZXIgdG8gY2hhcmFjdGVyIiwiaGFzaHN0cmluZyA8LSBmdW5jdGlvbih4KXtcbiAgb3V0PC0wXG4gIGZvcihpIGluIDE6bmNoYXIoeCkpe1xuICAgIG91dDwtaGFzaGNoYXIoc3RyX3NwbGl0X2koeCxcIlwiLGkpLG91dCl9XG4gIG91dH0iXX0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyMjIHRha2UgdGhlIEFTQ0lJIHZhbHVlK2FueSBwcmV2aW91cyB2YWx1ZSwgbXVsdGlwbHkgYnkgMTcsIG1vZCAyNTZcbmhhc2hjaGFyIDwtIGZ1bmN0aW9uKHgsY3VycnZhbD0wKSB7XG4gIG91dCA8LSBjdXJydmFsK2FzLm51bWVyaWMoY2hhclRvUmF3KHgpKVxuICBvdXQgPC0gb3V0KjE3XG4gIG91dCA8LSBvdXQlJTI1NlxuICBvdXR9XG5cbiMjIyBtb3ZlIHRoZSBwcmV2aW91cyB2YWx1ZSBmcm9tIGNoYXJhY3RlciB0byBjaGFyYWN0ZXJcbmhhc2hzdHJpbmcgPC0gZnVuY3Rpb24oeCl7XG4gIG91dDwtMFxuICBmb3IoaSBpbiAxOm5jaGFyKHgpKXtcbiAgICBvdXQ8LWhhc2hjaGFyKHN0cl9zcGxpdF9pKHgsXCJcIixpKSxvdXQpfVxuICBvdXR9XG5gYGAifQ== -->
 <pre class="r"><code>### take the ASCII value+any previous value, multiply by 17, mod 256
 hashchar &lt;- function(x,currval=0) {
   out &lt;- currval+as.numeric(charToRaw(x))
@@ -1786,7 +1787,7 @@ hashstring &lt;- function(x){
 <p>then hash the strings and add them</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbInBhcnQxPC1zdW0oc2FwcGx5KGlucHV0LGhhc2hzdHJpbmcpKSIsInBhcnQxIl19 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGFydDE8LXN1bShzYXBwbHkoaW5wdXQsaGFzaHN0cmluZykpXG5wYXJ0MVxuYGBgIn0= -->
 <pre class="r"><code>part1&lt;-sum(sapply(input,hashstring))
 part1</code></pre>
 <!-- rnb-source-end -->
@@ -1802,7 +1803,7 @@ part1</code></pre>
 annoying later, thanks R!))</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbImxlbnNsaWI8LXZlY3RvcihcImxpc3RcIixsZW5ndGg9MjU2KSIsIm5hbWVzKGxlbnNsaWIpPC0gcGFzdGUwKFwiYm94XCIsMDoyNTUpIl19 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGVuc2xpYjwtdmVjdG9yKFwibGlzdFwiLGxlbmd0aD0yNTYpXG5uYW1lcyhsZW5zbGliKTwtIHBhc3RlMChcImJveFwiLDA6MjU1KVxuYGBgIn0= -->
 <pre class="r"><code>lenslib&lt;-vector(&quot;list&quot;,length=256)
 names(lenslib)&lt;- paste0(&quot;box&quot;,0:255)</code></pre>
 <!-- rnb-source-end -->
@@ -1812,7 +1813,7 @@ names(lenslib)&lt;- paste0(&quot;box&quot;,0:255)</code></pre>
 box or adding it to the box with the correct focal length. In order.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiaGFuZGxlbGVuc2VzPC1mdW5jdGlvbihpbnN0cnVjdGlvbixsZW5zbGliKXtcbiAgIyMjIGlmIHRoZSBpbnN0cnVjdGlvbiBlbmRzIGluIGEgXCItXCIgdGhlbiByZW1vdmUgdGhlIGxlbnMgZnJvbSB0aGUgYm94IChpZiBpdCBpcyB0aGVyZSlcbiAgaWYoZ3JlcGwoXCItXCIsaW5zdHJ1Y3Rpb24sZml4ZWQ9VFJVRSkpe1xuICAgIHRoZV9rZXkgPC0gc3RyX3NwbGl0X2koaW5zdHJ1Y3Rpb24sXCItXCIsMSlcbiAgICB0aGVfYm94IDwtIHBhc3RlMChcImJveFwiLGhhc2hzdHJpbmcodGhlX2tleSkpXG4gICAgIyMjIGlmIHRoZSBib3ggaXMgZW1wdHksIGRvIG5vdGhpbmdcbiAgICBpZihpcy5udWxsKGxlbnNsaWJbW3RoZV9ib3hdXSkpe1xuICAgIH1lbHNlIGlmKHRoZV9rZXkgJWluJSBsZW5zbGliW1t0aGVfYm94XV0kayl7XG4gICAgICBsZW5zbGliW1t0aGVfYm94XV0gPC0gbGVuc2xpYltbdGhlX2JveF1dICU+JSBmaWx0ZXIoayE9dGhlX2tleSl9XG4gIH1lbHNle1xuICAjIyMgaWYgdGhlIGluc3RydWN0aW9uIGhhcyBhbiBcIj1cIiB0aGVuXG4gICAgZmlsZWxlbnM8LXN0cl9zcGxpdChpbnN0cnVjdGlvbixcIj1cIilbWzFdXVxuICAgIHRoZV9rZXk8LWZpbGVsZW5zWzFdXG4gICAgZm9jYWxsZW5ndGg8LWZpbGVsZW5zWzJdXG4gICAgdGhlX2JveDwtcGFzdGUwKFwiYm94XCIsaGFzaHN0cmluZyh0aGVfa2V5KSlcbiAgICAjIyMgaWYgdGhlIGJveCBpcyBlbXB0eSwgY3JlYXRlIGEgZGF0YS5mcmFtZSBhbmQgZW50ZXIgdGhlIGtleS9mb2NhbGxlbmd0aCBwYWlyXG4gICAgaWYoaXMubnVsbChsZW5zbGliW1t0aGVfYm94XV0pKXtcbiAgICAgIG1iPC1kYXRhLmZyYW1lKClcbiAgICAgIG1iPC1yYmluZChtYixmaWxlbGVucylcbiAgICAgIGNvbG5hbWVzKG1iKTwtYyhcImtcIixcIm5cIilcbiAgICAgIGxlbnNsaWJbW3RoZV9ib3hdXTwtbWJcbiAgICAjIyMgaWYgdGhlIGtleSBpcyBpbiB0aGUgYm94LCB0aGVuIHJlcGxhY2UgaXQgIFxuICAgIH1lbHNlIGlmKHRoZV9rZXkgJWluJSBsZW5zbGliW1t0aGVfYm94XV0kayl7XG4gICAgICBsZW5zbGliW1t0aGVfYm94XV08LWxlbnNsaWJbW3RoZV9ib3hdXSU+JSBtdXRhdGUobj1pZmVsc2Uoaz09dGhlX2tleSxmb2NhbGxlbmd0aCxuKSlcbiAgICB9ZWxzZXtcbiAgICAgICMjIyBpZiB0aGUga2V5IGlzIG5vdCBpbiB0aGUgYm94IGFscmVhZHksIGFkZCBpdCB0byB0aGUgZW5kLlxuICAgICAgbGVuc2xpYltbdGhlX2JveF1dPC1yYmluZChsZW5zbGliW1t0aGVfYm94XV0sZmlsZWxlbnMpXG4gICAgICBjb2xuYW1lcyhsZW5zbGliW1t0aGVfYm94XV0pPC1jKFwia1wiLFwiblwiKX19XG4gIGxlbnNsaWJ9In0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaGFuZGxlbGVuc2VzPC1mdW5jdGlvbihpbnN0cnVjdGlvbixsZW5zbGliKXtcbiAgIyMjIGlmIHRoZSBpbnN0cnVjdGlvbiBlbmRzIGluIGEgXCItXCIgdGhlbiByZW1vdmUgdGhlIGxlbnMgZnJvbSB0aGUgYm94IChpZiBpdCBpcyB0aGVyZSlcbiAgaWYoZ3JlcGwoXCItXCIsaW5zdHJ1Y3Rpb24sZml4ZWQ9VFJVRSkpe1xuICAgIHRoZV9rZXkgPC0gc3RyX3NwbGl0X2koaW5zdHJ1Y3Rpb24sXCItXCIsMSlcbiAgICB0aGVfYm94IDwtIHBhc3RlMChcImJveFwiLGhhc2hzdHJpbmcodGhlX2tleSkpXG4gICAgIyMjIGlmIHRoZSBib3ggaXMgZW1wdHksIGRvIG5vdGhpbmdcbiAgICBpZihpcy5udWxsKGxlbnNsaWJbW3RoZV9ib3hdXSkpe1xuICAgIH1lbHNlIGlmKHRoZV9rZXkgJWluJSBsZW5zbGliW1t0aGVfYm94XV0kayl7XG4gICAgICBsZW5zbGliW1t0aGVfYm94XV0gPC0gbGVuc2xpYltbdGhlX2JveF1dICU+JSBmaWx0ZXIoayE9dGhlX2tleSl9XG4gIH1lbHNle1xuICAjIyMgaWYgdGhlIGluc3RydWN0aW9uIGhhcyBhbiBcIj1cIiB0aGVuXG4gICAgZmlsZWxlbnM8LXN0cl9zcGxpdChpbnN0cnVjdGlvbixcIj1cIilbWzFdXVxuICAgIHRoZV9rZXk8LWZpbGVsZW5zWzFdXG4gICAgZm9jYWxsZW5ndGg8LWZpbGVsZW5zWzJdXG4gICAgdGhlX2JveDwtcGFzdGUwKFwiYm94XCIsaGFzaHN0cmluZyh0aGVfa2V5KSlcbiAgICAjIyMgaWYgdGhlIGJveCBpcyBlbXB0eSwgY3JlYXRlIGEgZGF0YS5mcmFtZSBhbmQgZW50ZXIgdGhlIGtleS9mb2NhbGxlbmd0aCBwYWlyXG4gICAgaWYoaXMubnVsbChsZW5zbGliW1t0aGVfYm94XV0pKXtcbiAgICAgIG1iPC1kYXRhLmZyYW1lKClcbiAgICAgIG1iPC1yYmluZChtYixmaWxlbGVucylcbiAgICAgIGNvbG5hbWVzKG1iKTwtYyhcImtcIixcIm5cIilcbiAgICAgIGxlbnNsaWJbW3RoZV9ib3hdXTwtbWJcbiAgICAjIyMgaWYgdGhlIGtleSBpcyBpbiB0aGUgYm94LCB0aGVuIHJlcGxhY2UgaXQgIFxuICAgIH1lbHNlIGlmKHRoZV9rZXkgJWluJSBsZW5zbGliW1t0aGVfYm94XV0kayl7XG4gICAgICBsZW5zbGliW1t0aGVfYm94XV08LWxlbnNsaWJbW3RoZV9ib3hdXSU+JSBtdXRhdGUobj1pZmVsc2Uoaz09dGhlX2tleSxmb2NhbGxlbmd0aCxuKSlcbiAgICB9ZWxzZXtcbiAgICAgICMjIyBpZiB0aGUga2V5IGlzIG5vdCBpbiB0aGUgYm94IGFscmVhZHksIGFkZCBpdCB0byB0aGUgZW5kLlxuICAgICAgbGVuc2xpYltbdGhlX2JveF1dPC1yYmluZChsZW5zbGliW1t0aGVfYm94XV0sZmlsZWxlbnMpXG4gICAgICBjb2xuYW1lcyhsZW5zbGliW1t0aGVfYm94XV0pPC1jKFwia1wiLFwiblwiKX19XG4gIGxlbnNsaWJ9XG4gIFxuYGBgIn0= -->
 <pre class="r"><code>handlelenses&lt;-function(instruction,lenslib){
   ### if the instruction ends in a &quot;-&quot; then remove the lens from the box (if it is there)
   if(grepl(&quot;-&quot;,instruction,fixed=TRUE)){
@@ -1841,14 +1842,15 @@ box or adding it to the box with the correct focal length. In order.</p>
       ### if the key is not in the box already, add it to the end.
       lenslib[[the_box]]&lt;-rbind(lenslib[[the_box]],filelens)
       colnames(lenslib[[the_box]])&lt;-c(&quot;k&quot;,&quot;n&quot;)}}
-  lenslib}</code></pre>
+  lenslib}
+  </code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>run this on all of the instructions:</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiZm9yIChpIGluIDE6bGVuZ3RoKGlucHV0KSl7XG4gIGxlbnNsaWIgPC1oYW5kbGVsZW5zZXMoaW5wdXRbaV0sbGVuc2xpYil9In0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZm9yIChpIGluIDE6bGVuZ3RoKGlucHV0KSl7XG4gIGxlbnNsaWIgPC1oYW5kbGVsZW5zZXMoaW5wdXRbaV0sbGVuc2xpYil9XG5gYGAifQ== -->
 <pre class="r"><code>for (i in 1:length(input)){
   lenslib &lt;-handlelenses(input[i],lenslib)}</code></pre>
 <!-- rnb-source-end -->
@@ -1858,7 +1860,7 @@ box or adding it to the box with the correct focal length. In order.</p>
 boxes:</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbIiMjIyB0aGlzIGZpbmRzIHRoZSBmb2N1cyBpbiBlYWNoIGJveCIsIiBib3hmb2N1czwtZnVuY3Rpb24obGVuc2JveCl7XG4gICBybjwtbnJvdyhsZW5zYm94KVxuICAgaWYocm49PTAgfHwgaXMubnVsbChybikpe291dDwtMH1lbHNle1xuICAgICBsZW5zYm94JG4gPC0gYXMubnVtZXJpYyhsZW5zYm94JG4pXG4gICAgIG91dDwtMFxuICAgICBmb3IoaSBpbiAxOmxlbmd0aChsZW5zYm94JG4pKXtcbiAgICAgICBvdXQ8LW91dCsoaSpsZW5zYm94JG5baV0pfX1cbiAgIG91dH0iLCIjIyMgZ2V0IGEgdmVjdG9yIG9mIGZvY2FsIHBvaW50cyIsImZwIDwtIHNhcHBseShsZW5zbGliLGJveGZvY3VzKSIsIiMjIyIsInBhcnQyPC1zdW0oZnAqKGMoMToyNTYpKSkiLCJwYXJ0MiJdfQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyMjIHRoaXMgZmluZHMgdGhlIGZvY3VzIGluIGVhY2ggYm94XG4gYm94Zm9jdXM8LWZ1bmN0aW9uKGxlbnNib3gpe1xuICAgcm48LW5yb3cobGVuc2JveClcbiAgIGlmKHJuPT0wIHx8IGlzLm51bGwocm4pKXtvdXQ8LTB9ZWxzZXtcbiAgICAgbGVuc2JveCRuIDwtIGFzLm51bWVyaWMobGVuc2JveCRuKVxuICAgICBvdXQ8LTBcbiAgICAgZm9yKGkgaW4gMTpsZW5ndGgobGVuc2JveCRuKSl7XG4gICAgICAgb3V0PC1vdXQrKGkqbGVuc2JveCRuW2ldKX19XG4gICBvdXR9XG4jIyMgZ2V0IGEgdmVjdG9yIG9mIGZvY2FsIHBvaW50c1xuZnAgPC0gc2FwcGx5KGxlbnNsaWIsYm94Zm9jdXMpXG4jIyNcbnBhcnQyPC1zdW0oZnAqKGMoMToyNTYpKSlcbnBhcnQyXG5gYGAifQ== -->
 <pre class="r"><code>### this finds the focus in each box
  boxfocus&lt;-function(lensbox){
    rn&lt;-nrow(lensbox)
@@ -1882,7 +1884,7 @@ part2</code></pre>
 <p>Single function (that needs all of the above functions to work)</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiZGF5MTVhbnN3ZXJzIDwtZnVuY3Rpb24oaW5wdXQpe1xuICAjIyNwYXJ0IDFcbiAgcGFydDE8LXN1bShzYXBwbHkoaW5wdXQsaGFzaHN0cmluZykpXG4gIFxuICAjIyNzZXQgdXAgZm9yIHBhcnQyXG4gIGxlbnNsaWI8LXZlY3RvcihcImxpc3RcIixsZW5ndGg9MjU2KVxuICBuYW1lcyhsZW5zbGliKTwtIHBhc3RlMChcImJveFwiLDA6MjU1KVxuICBcbiAgIyMjIHJ1biB0aGUgaW5zdHJ1Y3Rpb25zIG9uIHRoZSBsaWJyYXJ5XG4gIGZvciAoaSBpbiAxOmxlbmd0aChpbnB1dCkpe1xuICAgIGxlbnNsaWIgPC1oYW5kbGVsZW5zZXMoaW5wdXRbaV0sbGVuc2xpYil9XG4gIFxuICBwYXJ0MiA8LSBzdW0oc2FwcGx5KGxlbnNsaWIsYm94Zm9jdXMpKmMoMToyNTYpKVxuICBcbiAgYyhwYXJ0MSxwYXJ0Mil9In0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF5MTVhbnN3ZXJzIDwtZnVuY3Rpb24oaW5wdXQpe1xuICAjIyNwYXJ0IDFcbiAgcGFydDE8LXN1bShzYXBwbHkoaW5wdXQsaGFzaHN0cmluZykpXG4gIFxuICAjIyNzZXQgdXAgZm9yIHBhcnQyXG4gIGxlbnNsaWI8LXZlY3RvcihcImxpc3RcIixsZW5ndGg9MjU2KVxuICBuYW1lcyhsZW5zbGliKTwtIHBhc3RlMChcImJveFwiLDA6MjU1KVxuICBcbiAgIyMjIHJ1biB0aGUgaW5zdHJ1Y3Rpb25zIG9uIHRoZSBsaWJyYXJ5XG4gIGZvciAoaSBpbiAxOmxlbmd0aChpbnB1dCkpe1xuICAgIGxlbnNsaWIgPC1oYW5kbGVsZW5zZXMoaW5wdXRbaV0sbGVuc2xpYil9XG4gIFxuICBwYXJ0MiA8LSBzdW0oc2FwcGx5KGxlbnNsaWIsYm94Zm9jdXMpKmMoMToyNTYpKVxuICBcbiAgYyhwYXJ0MSxwYXJ0Mil9XG5cbmBgYCJ9 -->
 <pre class="r"><code>day15answers &lt;-function(input){
   ###part 1
   part1&lt;-sum(sapply(input,hashstring))
@@ -1897,13 +1899,14 @@ part2</code></pre>
   
   part2 &lt;- sum(sapply(lenslib,boxfocus)*c(1:256))
   
-  c(part1,part2)}</code></pre>
+  c(part1,part2)}
+</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbImRheTE1IDwtIGRheTE1YW5zd2VycyhpbnB1dCkiLCJkYXkxNSJdfQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF5MTUgPC0gZGF5MTVhbnN3ZXJzKGlucHV0KVxuZGF5MTVcbmBgYCJ9 -->
 <pre class="r"><code>day15 &lt;- day15answers(input)
 day15</code></pre>
 <!-- rnb-source-end -->
