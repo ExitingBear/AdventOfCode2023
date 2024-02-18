@@ -1,0 +1,237 @@
+---
+title: "Day 13 Notebook"
+output: html_notebook
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(dplyr)
+library(stringr)
+library(tidyverse)
+library(igraph)
+library(ggplot2)
+library(rgl)
+library(ggraph)
+library(readr)
+library(ds4psy)
+library(numbers)
+options(scipen = 999)
+```
+
+
+## Part 1
+Find the points of reflection for each frame
+
+Start by setting up the frames:
+```{r}
+input <- read_lines("Day13Sample.txt")
+blanklines <- c(which(input==""))
+starts<-c(1,blanklines+1)
+ends<-c(blanklines-1,length(input))
+frames<-list()
+
+for(i in 1:length(starts)){
+    dfm <- matrix(nrow=0,ncol=nchar(input[starts[i]]))
+    for(j in starts[i]:ends[i]){
+      dfm <- rbind(dfm,c(unlist(str_split(input[j],""))))}
+    dfm<-data.frame(dfm)
+    frames<-append(frames,list(dfm))}
+```
+
+Now to create two functions to find a point of reflection
+
+```{r}
+reflecth<-function(x){
+  horlist<-c()
+  for (i in 1:(nrow(x)-1)){
+    ### for each row, see if it is the same as the next row
+    if(all(x[i,]==x[(i+1),])){
+      j<-i-1
+      k<-i+2
+      additin<-TRUE
+      ### if so, start checking the rows above and below to see if they're also mirrors - until you reach an edge.
+      while(j>=1 && k<=(nrow(x))&&additin){
+        if((any(x[j,]!=x[k,]))){additin<-FALSE}
+        j<-j-1
+        k<-k+1}
+      ###if all they are all mirrors, add to the list of horizontal reflections
+      if (additin){horlist <- c(horlist,i)}}}
+  if(is.null(horlist)){horlist<-c(0)}
+  horlist}
+
+reflectv<-function(x){
+  vertlist<-c()
+  for (i in 1:(ncol(x)-1)){
+    ### for each column, see if it reflects the column next to it.
+    if(all((x[,i]==x[,(i+1)]))){
+      ### if so, check columns out to the right & left until you hit an edge.
+      j<-i-1
+      k<-i+2
+      additin<-TRUE
+      while(j>=1 && k<=(ncol(x))&&additin){
+        if(!(all(x[,j]==x[,k]))){additin<-FALSE}
+        j<-j-1
+        k<-k+1}
+      if(additin==TRUE){vertlist<-c(vertlist,i)}}}
+  if(is.null(vertlist)){vertlist<-c(0)}
+  vertlist}
+```
+Find the lists (it is possible there is more than one reflection for horizontal or vertical or both)
+```{r}
+horizontals <- sapply(frames,reflecth)
+verticals <- sapply(frames,reflectv)
+
+part1<-sum(100*horizontals+verticals)
+part1
+```
+## Part 2
+
+It's not the elves fault this time - there's an error, so the goal is to find things that are *almost* mirror images - at most one error.
+
+This means a slight change to the functions:
+
+```{r}
+### This is a little sloppy. It doesn't ensure that the error in h & v are the same. And it worked, so I'm letting it go.  
+
+smudgeh<-function(x){
+  horlist<-c()
+  for (i in 1:(nrow(x)-1)){
+    ##smudgecount is the number of differences between lines.  if it is 0 or 1, keep going.
+    smudgecount<-sum(x[i,]!=x[(i+1),])
+    if(smudgecount<=1){
+      j<-i-1
+      k<-i+2
+      additin<-TRUE
+      while(j>=1 && k<=(nrow(x))&&additin){
+        ##add the number of differences between the next two lines. if it is still at 0 or 1, keep going.
+        smudgecount<-smudgecount+sum(x[j,]!=x[k,])
+        if(smudgecount>1){
+          additin<-FALSE}
+        j<-j-1
+        k<-k+1}
+      ## only add if exactly 1 smudge
+      if (additin&&smudgecount==1){horlist <- c(horlist,i)}}}
+  if(is.null(horlist)){horlist <- c(0)}
+  horlist}
+
+
+smudgev<-function(x){
+  vertlist<-c()
+  for (i in 1:(ncol(x)-1)){
+    smudgecount<-sum(x[,i]!=x[,(i+1)])
+    if(smudgecount<=1){
+      j<-i-1
+      k<-i+2
+      additin<-TRUE
+      while(j>=1 && k<=(ncol(x))&&additin){
+        smudgecount<-smudgecount+sum(x[,j]!=x[,k])
+        if(smudgecount>1){
+          additin<-FALSE}
+        j<-j-1
+        k<-k+1}
+      ## only add if exactly 1 smudge
+      if(additin&&smudgecount==1){vertlist<-c(vertlist,i)}}}
+  
+  if(is.null(vertlist)){vertlist <- c(0)}
+  vertlist}
+```
+
+and again run and add them together for part 2
+
+```{r}
+horiz_smudge <- sapply(frames,smudgeh)
+vert_smudge <- sapply(frames,smudgev)
+
+part2<-sum(100*horiz_smudge+vert_smudge)
+part2
+```
+
+And the single function (it uses a variant of the smudge functions)
+
+
+```{r}
+###helpful functions
+
+comboh<-function(x){
+  horlist<-c()
+  smudgelist<-c()
+  for (i in 1:(nrow(x)-1)){
+    ##smudgecount is the number of differences between lines.  if it is 0 or 1, keep going.
+    smudgecount<-sum(x[i,]!=x[(i+1),])
+    if(smudgecount<=1){
+      j<-i-1
+      k<-i+2
+      additin<-TRUE
+      while(j>=1 && k<=(nrow(x))&&additin){
+        ##add the number of differences between the next two lines. if it is still at 0 or 1, keep going.
+        smudgecount<-smudgecount+sum(x[j,]!=x[k,])
+        if(smudgecount>1){
+          additin<-FALSE}
+        j<-j-1
+        k<-k+1}
+      ## only add if exactly 1 smudge
+      if (additin&&smudgecount==0){horlist <- c(horlist,i)}
+      if (additin&&smudgecount==1){smudgelist <- c(smudgelist,i)}}}
+  if(is.null(horlist)){horlist <- c(0)}
+  if(is.null(smudgelist)){smudgelist <- c(0)}
+  append(horlist,smudgelist)}
+
+
+combov<-function(x){
+  vertlist<-c()
+  smudgelist<-c()
+  for (i in 1:(ncol(x)-1)){
+    smudgecount<-sum(x[,i]!=x[,(i+1)])
+    if(smudgecount<=1){
+      j<-i-1
+      k<-i+2
+      additin<-TRUE
+      while(j>=1 && k<=(ncol(x))&&additin){
+        smudgecount<-smudgecount+sum(x[,j]!=x[,k])
+        if(smudgecount>1){
+          additin<-FALSE}
+        j<-j-1
+        k<-k+1}
+      ## only add if exactly 1 smudge
+      if(additin&&smudgecount==0){vertlist<-c(vertlist,i)}
+      if(additin&&smudgecount==1){smudgelist<-c(smudgelist,i)}}}
+  if(is.null(smudgelist)){smudgelist <- c(0)}
+  if(is.null(vertlist)){vertlist <- c(0)}
+  append(vertlist,smudgelist)}
+
+### main function
+
+day13answers <-function(input){
+  ### setup  
+  
+  blanklines <- c(which(input==""))
+  starts<-c(1,blanklines+1)
+  ends<-c(blanklines-1,length(input))
+  frames<-list()
+  
+  for(i in 1:length(starts)){
+    dfm <- matrix(nrow=0,ncol=nchar(input[starts[i]]))
+    for(j in starts[i]:ends[i]){
+      dfm <- rbind(dfm,c(unlist(str_split(input[j],""))))}
+    dfm<-data.frame(dfm)
+    frames<-append(frames,list(dfm))}
+
+  ### get the hs & vs
+  hs<-lapply(frames,comboh)
+  vs<-lapply(frames,combov)
+
+  p1h<-sum(sapply(hs,function(x){x[1]}))
+  p2h<-sum(sapply(hs,function(x){x[2]}))
+  p1v<-sum(sapply(vs,function(x){x[1]}))
+  p2v<-sum(sapply(vs,function(x){x[2]}))
+    
+  part1 <-100*p1h+p1v
+  part2 <-100*p2h+p2v
+  c(part1,part2)}
+
+```
+
+```{r}
+day13 <-day13answers(input)
+day13
+```
