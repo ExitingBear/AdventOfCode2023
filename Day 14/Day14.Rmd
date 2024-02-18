@@ -1,0 +1,221 @@
+---
+title: "Day 14 Notebook"
+output: html_notebook
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(dplyr)
+library(stringr)
+library(tidyverse)
+library(igraph)
+library(ggplot2)
+library(rgl)
+library(ggraph)
+library(readr)
+library(ds4psy)
+library(numbers)
+options(scipen = 999)
+```
+
+
+## Part 1
+I'd love to say this was my idea, but it was not.  I stole it (my code, but not my idea, not even a little, however the implementation is tortured enough that the person whose idea it was might disavow it if they ever run across this.)
+
+Anyway - start with preparing the dish
+
+```{r}
+input <- read_lines("Day14Sample.txt")
+
+dish <- data.frame(matrix(ncol=nchar(input[1]),nrow=0))
+
+for (i in 1:length(input)){
+  dish <- rbind(dish,str_split(input[i],"")[[1]])}
+dish
+```
+
+Start with making a function that will tilt the dish north:
+
+This basically creates a transformation matrix (showing how far to move an "O"), then a return matrix that actually moves it.
+The transform works by adding cumulatively adding 1 every time there's a blank space (".") or resetting every time there's a cube rock ("#").
+
+
+```{r}
+tiltnorth <- function(d){
+  ## create the baseline
+  refline <- lapply(d[1,],function(x){
+    if(x=="#") {0} else if(x==".") {1}else{0}})
+  
+  ## create the adder
+  addit <- data.frame(matrix(nrow=(nrow(d)-1),ncol=ncol(d)))
+  addit <- rbind(unlist(refline),addit)
+  
+  #  colnames(addit)<-1:(ncol(y))
+  for(i in 2:nrow(d)){
+    for (j in 1:ncol(d)){
+      if(d[i,j]=="#"){addit[i,j]<-0
+      }else if (d[i,j]=="O"){addit[i,j]<-addit[(i-1),j]
+      }else if(d[i,j]=="."){addit[i,j]<-addit[(i-1),j]+1
+      ### if something is wrong, just put in 34
+      }else{addit[i,j]<- 34}}}
+  
+  
+  ## create the return matrix
+  returndish<-data.frame(matrix(".",ncol=ncol(d),nrow=nrow(d)))
+  
+  ## update the return matrix  
+  for(i in 1:nrow(d)){
+    for (j in 1:ncol(d)){
+      if(d[i,j]=="O"||d[i,j]=="#"){
+        returndish[(i-addit[i,j]),j] <-d[i,j]}}}
+  returndish}
+```
+
+running on the dish:
+
+```{r}
+tilteddish <-tiltnorth(dish)
+tilteddish
+```
+And then a function to weigh the dish:
+
+```{r}
+findload<-function(d){
+  rows <- nrow(d)
+  dishload <- 0
+  for(i in 1:rows){
+    dishload<-dishload+(sum(d[i,]=="O")*(rows+1-i))}
+  dishload}
+```
+
+Part 1 is findload for the tilted dish
+
+```{r}
+part1<-findload(tilteddish)
+part1
+```
+## Part 2
+
+So, what happens after it tilts in all four directions a billion times (really?  a billion?)
+
+First, create the functions to tilt to the east, south, and west (they all work the same as tiltnorth- then the function to run all of those in a row:
+
+```{r}
+tiltsouth <- function(d){
+  ## create the baseline
+  refline <- lapply(d[nrow(d),],function(x){
+    if(x=="#") {0} else if(x==".") {1}else{0}})
+  
+  ## create the adder
+  addit <- data.frame(matrix(nrow=(nrow(d)-1),ncol=ncol(d)))
+  addit <- rbind(addit,unlist(refline))
+  
+  for(i in (nrow(d)-1):1){
+    for (j in 1:ncol(d)){
+      if(d[i,j]=="#"){addit[i,j]<-0
+      }else if (d[i,j]=="O"){addit[i,j]<-addit[(i+1),j]
+      }else if(d[i,j]=="."){addit[i,j]<-addit[(i+1),j]+1
+      ### if something is wrong, just put in 34
+      
+      }else{addit[i,j]<- 34}}}
+  
+  
+  ## create the return matrix
+  returndish<-data.frame(matrix(".",ncol=ncol(d),nrow=nrow(d)))
+  
+  ## update the return matrix
+  for(i in nrow(d):1){
+    for (j in 1:ncol(d)){
+      if(d[i,j]=="O"||d[i,j]=="#"){
+        returndish[(i+addit[i,j]),j] <-d[i,j]}}}
+  returndish}
+
+tiltwest <- function(d){
+  ## create the baseline
+  refline <- lapply(d[,1],function(x){
+    if(x=="#") {0} else if(x==".") {1}else{0}})
+  
+  ## create the adder
+  addit <- data.frame(matrix(nrow=nrow(d),ncol=(ncol(d)-1)))
+  addit <- cbind(unlist(refline),addit)
+  
+  for(j in 2:ncol(d)){
+    for (i in 1:nrow(d)){
+      if(d[i,j]=="#"){addit[i,j]<-0
+      }else if (d[i,j]=="O"){addit[i,j]<-addit[i,(j-1)]
+      }else if(d[i,j]=="."){addit[i,j]<-addit[i,(j-1)]+1
+      ### if something is wrong, just put in 34
+      }else{addit[i,j]<- 34}}}
+  
+  
+  ## create the return matrix
+  returndish<-data.frame(matrix(".",ncol=ncol(d),nrow=nrow(d)))
+  
+  for(j in 1:ncol(d)){
+    for (i in 1:nrow(d)){
+      if(d[i,j]=="O"||d[i,j]=="#"){
+        returndish[i,j-addit[i,j]]<-d[i,j]}}}
+  returndish}
+
+tilteast <- function(d){
+  ## create the baseline
+  refline <- lapply(d[,ncol(d)],function(x){
+    if(x=="#") {0} else if(x==".") {1}else{0}})
+  
+  ## create the adder
+  addit <- data.frame(matrix(nrow=nrow(d),ncol=(ncol(d)-1)))
+  addit <- cbind(addit,unlist(refline))
+  
+  for(j in (ncol(d)-1):1){
+    for (i in 1:nrow(d)){
+      if(d[i,j]=="#"){addit[i,j]<-0
+      }else if (d[i,j]=="O"){addit[i,j]<-addit[i,(j+1)]
+      }else if(d[i,j]=="."){addit[i,j]<-addit[i,(j+1)]+1
+      ### if something is wrong, just put in 34
+      }else{addit[i,j]<- 34}}}
+  
+  
+  ## create the return matrix
+  returndish<-data.frame(matrix(".",ncol=ncol(d),nrow=nrow(d)))
+  
+  for(j in ncol(d):1){
+    for (i in 1:nrow(d)){
+      if(d[i,j]=="O"||d[i,j]=="#"){
+        returndish[i,j+addit[i,j]]<-d[i,j]}}}
+  returndish}
+
+
+#### to run all in a row:
+spincycle<-function(d){
+  go_n<-tiltnorth(d)
+  go_nw<-tiltwest(go_n)
+  go_nws<-tiltsouth(go_nw)
+  go_nwse<-tilteast(go_nws)
+  go_nwse}
+
+```
+
+A billion is way too many times to run, and it is likely that it is running in a cycle. In fact, running it 1000 times shows that it does:
+
+```{r,echo=FALSE}
+gm<-1:100
+forgraph<-dish
+ld <- c()
+
+for(i in 1:100){
+  forgraph<-spincycle(forgraph)
+  ld<-c(ld,findload(forgraph))}
+
+graphme <- as.data.frame(cbind(gm,ld))
+graphme <- rbind(c(0,findload(dish)),graphme)
+colnames(graphme)<-c("cyclenumber","load")
+```
+```{r}
+gr <- ggplot(data=graphme)+
+  geom_point(aes(x=cyclenumber,y=load),colour="black")
+gr
+```
+It's obvious there's a repeat (for the sample, it cycles every 7.)  And from there it's trivial to figure out what the billionth repeat would look like.
+
+Similar with the real data.
+
