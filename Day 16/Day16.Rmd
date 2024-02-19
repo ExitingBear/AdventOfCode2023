@@ -1,0 +1,319 @@
+---
+title: "Day 16 Notebook"
+output: html_notebook
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(dplyr)
+library(stringr)
+library(tidyverse)
+library(igraph)
+library(ggplot2)
+library(rgl)
+library(ggraph)
+library(readr)
+library(ds4psy)
+library(numbers)
+options(scipen = 999)
+```
+
+
+## Part 1
+So if you shine a light in the top left corner, pointing right - where does it go?
+
+```{r}
+input <- read_lines("Day16Sample.txt")
+contraption<-data.frame()
+for(i in 1:length(input)){
+  contraption<-rbind(contraption,unlist(str_split(input[i],"")))}
+```
+
+Create a function that takes in starting point, direction and returns all the points that light up - 
+the idea here is that it doesn't have to actually follow the path, because the path itself isn't that important.  Instead, get a spot (and direction), find out where the light goes from there and add the next spot to the bottom of the list.  Do that for the next spot on the list.  Eventually, there's no more new spots on the list and the old spots are the ones that have been lit up.
+
+
+```{r}
+### points are complex numbers - because it seemed like a fun idea at the time.
+
+
+lightlist<-function(startingpoint=as.complex(1+1i),d="R",c=contraption){
+  ### using a dataframe to hold the list of places that have been visited.
+  lit <- data.frame()
+  ### the dataframe has the starting point, the direction, and the combo of direction/startingpoint,
+  ### because it does matter which angle you visit the point.
+  lit <- rbind(lit,list(d,startingpoint,paste0(d,startingpoint)))
+  colnames(lit) <- c("nextd","currspace","combod")
+  ### starting at the top of the list
+  i<-1
+  ### find where the edges are
+  collimit<-ncol(c)
+  rowlimit<-nrow(c)
+  
+  while(i<=nrow(lit)){
+    dirs<-lit$nextd[i]
+    spc<-lit$currspace[i]
+    whatami<- c[Im(spc),Re(spc)]
+    ### mr1 & mr2 may be added to the bottom of the list - depending. both are needed in case there's a split 
+    mr1<-list()
+    mr2<-list()
+    ### calculate what mr1 & 2 would be based on the direction & current space
+    switch(dirs,
+           "R"={
+             switch(whatami,
+                    "."=mr1 <- list(nextd="R",currspace=spc+1,combod=paste0("R",spc+1)),
+                    "/"=mr1 <- list(nextd="U",currspace=spc-1i,combod=paste0("U",spc-1i)),
+                    "\\"=mr1 <- list(nextd="D",currspace=spc+1i,combod=paste0("D",spc+1i)),
+                    "-"=mr1 <- list(nextd="R",currspace=spc+1,combod=paste0("R",spc+1)),
+                    "|"=
+                      {mr1 <- list(nextd="U",currspace=spc-1i,combod=paste0("U",spc-1i))
+                      mr2 <- list(nextd="D",currspace=spc+1i,combod=paste0("D",spc+1i))},
+                    cat(cursp,whatami,"rightproblem","\n"))},
+           "L"={
+             switch(whatami,
+                    "."=mr1 <- list(nextd="L",currspace=spc-1,combod=paste0("L",spc-1)),
+                    "/"=mr1 <- list(nextd="D",currspace=spc+1i,combod=paste0("D",spc+1i)),
+                    "\\"=mr1 <- list(nextd="U",currspace=spc-1i,combod=paste0("U",spc-1i)),
+                    "-"=mr1 <- list(nextd="L",currspace=spc-1,combod=paste0("L",spc-1)),
+                    "|"=
+                      {mr1 <- list(nextd="U",currspace=spc-1i,combod=paste0("U",spc-1i))
+                      mr2 <- list(nextd="D",currspace=spc+1i,combod=paste0("D",spc+1i))},
+                    cat(cursp,whatami,"rightproblem","\n"))},
+           "U"={
+             switch(whatami,
+                    "."=mr1 <- list(nextd="U",currspace=spc-1i,combod=paste0("U",spc-1i)),
+                    "/"=mr1 <- list(nextd="R",currspace=spc+1,combod=paste0("R",spc+1)),
+                    "\\"=mr1 <- list(nextd="L",currspace=spc-1,combod=paste0("L",spc-1)),
+                    "|"=mr1 <- list(nextd="U",currspace=spc-1i,combod=paste0("U",spc-1i)),
+                    "-"=
+                      {mr1 <- list(nextd="L",currspace=spc-1,combod=paste0("L",spc-1))
+                      mr2 <- list(nextd="R",currspace=spc+1,combod=paste0("R",spc+1))},
+                    cat(cursp,whatami,"rightproblem","\n"))},
+           "D"={
+             switch(whatami,
+                    "."=mr1 <- list(nextd="D",currspace=spc+1i,combod=paste0("D",spc+1i)),
+                    "/"=mr1 <- list(nextd="L",currspace=spc-1,combod=paste0("L",spc-1)),
+                    "\\"=mr1 <- list(nextd="R",currspace=spc+1,combod=paste0("R",spc+1)),
+                    "|"=mr1 <- list(nextd="D",currspace=spc+1i,combod=paste0("D",spc+1i)),
+                    "-"=
+                      {mr1 <- list(nextd="L",currspace=spc-1,combod=paste0("L",spc-1))
+                      mr2 <- list(nextd="R",currspace=spc+1,combod=paste0("R",spc+1))},
+                    cat(cursp,whatami,"rightproblem","\n"))},
+           cat("somethingwentwrong","\n"))
+    ### check if this has already been visited or is going over the edge - if so, do nothing.  if not, add 
+    names(mr1) <- c("nextd","currspace","combod")
+    if (!(mr1$combod %in% lit$combod)&&
+        Re(mr1$currspace)>=1 &&
+        Re(mr1$currspace)<=collimit &&
+        Im(mr1$currspace)>=1 &&
+        Im(mr1$currspace)<=rowlimit){lit <- rbind(lit,mr1)}
+    ### if mr2 exists, then do the same.
+    if (length(mr2)>1){
+      if(!(mr2$combod %in% lit$combod)&&
+         Re(mr2$currspace)>=1 &&
+         Re(mr2$currspace)<=collimit &&
+         Im(mr2$currspace)>=1 &&
+         Im(mr2$currspace)<=rowlimit){
+        names(mr2) <- c("nextd","currspace","combod")
+        lit <- rbind(lit,mr2)}}
+    i<-i+1}
+  ### the directions do not matter after all the list has been run through.  Only return the spaces visited
+  lit <- unique(lit$currspace)
+  lit}
+```
+
+And then run:
+
+```{r}
+lightedspaces <- lightlist()
+part1 <- length(lightedspaces)
+part1
+```
+```{r,echo=FALSE}
+lightpoints <- data.frame(lightedspaces)
+lightpoints <- lightpoints %>% mutate (x=Re(lightedspaces),y=Im(lightedspaces)) %>%
+  rowwise %>% mutate(symb=contraption[y,x]) %>%
+  select(x,y,symb)
+
+gr<-ggplot(data=lightpoints)+
+  geom_point(aes(x=x,y=y),colour="yellow",shape=15,size=14)+
+  geom_text(aes(x=x,y=y,label=symb),size=8)+
+  scale_y_reverse()+
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.title.y = element_blank(),
+        axis.title.x = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())+
+  coord_fixed()
+
+
+gr
+```
+
+## Part 2
+Find the highest number of lights you can light from any direction (no need to know where - just how many lights)
+```{r}
+### create a list of all starting points, down from the top, up from the bottom, left from the right, right from the left
+
+possiblestarts <- list()
+for (j in 1:nrow(contraption)){
+  l<-list("R",(as.complex(0+1i)*j)+1)
+  r<-list("L",(as.complex(0+1i)*j)+ncol(contraption))
+  possiblestarts <- append(possiblestarts,list(r))
+  possiblestarts <- append(possiblestarts,list(l))}
+
+for (j in 1:ncol(contraption)){
+  u<-list("D",(as.complex(j+1i)))
+  d<-list("R",(as.complex(0+1i)*nrow(contraption))+j)
+  possiblestarts <- append(possiblestarts,list(u))
+  possiblestarts <- append(possiblestarts,list(d))}
+
+```
+
+Also, changing the function a tiny bit to return the entire visited list, instead of just the places visited.
+
+```{r}
+ll2<-function(startingpoint=as.complex(1+1i),d="R",c=contraption){
+  ### using a dataframe to hold the list of places that have been visited.
+  lit <- data.frame()
+  ### the dataframe has the starting point, the direction, and the combo of direction/startingpoint,
+  ### because it does matter which angle you visit the point.
+  lit <- rbind(lit,list(d,startingpoint,paste0(d,startingpoint)))
+  colnames(lit) <- c("nextd","currspace","combod")
+  ### starting at the top of the list
+  i<-1
+  ### find where the edges are
+  collimit<-ncol(c)
+  rowlimit<-nrow(c)
+  
+  while(i<=nrow(lit)){
+    dirs<-lit$nextd[i]
+    spc<-lit$currspace[i]
+    whatami<- c[Im(spc),Re(spc)]
+    ### mr1 & mr2 may be added to the bottom of the list - depending. both are needed in case there's a split 
+    mr1<-list()
+    mr2<-list()
+    ### calculate what mr1 & 2 would be based on the direction & current space
+    switch(dirs,
+           "R"={
+             switch(whatami,
+                    "."=mr1 <- list(nextd="R",currspace=spc+1,combod=paste0("R",spc+1)),
+                    "/"=mr1 <- list(nextd="U",currspace=spc-1i,combod=paste0("U",spc-1i)),
+                    "\\"=mr1 <- list(nextd="D",currspace=spc+1i,combod=paste0("D",spc+1i)),
+                    "-"=mr1 <- list(nextd="R",currspace=spc+1,combod=paste0("R",spc+1)),
+                    "|"=
+                      {mr1 <- list(nextd="U",currspace=spc-1i,combod=paste0("U",spc-1i))
+                      mr2 <- list(nextd="D",currspace=spc+1i,combod=paste0("D",spc+1i))},
+                    cat(cursp,whatami,"rightproblem","\n"))},
+           "L"={
+             switch(whatami,
+                    "."=mr1 <- list(nextd="L",currspace=spc-1,combod=paste0("L",spc-1)),
+                    "/"=mr1 <- list(nextd="D",currspace=spc+1i,combod=paste0("D",spc+1i)),
+                    "\\"=mr1 <- list(nextd="U",currspace=spc-1i,combod=paste0("U",spc-1i)),
+                    "-"=mr1 <- list(nextd="L",currspace=spc-1,combod=paste0("L",spc-1)),
+                    "|"=
+                      {mr1 <- list(nextd="U",currspace=spc-1i,combod=paste0("U",spc-1i))
+                      mr2 <- list(nextd="D",currspace=spc+1i,combod=paste0("D",spc+1i))},
+                    cat(cursp,whatami,"rightproblem","\n"))},
+           "U"={
+             switch(whatami,
+                    "."=mr1 <- list(nextd="U",currspace=spc-1i,combod=paste0("U",spc-1i)),
+                    "/"=mr1 <- list(nextd="R",currspace=spc+1,combod=paste0("R",spc+1)),
+                    "\\"=mr1 <- list(nextd="L",currspace=spc-1,combod=paste0("L",spc-1)),
+                    "|"=mr1 <- list(nextd="U",currspace=spc-1i,combod=paste0("U",spc-1i)),
+                    "-"=
+                      {mr1 <- list(nextd="L",currspace=spc-1,combod=paste0("L",spc-1))
+                      mr2 <- list(nextd="R",currspace=spc+1,combod=paste0("R",spc+1))},
+                    cat(cursp,whatami,"rightproblem","\n"))},
+           "D"={
+             switch(whatami,
+                    "."=mr1 <- list(nextd="D",currspace=spc+1i,combod=paste0("D",spc+1i)),
+                    "/"=mr1 <- list(nextd="L",currspace=spc-1,combod=paste0("L",spc-1)),
+                    "\\"=mr1 <- list(nextd="R",currspace=spc+1,combod=paste0("R",spc+1)),
+                    "|"=mr1 <- list(nextd="D",currspace=spc+1i,combod=paste0("D",spc+1i)),
+                    "-"=
+                      {mr1 <- list(nextd="L",currspace=spc-1,combod=paste0("L",spc-1))
+                      mr2 <- list(nextd="R",currspace=spc+1,combod=paste0("R",spc+1))},
+                    cat(cursp,whatami,"rightproblem","\n"))},
+           cat("somethingwentwrong","\n"))
+    ### check if this has already been visited or is going over the edge - if so, do nothing.  if not, add 
+    names(mr1) <- c("nextd","currspace","combod")
+    if (!(mr1$combod %in% lit$combod)&&
+        Re(mr1$currspace)>=1 &&
+        Re(mr1$currspace)<=collimit &&
+        Im(mr1$currspace)>=1 &&
+        Im(mr1$currspace)<=rowlimit){lit <- rbind(lit,mr1)}
+    ### if mr2 exists, then do the same.
+    if (length(mr2)>1){
+      if(!(mr2$combod %in% lit$combod)&&
+         Re(mr2$currspace)>=1 &&
+         Re(mr2$currspace)<=collimit &&
+         Im(mr2$currspace)>=1 &&
+         Im(mr2$currspace)<=rowlimit){
+        names(mr2) <- c("nextd","currspace","combod")
+        lit <- rbind(lit,mr2)}}
+    i<-i+1}
+  lit}
+```
+
+
+
+Now run the possible starts - first check to see if I've ever been there before from this direction.  If so, don't bother, it will be less than the one already run.
+```{r}
+beenthere<-data.frame(matrix(ncol=3,nrow=0))
+colnames(beenthere)<-c("nextd","currspace","combod")
+howmany<-c()
+
+for(i in 1:length(possiblestarts)){
+  x<-possiblestarts[[i]]
+  if (!(paste0(x[[1]],x[[2]])%in%beenthere$combod)){
+    attempt<-ll2(x[[2]],x[[1]],contraption)
+    beenthere <- unique(rbind(beenthere,attempt))
+    howmany <- c(howmany,length(unique(attempt$currspace)))}}
+part2<-max(howmany)
+part2
+```
+
+
+Single function:
+```{r}
+day16answers <-function(contraption){
+  ### part1
+  part1 <- length(lightlist(as.complex(1+1i),"R",contraption))
+  ### part 2 - get the list of starts
+  possiblestarts <- list()
+  for (j in 1:nrow(contraption)){
+    l<-list("R",(as.complex(0+1i)*j)+1)
+    r<-list("L",(as.complex(0+1i)*j)+ncol(contraption))
+    possiblestarts <- append(possiblestarts,list(r))
+    possiblestarts <- append(possiblestarts,list(l))}
+  
+  for (j in 1:ncol(contraption)){
+    u<-list("D",(as.complex(j+1i)))
+    d<-list("R",(as.complex(0+1i)*nrow(contraption))+j)
+    possiblestarts <- append(possiblestarts,list(u))
+    possiblestarts <- append(possiblestarts,list(d))}
+  
+  ### run through starts
+  beenthere<-data.frame(matrix(ncol=3,nrow=0))
+  colnames(beenthere)<-c("nextd","currspace","combod")
+  part2<-0
+  
+  for(i in 1:length(possiblestarts)){
+    x<-possiblestarts[[i]]
+    if (!(paste0(x[[1]],x[[2]])%in%beenthere$combod)){
+      attempt<-ll2(x[[2]],x[[1]],contraption)
+      beenthere <- unique(rbind(beenthere,attempt))
+      part2 <- max(part2,length(unique(attempt$currspace)))}}
+  c(part1,part2)}
+```
+
+This really does take forever.  I have decided to be ok with that.
+
+```{r}
+day16 <- day16answers(contraption)
+day16
+```
