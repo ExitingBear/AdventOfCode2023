@@ -97,7 +97,8 @@ outplot<-ggplot(plotdf)+
         axis.title.y = element_blank(),
         axis.title.x = element_blank(),
         panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank())
+        panel.grid.minor = element_blank())+
+  coord_fixed()
 
 outplot
 ```
@@ -277,7 +278,8 @@ outplot<-ggplot(plotdf)+
         axis.title.y = element_blank(),
         axis.title.x = element_blank(),
         panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank())
+        panel.grid.minor = element_blank())+
+  coord_fixed()
 
 insidelist <- as.data.frame(insidelist)
 
