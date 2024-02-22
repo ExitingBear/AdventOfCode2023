@@ -19,10 +19,10 @@ library(numbers)
 options(scipen = 999)
 ```
 
-I got this to work, found the answer, was disappointed that it took the better part of an hour, tried to refine it, broke it.
-It now takes only a few seconds to come up with the wrong answer.  (All the sample problems I've found so far work.) Also, unfortunately, my notes are such a hash on the first go-round that I honestly can't tell what's broken.
+I got this to work, found the answer, was disappointed that it took the better part of an hour, tried to refine it, broke it. It now takes only a few seconds to come up with the wrong answer. (All the sample problems I've found so far work.) Also, unfortunately, my notes are such a hash on the first go-round that I honestly can't tell what's broken.
 
 ## Part 1
+
 Setup the lavafield matrix
 
 ```{r}
@@ -37,16 +37,24 @@ rowedge<-nrow(lavafield)
 Function - takes in everything (start point, end points, min distance allowed before a turn, max distance allowed before a turn, and, of course, the lavafield.)
 
 Steps:
-Start: set up a priority queue. Add the starting point but Up/Down & Right/Left
-repeat from here:
-1. Grab the lowest priority.
-2. Checks:
- + have we been there before? if so, back to 1
- + is this the end? if so, stop. (because the check is the first thing done, there's no way that something with a lower heat loss could have happened earlier)
-3. Find all the possible moves from that spot (if we got there going left/right, the moves are up/down & vice versa.)
-4. Add them to the queue where priority = heatloss to that spot+manhattan distance (which is the lowest possible heatloss - assuming it found a trail of all 1s from that point forward)
-end repeat
 
+Start: set up a priority queue. Add the starting point but Up/Down & Right/Left
+
+Repeat from here:
+
+1.  Grab the lowest priority.
+
+2.  Checks:
+
+    +  have we been there before? if so, back to Step 1
+
+    +  is this the end? if so, stop. (because of the way priority is calculated, this must be the lowest possible option. Anything that comes later must already have a higher heatloss already or in a best case scenario would have an equal or higher heat once it reached the end. )
+
+5.  Find all the possible moves from that spot (if we got there going left/right, the moves are up/down & vice versa.)
+
+6.  Add them to the queue where priority = heatloss to that spot+manhattan distance (which is the lowest possible heatloss - assuming it found a trail of all 1s from that point forward)
+
+end repeat
 
 ```{r}
 lowestheatloss<-function(startx=1,starty=1,endx=13,endy=13,mindist=1,maxdist=3,lf=lavafield){
@@ -69,8 +77,8 @@ lowestheatloss<-function(startx=1,starty=1,endx=13,endy=13,mindist=1,maxdist=3,l
     if(currentx==endx&&currenty==endy){
       out=currentheat
       break}
-    if(beenthere$has(paste0(orientation,currentx,currenty))){next
-      }else{beenthere$set(key=paste0(orientation,currentx,currenty),value=paste(currentstep))}
+    if(beenthere$has(paste(orientation,currentx,currenty))){next
+      }else{beenthere$set(key=paste(orientation,currentx,currenty),value=paste(currentstep))}
     newheat<-currentheat
     newx<-currentx
     newy<-currenty
@@ -132,18 +140,16 @@ part1<-lowestheatloss(1,1,coledge,rowedge,1,3,lavafield)
 part1
 ```
 
-
-
 ## Part 2
-The lowest & highest number of blocks are already built into the function.  Re-run. 
+
+The lowest & highest number of blocks are already built into the function. Re-run.
+
 ```{r}
 part2<-lowestheatloss(1,1,coledge,rowedge,4,10,lavafield)
 part2
 ```
 
-
-
-Wrong answer, but fast (for me) wrong answer!
+Stuck both together and here it is:
 
 ```{r}
 day17answers <-function(lavafield){
@@ -160,4 +166,3 @@ day17answers <-function(lavafield){
 day17 <- day17answers(lavafield)
 day17
 ```
-
