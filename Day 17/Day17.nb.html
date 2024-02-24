@@ -1755,62 +1755,71 @@ display: none;
 <!-- rnb-text-end -->
 <!-- rnb-text-begin -->
 <p>I got this to work, found the answer, was disappointed that it took
-the better part of an hour, tried to refine it, broke it. It now takes
-only a few seconds to come up with the wrong answer. (All the sample
-problems I’ve found so far work.) Also, unfortunately, my notes are such
-a hash on the first go-round that I honestly can’t tell what’s
-broken.</p>
+the better part of an hour, tried to refine it, broke it. Refined some
+more. Broke it again. Finally fixed it.</p>
 <div id="part-1" class="section level2">
 <h2>Part 1</h2>
 <p>Setup the lavafield matrix</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaW5wdXQgPC0gcmVhZF9saW5lcyhcIkRheTE3U2FtcGxlLnR4dFwiKVxubGF2YWZpZWxkPC1tYXRyaXgobmNvbD1uY2hhcihpbnB1dFsxXSksbnJvdz0wKVxuZm9yKGkgaW4gMTpsZW5ndGgoaW5wdXQpKXtcbmxhdmFmaWVsZDwtcmJpbmQobGF2YWZpZWxkLGFzLm51bWVyaWModW5saXN0KHN0cl9zcGxpdChpbnB1dFtpXSxcIlwiKSkpKX1cbmNvbGVkZ2U8LW5jb2wobGF2YWZpZWxkKVxucm93ZWRnZTwtbnJvdyhsYXZhZmllbGQpXG5gYGAifQ== -->
-<pre class="r"><code>input &lt;- read_lines(&quot;Day17Sample.txt&quot;)
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuaW5wdXQgPC0gcmVhZF9saW5lcyhcXERheTE3U2FtcGxlLnR4dFxcKVxubGF2YWZpZWxkPC1tYXRyaXgobmNvbD1uY2hhcihpbnB1dFsxXSksbnJvdz0wKVxuZm9yKGkgaW4gMTpsZW5ndGgoaW5wdXQpKXtcbmxhdmFmaWVsZDwtcmJpbmQobGF2YWZpZWxkLGFzLm51bWVyaWModW5saXN0KHN0cl9zcGxpdChpbnB1dFtpXSxcXFxcKSkpKX1cbmNvbGVkZ2U8LW5jb2wobGF2YWZpZWxkKVxucm93ZWRnZTwtbnJvdyhsYXZhZmllbGQpXG5gYGBcbmBgYCJ9 -->
+<pre class="r"><code>```r
+input &lt;- read_lines(\Day17Sample.txt\)
 lavafield&lt;-matrix(ncol=nchar(input[1]),nrow=0)
 for(i in 1:length(input)){
-lavafield&lt;-rbind(lavafield,as.numeric(unlist(str_split(input[i],&quot;&quot;))))}
+lavafield&lt;-rbind(lavafield,as.numeric(unlist(str_split(input[i],\\))))}
 coledge&lt;-ncol(lavafield)
 rowedge&lt;-nrow(lavafield)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Function - takes in everything (start point, end points, min distance
-allowed before a turn, max distance allowed before a turn, and, of
-course, the lavafield.)</p>
-<p>Steps:</p>
-<p>Start: set up a priority queue. Add the starting point but Up/Down
-&amp; Right/Left</p>
-<p>Repeat from here:</p>
-<ol style="list-style-type: decimal">
-<li><p>Grab the lowest priority.</p></li>
-<li><p>Checks:</p>
-<ul>
-<li><p>have we been there before? if so, back to Step 1</p></li>
-<li><p>is this the end? if so, stop. (because of the way priority is
-calculated, this must be the lowest possible option. Anything that comes
-later must already have a higher heatloss already or in a best case
-scenario would have an equal or higher heat once it reached the end.
-)</p></li>
-</ul></li>
-<li><p>Find all the possible moves from that spot (if we got there going
-left/right, the moves are up/down &amp; vice versa.)</p></li>
-<li><p>Add them to the queue where priority = heatloss to that
-spot+manhattan distance (which is the lowest possible heatloss -
-assuming it found a trail of all 1s from that point forward)</p></li>
-</ol>
-<p>end repeat</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubG93ZXN0aGVhdGxvc3M8LWZ1bmN0aW9uKHN0YXJ0eD0xLHN0YXJ0eT0xLGVuZHg9MTMsZW5keT0xMyxtaW5kaXN0PTEsbWF4ZGlzdD0zLGxmPWxhdmFmaWVsZCl7XG4gICMjIyBjcmVhdGUgYSBwcmlvcml0eSBxdWV1ZVxuICBsYXZhcXVldWU8LWNvbGxlY3Rpb25zOjpwcmlvcml0eV9xdWV1ZSgpXG4gICMjIyBzdGFydCBieSBwdXNoaW5nIHRoZSBzdGFydCB0byB0aGUgcXVldWUgaW4gUkwgJiBVRCBkaXJlY3Rpb25zXG4gIG1heF94PC1uY29sKGxmKVxuICBtYXhfeTwtbnJvdyhsZilcbiAgbGF2YXF1ZXVlJHB1c2godHVwbGUoXCJSTFwiLHN0YXJ0eCxzdGFydHksMCkscHJpb3JpdHk9MClcbiAgbGF2YXF1ZXVlJHB1c2godHVwbGUoXCJVRFwiLHN0YXJ0eCxzdGFydHksMCkscHJpb3JpdHk9MClcbiAgb3V0PC0wXG4gIGJlZW50aGVyZTwtY29sbGVjdGlvbnM6OmRpY3QoKVxuICAjIyMjIGJlZ2luIHdoaWxlXG4gIHdoaWxlKGxhdmFxdWV1ZSRzaXplKCk+MCl7XG4gICAgY3VycmVudHN0ZXA8LWxhdmFxdWV1ZSRwb3AoKVxuICAgIG9yaWVudGF0aW9uPC1jdXJyZW50c3RlcFtbMV1dXG4gICAgY3VycmVudHg8LWN1cnJlbnRzdGVwW1syXV1cbiAgICBjdXJyZW50eTwtY3VycmVudHN0ZXBbWzNdXVxuICAgIGN1cnJlbnRoZWF0PC1jdXJyZW50c3RlcFtbNF1dXG4gICAgaWYoY3VycmVudHg9PWVuZHgmJmN1cnJlbnR5PT1lbmR5KXtcbiAgICAgIG91dD1jdXJyZW50aGVhdFxuICAgICAgYnJlYWt9XG4gICAgaWYoYmVlbnRoZXJlJGhhcyhwYXN0ZShvcmllbnRhdGlvbixjdXJyZW50eCxjdXJyZW50eSkpKXtuZXh0XG4gICAgICB9ZWxzZXtiZWVudGhlcmUkc2V0KGtleT1wYXN0ZShvcmllbnRhdGlvbixjdXJyZW50eCxjdXJyZW50eSksdmFsdWU9cGFzdGUoY3VycmVudHN0ZXApKX1cbiAgICBuZXdoZWF0PC1jdXJyZW50aGVhdFxuICAgIG5ld3g8LWN1cnJlbnR4XG4gICAgbmV3eTwtY3VycmVudHlcbiAgICAjIyMgaWYgY3VycmVudCBvcmllbnRhdGlvbiBpcyBSTCwgZmluZCB0aGUgbmV4dCBzdGVwcyB0byB0aGUgcmlnaHRcbiAgICBpZihvcmllbnRhdGlvbj09XCJSTFwiKXtcbiAgICAgICMjIyBmaW5kIHRvIHRoZSByaWdodFxuICAgICAgaTwtMVxuICAgICAgbmV3eDwtY3VycmVudHgrMVxuICAgICAgbmV3aGVhdDwtY3VycmVudGhlYXRcbiAgICAgIHdoaWxlKG5ld3g+PTEmJm5ld3g8PW1heF94JiZpPD1tYXhkaXN0KXtcbiAgICAgICAgbmV3aGVhdDwtbmV3aGVhdCtsZltuZXd5LG5ld3hdXG4gICAgICAgICMjI2FkZCB0byBwcmlvcml0eSBxdWV1ZSBpbiBpZiBpPj1taW5pbXVtZGlzdGFuY2UuXG4gICAgICAgICMjI2JlY2F1c2UgcHJpb3JpdHkgZ29lcyBmcm9tIGJpZ2dlc3QgdG8gc21hbGxlc3QsIHByaW9yaXR5IGlzIC0oaGVhdGxvc3MrbWFuaGF0dGFuIGRpc3RhbmNlIHRvIHRoZSBlbmRwb2ludCkuXG4gICAgICAgIGlmKGk+PW1pbmRpc3Qpe2xhdmFxdWV1ZSRwdXNoKHR1cGxlKFwiVURcIixuZXd4LG5ld3ksbmV3aGVhdCkscHJpb3JpdHk9LShuZXdoZWF0KyhlbmR4LW5ld3gpKyhlbmR5LW5ld3kpKSl9XG4gICAgICAgIG5ld3g8LW5ld3grMVxuICAgICAgICBpPC1pKzF9XG4gICAgICAjIyNyZXNldCBhbmQgZ28gdG8gdGhlIGxlZnQuXG4gICAgICBpPC0xXG4gICAgICBuZXd4PC1jdXJyZW50eC0xXG4gICAgICBuZXdoZWF0PC1jdXJyZW50aGVhdFxuICAgICAgd2hpbGUobmV3eD49MSYmbmV3eDw9bWF4X3gmJmk8PW1heGRpc3Qpe1xuICAgICAgICBuZXdoZWF0PC1uZXdoZWF0K2xmW25ld3ksbmV3eF1cbiAgICAgICAgIyMjYWRkIHRvIHByaW9yaXR5IHF1ZXVlIGluIGlmIGk+PW1pbmltdW1kaXN0YW5jZS5cbiAgICAgICAgIyMjYmVjYXVzZSBwcmlvcml0eSBnb2VzIGZyb20gYmlnZ2VzdCB0byBzbWFsbGVzdCwgcHJpb3JpdHkgaXMgLShoZWF0bG9zcyttYW5oYXR0YW4gZGlzdGFuY2UgdG8gdGhlIGVuZHBvaW50KVxuICAgICAgICBpZihpPj1taW5kaXN0KXtsYXZhcXVldWUkcHVzaCh0dXBsZShcIlVEXCIsbmV3eCxuZXd5LG5ld2hlYXQpLHByaW9yaXR5PS0obmV3aGVhdCsoZW5keC1uZXd4KSsoZW5keS1uZXd5KSkpfVxuICAgICAgICBuZXd4PC1uZXd4LTFcbiAgICAgICAgIyMjIHN0b3Agd2hlbiBpIGhpdHMgdGhlIG1heGxlbmd0aFxuICAgICAgICBpPC1pKzF9XG4gICAgICAjIyMgb3RoZXJ3aXNlIGlmIG9yaWVudGF0aW9uIGlzIFVELCBmaW5kIHRoZSBwb3NzaWJpbGl0aWVzIHVwIGFuZCBkb3duXG4gICAgfWVsc2UgaWYob3JpZW50YXRpb249PVwiVURcIil7XG4gICAgICAjIyMgZmlyc3QgbG9vayBkb3duXG4gICAgICBpPC0xXG4gICAgICBuZXd5PC1jdXJyZW50eSsxXG4gICAgICBuZXdoZWF0PC1jdXJyZW50aGVhdFxuICAgICAgd2hpbGUobmV3eT49MSYmbmV3eTw9bWF4X3kmJmk8PW1heGRpc3Qpe1xuICAgICAgICBuZXdoZWF0PC1uZXdoZWF0K2xmW25ld3ksbmV3eF1cbiAgICAgICAgIyMjYWRkIHRvIHByaW9yaXR5IHF1ZXVlIGluIGlmIGk+PW1pbmltdW1kaXN0YW5jZS5cbiAgICAgICAgIyMjYmVjYXVzZSBwcmlvcml0eSBnb2VzIGZyb20gYmlnZ2VzdCB0byBzbWFsbGVzdCwgcHJpb3JpdHkgaXMgLShoZWF0bG9zcyttYW5oYXR0YW4gZGlzdGFuY2UgdG8gdGhlIGVuZHBvaW50KVxuICAgICAgICBpZihpPj1taW5kaXN0KXtsYXZhcXVldWUkcHVzaCh0dXBsZShcIlJMXCIsbmV3eCxuZXd5LG5ld2hlYXQpLHByaW9yaXR5PS0obmV3aGVhdCsoZW5keC1uZXd4KSsoZW5keS1uZXd5KSkpfVxuICAgICAgICBuZXd5PC1uZXd5KzFcbiAgICAgICAgaTwtaSsxfVxuICAgICAgIyMjcmVzZXQgYW5kIGdvIHVwXG4gICAgICBpPC0xXG4gICAgICBuZXd5PC1jdXJyZW50eS0xXG4gICAgICBuZXdoZWF0PC1jdXJyZW50aGVhdFxuICAgICAgd2hpbGUobmV3eT49MSYmbmV3eTw9bWF4X3kmJmk8PW1heGRpc3Qpe1xuICAgICAgICBuZXdoZWF0PC1uZXdoZWF0K2xmW25ld3ksbmV3eF1cbiAgICAgICAgIyMjYWRkIHRvIHByaW9yaXR5IHF1ZXVlIGluIGlmIGk+PW1pbmltdW1kaXN0YW5jZS5cbiAgICAgICAgIyMjYmVjYXVzZSBwcmlvcml0eSBnb2VzIGZyb20gYmlnZ2VzdCB0byBzbWFsbGVzdCwgcHJpb3JpdHkgaXMgLShoZWF0bG9zcyttYW5oYXR0YW4gZGlzdGFuY2UgdG8gdGhlIGVuZHBvaW50KVxuICAgICAgICBpZihpPj1taW5kaXN0KXtsYXZhcXVldWUkcHVzaCh0dXBsZShcIlJMXCIsbmV3eCxuZXd5LG5ld2hlYXQpLHByaW9yaXR5PS0obmV3aGVhdCsoZW5keC1uZXd4KSsoZW5keS1uZXd5KSkpfVxuICAgICAgICBuZXd5PC1uZXd5LTFcbiAgICAgICAgIyMjIHN0b3Agd2hlbiBpIGhpdHMgdGhlIG1heGxlbmd0aFxuICAgICAgICBpPC1pKzF9fX1cbiAgb3V0fVxuYGBgIn0= -->
-<pre class="r"><code>lowestheatloss&lt;-function(startx=1,starty=1,endx=13,endy=13,mindist=1,maxdist=3,lf=lavafield){
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+Function - takes in everything (start point, end points, min distance allowed before a turn, max distance allowed before a turn, and, of course, the lavafield.)
+
+Steps:
+
+Start: set up a priority queue. Add the starting point but Up/Down &amp; Right/Left
+
+Repeat from here:
+
+1.  Grab the lowest priority.
+
+2.  Checks:
+
+    +  have we been there before? if so, back to Step 1
+
+    +  is this the end? if so, stop. (because of the way priority is calculated, this must be the lowest possible option. Anything that comes later must already have a higher heatloss already or in a best case scenario would have an equal or higher heat once it reached the end. )
+
+5.  Find all the possible moves from that spot (if we got there going left/right, the moves are up/down &amp; vice versa.)
+
+6.  Add them to the queue where priority = heatloss to that spot+manhattan distance (which is the lowest possible heatloss - assuming it found a trail of all 1s from that point forward)
+
+end repeat
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxubG93ZXN0aGVhdGxvc3M8LWZ1bmN0aW9uKHN0YXJ0eD0xLHN0YXJ0eT0xLGVuZHg9MTMsZW5keT0xMyxtaW5kaXN0PTEsbWF4ZGlzdD0zLGxmPWxhdmFmaWVsZCl7XG4gICMjIyBjcmVhdGUgYSBwcmlvcml0eSBxdWV1ZVxuICBsYXZhcXVldWU8LWNvbGxlY3Rpb25zOjpwcmlvcml0eV9xdWV1ZSgpXG4gICMjIyBzdGFydCBieSBwdXNoaW5nIHRoZSBzdGFydCB0byB0aGUgcXVldWUgaW4gUkwgJiBVRCBkaXJlY3Rpb25zXG4gIG1heF94PC1uY29sKGxmKVxuICBtYXhfeTwtbnJvdyhsZilcbiAgbGF2YXF1ZXVlJHB1c2godHVwbGUoXFxSTFxcLHN0YXJ0eCxzdGFydHksMCkscHJpb3JpdHk9MClcbiAgbGF2YXF1ZXVlJHB1c2godHVwbGUoXFxVRFxcLHN0YXJ0eCxzdGFydHksMCkscHJpb3JpdHk9MClcbiAgb3V0PC0wXG4gIGJlZW50aGVyZTwtY29sbGVjdGlvbnM6OmRpY3QoKVxuICAjIyMjIGJlZ2luIHdoaWxlXG4gIHdoaWxlKGxhdmFxdWV1ZSRzaXplKCk+MCl7XG4gICAgY3VycmVudHN0ZXA8LWxhdmFxdWV1ZSRwb3AoKVxuICAgIG9yaWVudGF0aW9uPC1jdXJyZW50c3RlcFtbMV1dXG4gICAgY3VycmVudHg8LWN1cnJlbnRzdGVwW1syXV1cbiAgICBjdXJyZW50eTwtY3VycmVudHN0ZXBbWzNdXVxuICAgIGN1cnJlbnRoZWF0PC1jdXJyZW50c3RlcFtbNF1dXG4gICAgaWYoY3VycmVudHg9PWVuZHgmJmN1cnJlbnR5PT1lbmR5KXtcbiAgICAgIG91dD1jdXJyZW50aGVhdFxuICAgICAgYnJlYWt9XG4gICAgaWYoYmVlbnRoZXJlJGhhcyhwYXN0ZShvcmllbnRhdGlvbixjdXJyZW50eCxjdXJyZW50eSkpKXtuZXh0XG4gICAgICB9ZWxzZXtiZWVudGhlcmUkc2V0KGtleT1wYXN0ZShvcmllbnRhdGlvbixjdXJyZW50eCxjdXJyZW50eSksdmFsdWU9cGFzdGUoY3VycmVudHN0ZXApKX1cbiAgICBuZXdoZWF0PC1jdXJyZW50aGVhdFxuICAgIG5ld3g8LWN1cnJlbnR4XG4gICAgbmV3eTwtY3VycmVudHlcbiAgICAjIyMgaWYgY3VycmVudCBvcmllbnRhdGlvbiBpcyBSTCwgZmluZCB0aGUgbmV4dCBzdGVwcyB0byB0aGUgcmlnaHRcbiAgICBpZihvcmllbnRhdGlvbj09XFxSTFxcKXtcbiAgICAgICMjIyBmaW5kIHRvIHRoZSByaWdodFxuICAgICAgaTwtMVxuICAgICAgbmV3eDwtY3VycmVudHgrMVxuICAgICAgbmV3aGVhdDwtY3VycmVudGhlYXRcbiAgICAgIHdoaWxlKG5ld3g+PTEmJm5ld3g8PW1heF94JiZpPD1tYXhkaXN0KXtcbiAgICAgICAgbmV3aGVhdDwtbmV3aGVhdCtsZltuZXd5LG5ld3hdXG4gICAgICAgICMjI2FkZCB0byBwcmlvcml0eSBxdWV1ZSBpbiBpZiBpPj1taW5pbXVtZGlzdGFuY2UuXG4gICAgICAgICMjI2JlY2F1c2UgcHJpb3JpdHkgZ29lcyBmcm9tIGJpZ2dlc3QgdG8gc21hbGxlc3QsIHByaW9yaXR5IGlzIC0oaGVhdGxvc3MrbWFuaGF0dGFuIGRpc3RhbmNlIHRvIHRoZSBlbmRwb2ludCkuXG4gICAgICAgIGlmKGk+PW1pbmRpc3Qpe2xhdmFxdWV1ZSRwdXNoKHR1cGxlKFxcVURcXCxuZXd4LG5ld3ksbmV3aGVhdCkscHJpb3JpdHk9LShuZXdoZWF0KyhlbmR4LW5ld3gpKyhlbmR5LW5ld3kpKSl9XG4gICAgICAgIG5ld3g8LW5ld3grMVxuICAgICAgICBpPC1pKzF9XG4gICAgICAjIyNyZXNldCBhbmQgZ28gdG8gdGhlIGxlZnQuXG4gICAgICBpPC0xXG4gICAgICBuZXd4PC1jdXJyZW50eC0xXG4gICAgICBuZXdoZWF0PC1jdXJyZW50aGVhdFxuICAgICAgd2hpbGUobmV3eD49MSYmbmV3eDw9bWF4X3gmJmk8PW1heGRpc3Qpe1xuICAgICAgICBuZXdoZWF0PC1uZXdoZWF0K2xmW25ld3ksbmV3eF1cbiAgICAgICAgIyMjYWRkIHRvIHByaW9yaXR5IHF1ZXVlIGluIGlmIGk+PW1pbmltdW1kaXN0YW5jZS5cbiAgICAgICAgIyMjYmVjYXVzZSBwcmlvcml0eSBnb2VzIGZyb20gYmlnZ2VzdCB0byBzbWFsbGVzdCwgcHJpb3JpdHkgaXMgLShoZWF0bG9zcyttYW5oYXR0YW4gZGlzdGFuY2UgdG8gdGhlIGVuZHBvaW50KVxuICAgICAgICBpZihpPj1taW5kaXN0KXtsYXZhcXVldWUkcHVzaCh0dXBsZShcXFVEXFwsbmV3eCxuZXd5LG5ld2hlYXQpLHByaW9yaXR5PS0obmV3aGVhdCsoZW5keC1uZXd4KSsoZW5keS1uZXd5KSkpfVxuICAgICAgICBuZXd4PC1uZXd4LTFcbiAgICAgICAgIyMjIHN0b3Agd2hlbiBpIGhpdHMgdGhlIG1heGxlbmd0aFxuICAgICAgICBpPC1pKzF9XG4gICAgICAjIyMgb3RoZXJ3aXNlIGlmIG9yaWVudGF0aW9uIGlzIFVELCBmaW5kIHRoZSBwb3NzaWJpbGl0aWVzIHVwIGFuZCBkb3duXG4gICAgfWVsc2UgaWYob3JpZW50YXRpb249PVxcVURcXCl7XG4gICAgICAjIyMgZmlyc3QgbG9vayBkb3duXG4gICAgICBpPC0xXG4gICAgICBuZXd5PC1jdXJyZW50eSsxXG4gICAgICBuZXdoZWF0PC1jdXJyZW50aGVhdFxuICAgICAgd2hpbGUobmV3eT49MSYmbmV3eTw9bWF4X3kmJmk8PW1heGRpc3Qpe1xuICAgICAgICBuZXdoZWF0PC1uZXdoZWF0K2xmW25ld3ksbmV3eF1cbiAgICAgICAgIyMjYWRkIHRvIHByaW9yaXR5IHF1ZXVlIGluIGlmIGk+PW1pbmltdW1kaXN0YW5jZS5cbiAgICAgICAgIyMjYmVjYXVzZSBwcmlvcml0eSBnb2VzIGZyb20gYmlnZ2VzdCB0byBzbWFsbGVzdCwgcHJpb3JpdHkgaXMgLShoZWF0bG9zcyttYW5oYXR0YW4gZGlzdGFuY2UgdG8gdGhlIGVuZHBvaW50KVxuICAgICAgICBpZihpPj1taW5kaXN0KXtsYXZhcXVldWUkcHVzaCh0dXBsZShcXFJMXFwsbmV3eCxuZXd5LG5ld2hlYXQpLHByaW9yaXR5PS0obmV3aGVhdCsoZW5keC1uZXd4KSsoZW5keS1uZXd5KSkpfVxuICAgICAgICBuZXd5PC1uZXd5KzFcbiAgICAgICAgaTwtaSsxfVxuICAgICAgIyMjcmVzZXQgYW5kIGdvIHVwXG4gICAgICBpPC0xXG4gICAgICBuZXd5PC1jdXJyZW50eS0xXG4gICAgICBuZXdoZWF0PC1jdXJyZW50aGVhdFxuICAgICAgd2hpbGUobmV3eT49MSYmbmV3eTw9bWF4X3kmJmk8PW1heGRpc3Qpe1xuICAgICAgICBuZXdoZWF0PC1uZXdoZWF0K2xmW25ld3ksbmV3eF1cbiAgICAgICAgIyMjYWRkIHRvIHByaW9yaXR5IHF1ZXVlIGluIGlmIGk+PW1pbmltdW1kaXN0YW5jZS5cbiAgICAgICAgIyMjYmVjYXVzZSBwcmlvcml0eSBnb2VzIGZyb20gYmlnZ2VzdCB0byBzbWFsbGVzdCwgcHJpb3JpdHkgaXMgLShoZWF0bG9zcyttYW5oYXR0YW4gZGlzdGFuY2UgdG8gdGhlIGVuZHBvaW50KVxuICAgICAgICBpZihpPj1taW5kaXN0KXtsYXZhcXVldWUkcHVzaCh0dXBsZShcXFJMXFwsbmV3eCxuZXd5LG5ld2hlYXQpLHByaW9yaXR5PS0obmV3aGVhdCsoZW5keC1uZXd4KSsoZW5keS1uZXd5KSkpfVxuICAgICAgICBuZXd5PC1uZXd5LTFcbiAgICAgICAgIyMjIHN0b3Agd2hlbiBpIGhpdHMgdGhlIG1heGxlbmd0aFxuICAgICAgICBpPC1pKzF9fX1cbiAgb3V0fVxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+lowestheatloss&lt;-function(startx=1,starty=1,endx=13,endy=13,mindist=1,maxdist=3,lf=lavafield){
   ### create a priority queue
   lavaqueue&lt;-collections::priority_queue()
   ### start by pushing the start to the queue in RL &amp; UD directions
   max_x&lt;-ncol(lf)
   max_y&lt;-nrow(lf)
-  lavaqueue$push(tuple(&quot;RL&quot;,startx,starty,0),priority=0)
-  lavaqueue$push(tuple(&quot;UD&quot;,startx,starty,0),priority=0)
+  lavaqueue$push(tuple(\RL\,startx,starty,0),priority=0)
+  lavaqueue$push(tuple(\UD\,startx,starty,0),priority=0)
   out&lt;-0
   beenthere&lt;-collections::dict()
   #### begin while
@@ -1829,7 +1838,7 @@ assuming it found a trail of all 1s from that point forward)</p></li>
     newx&lt;-currentx
     newy&lt;-currenty
     ### if current orientation is RL, find the next steps to the right
-    if(orientation==&quot;RL&quot;){
+    if(orientation==\RL\){
       ### find to the right
       i&lt;-1
       newx&lt;-currentx+1
@@ -1838,7 +1847,7 @@ assuming it found a trail of all 1s from that point forward)</p></li>
         newheat&lt;-newheat+lf[newy,newx]
         ###add to priority queue in if i&gt;=minimumdistance.
         ###because priority goes from biggest to smallest, priority is -(heatloss+manhattan distance to the endpoint).
-        if(i&gt;=mindist){lavaqueue$push(tuple(&quot;UD&quot;,newx,newy,newheat),priority=-(newheat+(endx-newx)+(endy-newy)))}
+        if(i&gt;=mindist){lavaqueue$push(tuple(\UD\,newx,newy,newheat),priority=-(newheat+(endx-newx)+(endy-newy)))}
         newx&lt;-newx+1
         i&lt;-i+1}
       ###reset and go to the left.
@@ -1849,12 +1858,12 @@ assuming it found a trail of all 1s from that point forward)</p></li>
         newheat&lt;-newheat+lf[newy,newx]
         ###add to priority queue in if i&gt;=minimumdistance.
         ###because priority goes from biggest to smallest, priority is -(heatloss+manhattan distance to the endpoint)
-        if(i&gt;=mindist){lavaqueue$push(tuple(&quot;UD&quot;,newx,newy,newheat),priority=-(newheat+(endx-newx)+(endy-newy)))}
+        if(i&gt;=mindist){lavaqueue$push(tuple(\UD\,newx,newy,newheat),priority=-(newheat+(endx-newx)+(endy-newy)))}
         newx&lt;-newx-1
         ### stop when i hits the maxlength
         i&lt;-i+1}
       ### otherwise if orientation is UD, find the possibilities up and down
-    }else if(orientation==&quot;UD&quot;){
+    }else if(orientation==\UD\){
       ### first look down
       i&lt;-1
       newy&lt;-currenty+1
@@ -1863,7 +1872,7 @@ assuming it found a trail of all 1s from that point forward)</p></li>
         newheat&lt;-newheat+lf[newy,newx]
         ###add to priority queue in if i&gt;=minimumdistance.
         ###because priority goes from biggest to smallest, priority is -(heatloss+manhattan distance to the endpoint)
-        if(i&gt;=mindist){lavaqueue$push(tuple(&quot;RL&quot;,newx,newy,newheat),priority=-(newheat+(endx-newx)+(endy-newy)))}
+        if(i&gt;=mindist){lavaqueue$push(tuple(\RL\,newx,newy,newheat),priority=-(newheat+(endx-newx)+(endy-newy)))}
         newy&lt;-newy+1
         i&lt;-i+1}
       ###reset and go up
@@ -1874,46 +1883,98 @@ assuming it found a trail of all 1s from that point forward)</p></li>
         newheat&lt;-newheat+lf[newy,newx]
         ###add to priority queue in if i&gt;=minimumdistance.
         ###because priority goes from biggest to smallest, priority is -(heatloss+manhattan distance to the endpoint)
-        if(i&gt;=mindist){lavaqueue$push(tuple(&quot;RL&quot;,newx,newy,newheat),priority=-(newheat+(endx-newx)+(endy-newy)))}
+        if(i&gt;=mindist){lavaqueue$push(tuple(\RL\,newx,newy,newheat),priority=-(newheat+(endx-newx)+(endy-newy)))}
         newy&lt;-newy-1
         ### stop when i hits the maxlength
         i&lt;-i+1}}}
   out}</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGFydDE8LWxvd2VzdGhlYXRsb3NzKDEsMSxjb2xlZGdlLHJvd2VkZ2UsMSwzLGxhdmFmaWVsZClcbnBhcnQxXG5gYGAifQ== -->
-<pre class="r"><code>part1&lt;-lowestheatloss(1,1,coledge,rowedge,1,3,lavafield)
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxucGFydDE8LWxvd2VzdGhlYXRsb3NzKDEsMSxjb2xlZGdlLHJvd2VkZ2UsMSwzLGxhdmFmaWVsZClcbnBhcnQxXG5gYGBcbmBgYCJ9 --&gt;
+
+```r
+```r
+part1&lt;-lowestheatloss(1,1,coledge,rowedge,1,3,lavafield)
 part1</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDEwMlxuIn0= -->
-<pre><code>[1] 102</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-</div>
-<div id="part-2" class="section level2">
-<h2>Part 2</h2>
-<p>The lowest &amp; highest number of blocks are already built into the
-function. Re-run.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGFydDI8LWxvd2VzdGhlYXRsb3NzKDEsMSxjb2xlZGdlLHJvd2VkZ2UsNCwxMCxsYXZhZmllbGQpXG5wYXJ0MlxuYGBgIn0= -->
-<pre class="r"><code>part2&lt;-lowestheatloss(1,1,coledge,rowedge,4,10,lavafield)
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiWzFdIDEwMlxuIn0= --&gt;
+</code></pre>
+<p>[1] 102</p>
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+## Part 2
+
+The lowest &amp; highest number of blocks are already built into the function. Re-run.
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxucGFydDI8LWxvd2VzdGhlYXRsb3NzKDEsMSxjb2xlZGdlLHJvd2VkZ2UsNCwxMCxsYXZhZmllbGQpXG5wYXJ0MlxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+part2&lt;-lowestheatloss(1,1,coledge,rowedge,4,10,lavafield)
 part2</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDk0XG4ifQ== -->
-<pre><code>[1] 94</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Stuck both together and here it is:</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF5MTdhbnN3ZXJzIDwtZnVuY3Rpb24obGF2YWZpZWxkKXtcbiAgY29sZWRnZTwtbmNvbChsYXZhZmllbGQpXG4gIHJvd2VkZ2U8LW5yb3cobGF2YWZpZWxkKVxuICBwYXJ0MSA8LWxvd2VzdGhlYXRsb3NzKDEsMSxjb2xlZGdlLHJvd2VkZ2UsMSwzLGxhdmFmaWVsZClcbiAgcGFydDIgPC1sb3dlc3RoZWF0bG9zcygxLDEsY29sZWRnZSxyb3dlZGdlLDQsMTAsbGF2YWZpZWxkKVxuICBcbiAgYyhwYXJ0MSxwYXJ0Mil9XG5cbmBgYCJ9 -->
-<pre class="r"><code>day17answers &lt;-function(lavafield){
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiWzFdIDk0XG4ifQ== --&gt;
+</code></pre>
+<p>[1] 94</p>
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+Stuck both together and here it is:
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZGF5MTdhbnN3ZXJzIDwtZnVuY3Rpb24obGF2YWZpZWxkKXtcbiAgY29sZWRnZTwtbmNvbChsYXZhZmllbGQpXG4gIHJvd2VkZ2U8LW5yb3cobGF2YWZpZWxkKVxuICBwYXJ0MSA8LWxvd2VzdGhlYXRsb3NzKDEsMSxjb2xlZGdlLHJvd2VkZ2UsMSwzLGxhdmFmaWVsZClcbiAgcGFydDIgPC1sb3dlc3RoZWF0bG9zcygxLDEsY29sZWRnZSxyb3dlZGdlLDQsMTAsbGF2YWZpZWxkKVxuICBcbiAgYyhwYXJ0MSxwYXJ0Mil9XG5cbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+day17answers &lt;-function(lavafield){
   coledge&lt;-ncol(lavafield)
   rowedge&lt;-nrow(lavafield)
   part1 &lt;-lowestheatloss(1,1,coledge,rowedge,1,3,lavafield)
@@ -1921,22 +1982,39 @@ part2</code></pre>
   
   c(part1,part2)}
 </code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF5MTcgPC0gZGF5MTdhbnN3ZXJzKGxhdmFmaWVsZClcbmRheTE3XG5gYGAifQ== -->
-<pre class="r"><code>day17 &lt;- day17answers(lavafield)
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZGF5MTcgPC0gZGF5MTdhbnN3ZXJzKGxhdmFmaWVsZClcbmRheTE3XG5gYGBcbmBgYCJ9 --&gt;
+
+```r
+```r
+day17 &lt;- day17answers(lavafield)
 day17</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDEwMiAgOTRcbiJ9 -->
-<pre><code>[1] 102  94</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiWzFdIDEwMiAgOTRcbiJ9 --&gt;
+</code></pre>
+<p>[1] 102 94 ```</p>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 </div>
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIkRheSAxNyBOb3RlYm9vayINCm91dHB1dDogaHRtbF9ub3RlYm9vaw0KLS0tDQoNCmBgYHtyIHNldHVwLCBpbmNsdWRlPUZBTFNFfQ0KbGlicmFyeShzZXRzKQ0KbGlicmFyeShrbml0cikNCmxpYnJhcnkoZHBseXIpDQpsaWJyYXJ5KHN0cmluZ3IpDQpsaWJyYXJ5KHRpZHl2ZXJzZSkNCmxpYnJhcnkoaWdyYXBoKQ0KbGlicmFyeShnZ3Bsb3QyKQ0KbGlicmFyeShyZ2wpDQpsaWJyYXJ5KGdncmFwaCkNCmxpYnJhcnkocmVhZHIpDQpsaWJyYXJ5KGRzNHBzeSkNCmxpYnJhcnkobnVtYmVycykNCm9wdGlvbnMoc2NpcGVuID0gOTk5KQ0KYGBgDQoNCkkgZ290IHRoaXMgdG8gd29yaywgZm91bmQgdGhlIGFuc3dlciwgd2FzIGRpc2FwcG9pbnRlZCB0aGF0IGl0IHRvb2sgdGhlIGJldHRlciBwYXJ0IG9mIGFuIGhvdXIsIHRyaWVkIHRvIHJlZmluZSBpdCwgYnJva2UgaXQuIEl0IG5vdyB0YWtlcyBvbmx5IGEgZmV3IHNlY29uZHMgdG8gY29tZSB1cCB3aXRoIHRoZSB3cm9uZyBhbnN3ZXIuIChBbGwgdGhlIHNhbXBsZSBwcm9ibGVtcyBJJ3ZlIGZvdW5kIHNvIGZhciB3b3JrLikgQWxzbywgdW5mb3J0dW5hdGVseSwgbXkgbm90ZXMgYXJlIHN1Y2ggYSBoYXNoIG9uIHRoZSBmaXJzdCBnby1yb3VuZCB0aGF0IEkgaG9uZXN0bHkgY2FuJ3QgdGVsbCB3aGF0J3MgYnJva2VuLg0KDQojIyBQYXJ0IDENCg0KU2V0dXAgdGhlIGxhdmFmaWVsZCBtYXRyaXgNCg0KYGBge3J9DQppbnB1dCA8LSByZWFkX2xpbmVzKCJEYXkxN1NhbXBsZS50eHQiKQ0KbGF2YWZpZWxkPC1tYXRyaXgobmNvbD1uY2hhcihpbnB1dFsxXSksbnJvdz0wKQ0KZm9yKGkgaW4gMTpsZW5ndGgoaW5wdXQpKXsNCmxhdmFmaWVsZDwtcmJpbmQobGF2YWZpZWxkLGFzLm51bWVyaWModW5saXN0KHN0cl9zcGxpdChpbnB1dFtpXSwiIikpKSl9DQpjb2xlZGdlPC1uY29sKGxhdmFmaWVsZCkNCnJvd2VkZ2U8LW5yb3cobGF2YWZpZWxkKQ0KYGBgDQoNCkZ1bmN0aW9uIC0gdGFrZXMgaW4gZXZlcnl0aGluZyAoc3RhcnQgcG9pbnQsIGVuZCBwb2ludHMsIG1pbiBkaXN0YW5jZSBhbGxvd2VkIGJlZm9yZSBhIHR1cm4sIG1heCBkaXN0YW5jZSBhbGxvd2VkIGJlZm9yZSBhIHR1cm4sIGFuZCwgb2YgY291cnNlLCB0aGUgbGF2YWZpZWxkLikNCg0KU3RlcHM6DQoNClN0YXJ0OiBzZXQgdXAgYSBwcmlvcml0eSBxdWV1ZS4gQWRkIHRoZSBzdGFydGluZyBwb2ludCBidXQgVXAvRG93biAmIFJpZ2h0L0xlZnQNCg0KUmVwZWF0IGZyb20gaGVyZToNCg0KMS4gIEdyYWIgdGhlIGxvd2VzdCBwcmlvcml0eS4NCg0KMi4gIENoZWNrczoNCg0KICAgICsgIGhhdmUgd2UgYmVlbiB0aGVyZSBiZWZvcmU/IGlmIHNvLCBiYWNrIHRvIFN0ZXAgMQ0KDQogICAgKyAgaXMgdGhpcyB0aGUgZW5kPyBpZiBzbywgc3RvcC4gKGJlY2F1c2Ugb2YgdGhlIHdheSBwcmlvcml0eSBpcyBjYWxjdWxhdGVkLCB0aGlzIG11c3QgYmUgdGhlIGxvd2VzdCBwb3NzaWJsZSBvcHRpb24uIEFueXRoaW5nIHRoYXQgY29tZXMgbGF0ZXIgbXVzdCBhbHJlYWR5IGhhdmUgYSBoaWdoZXIgaGVhdGxvc3MgYWxyZWFkeSBvciBpbiBhIGJlc3QgY2FzZSBzY2VuYXJpbyB3b3VsZCBoYXZlIGFuIGVxdWFsIG9yIGhpZ2hlciBoZWF0IG9uY2UgaXQgcmVhY2hlZCB0aGUgZW5kLiApDQoNCjUuICBGaW5kIGFsbCB0aGUgcG9zc2libGUgbW92ZXMgZnJvbSB0aGF0IHNwb3QgKGlmIHdlIGdvdCB0aGVyZSBnb2luZyBsZWZ0L3JpZ2h0LCB0aGUgbW92ZXMgYXJlIHVwL2Rvd24gJiB2aWNlIHZlcnNhLikNCg0KNi4gIEFkZCB0aGVtIHRvIHRoZSBxdWV1ZSB3aGVyZSBwcmlvcml0eSA9IGhlYXRsb3NzIHRvIHRoYXQgc3BvdCttYW5oYXR0YW4gZGlzdGFuY2UgKHdoaWNoIGlzIHRoZSBsb3dlc3QgcG9zc2libGUgaGVhdGxvc3MgLSBhc3N1bWluZyBpdCBmb3VuZCBhIHRyYWlsIG9mIGFsbCAxcyBmcm9tIHRoYXQgcG9pbnQgZm9yd2FyZCkNCg0KZW5kIHJlcGVhdA0KDQpgYGB7cn0NCmxvd2VzdGhlYXRsb3NzPC1mdW5jdGlvbihzdGFydHg9MSxzdGFydHk9MSxlbmR4PTEzLGVuZHk9MTMsbWluZGlzdD0xLG1heGRpc3Q9MyxsZj1sYXZhZmllbGQpew0KICAjIyMgY3JlYXRlIGEgcHJpb3JpdHkgcXVldWUNCiAgbGF2YXF1ZXVlPC1jb2xsZWN0aW9uczo6cHJpb3JpdHlfcXVldWUoKQ0KICAjIyMgc3RhcnQgYnkgcHVzaGluZyB0aGUgc3RhcnQgdG8gdGhlIHF1ZXVlIGluIFJMICYgVUQgZGlyZWN0aW9ucw0KICBtYXhfeDwtbmNvbChsZikNCiAgbWF4X3k8LW5yb3cobGYpDQogIGxhdmFxdWV1ZSRwdXNoKHR1cGxlKCJSTCIsc3RhcnR4LHN0YXJ0eSwwKSxwcmlvcml0eT0wKQ0KICBsYXZhcXVldWUkcHVzaCh0dXBsZSgiVUQiLHN0YXJ0eCxzdGFydHksMCkscHJpb3JpdHk9MCkNCiAgb3V0PC0wDQogIGJlZW50aGVyZTwtY29sbGVjdGlvbnM6OmRpY3QoKQ0KICAjIyMjIGJlZ2luIHdoaWxlDQogIHdoaWxlKGxhdmFxdWV1ZSRzaXplKCk+MCl7DQogICAgY3VycmVudHN0ZXA8LWxhdmFxdWV1ZSRwb3AoKQ0KICAgIG9yaWVudGF0aW9uPC1jdXJyZW50c3RlcFtbMV1dDQogICAgY3VycmVudHg8LWN1cnJlbnRzdGVwW1syXV0NCiAgICBjdXJyZW50eTwtY3VycmVudHN0ZXBbWzNdXQ0KICAgIGN1cnJlbnRoZWF0PC1jdXJyZW50c3RlcFtbNF1dDQogICAgaWYoY3VycmVudHg9PWVuZHgmJmN1cnJlbnR5PT1lbmR5KXsNCiAgICAgIG91dD1jdXJyZW50aGVhdA0KICAgICAgYnJlYWt9DQogICAgaWYoYmVlbnRoZXJlJGhhcyhwYXN0ZShvcmllbnRhdGlvbixjdXJyZW50eCxjdXJyZW50eSkpKXtuZXh0DQogICAgICB9ZWxzZXtiZWVudGhlcmUkc2V0KGtleT1wYXN0ZShvcmllbnRhdGlvbixjdXJyZW50eCxjdXJyZW50eSksdmFsdWU9cGFzdGUoY3VycmVudHN0ZXApKX0NCiAgICBuZXdoZWF0PC1jdXJyZW50aGVhdA0KICAgIG5ld3g8LWN1cnJlbnR4DQogICAgbmV3eTwtY3VycmVudHkNCiAgICAjIyMgaWYgY3VycmVudCBvcmllbnRhdGlvbiBpcyBSTCwgZmluZCB0aGUgbmV4dCBzdGVwcyB0byB0aGUgcmlnaHQNCiAgICBpZihvcmllbnRhdGlvbj09IlJMIil7DQogICAgICAjIyMgZmluZCB0byB0aGUgcmlnaHQNCiAgICAgIGk8LTENCiAgICAgIG5ld3g8LWN1cnJlbnR4KzENCiAgICAgIG5ld2hlYXQ8LWN1cnJlbnRoZWF0DQogICAgICB3aGlsZShuZXd4Pj0xJiZuZXd4PD1tYXhfeCYmaTw9bWF4ZGlzdCl7DQogICAgICAgIG5ld2hlYXQ8LW5ld2hlYXQrbGZbbmV3eSxuZXd4XQ0KICAgICAgICAjIyNhZGQgdG8gcHJpb3JpdHkgcXVldWUgaW4gaWYgaT49bWluaW11bWRpc3RhbmNlLg0KICAgICAgICAjIyNiZWNhdXNlIHByaW9yaXR5IGdvZXMgZnJvbSBiaWdnZXN0IHRvIHNtYWxsZXN0LCBwcmlvcml0eSBpcyAtKGhlYXRsb3NzK21hbmhhdHRhbiBkaXN0YW5jZSB0byB0aGUgZW5kcG9pbnQpLg0KICAgICAgICBpZihpPj1taW5kaXN0KXtsYXZhcXVldWUkcHVzaCh0dXBsZSgiVUQiLG5ld3gsbmV3eSxuZXdoZWF0KSxwcmlvcml0eT0tKG5ld2hlYXQrKGVuZHgtbmV3eCkrKGVuZHktbmV3eSkpKX0NCiAgICAgICAgbmV3eDwtbmV3eCsxDQogICAgICAgIGk8LWkrMX0NCiAgICAgICMjI3Jlc2V0IGFuZCBnbyB0byB0aGUgbGVmdC4NCiAgICAgIGk8LTENCiAgICAgIG5ld3g8LWN1cnJlbnR4LTENCiAgICAgIG5ld2hlYXQ8LWN1cnJlbnRoZWF0DQogICAgICB3aGlsZShuZXd4Pj0xJiZuZXd4PD1tYXhfeCYmaTw9bWF4ZGlzdCl7DQogICAgICAgIG5ld2hlYXQ8LW5ld2hlYXQrbGZbbmV3eSxuZXd4XQ0KICAgICAgICAjIyNhZGQgdG8gcHJpb3JpdHkgcXVldWUgaW4gaWYgaT49bWluaW11bWRpc3RhbmNlLg0KICAgICAgICAjIyNiZWNhdXNlIHByaW9yaXR5IGdvZXMgZnJvbSBiaWdnZXN0IHRvIHNtYWxsZXN0LCBwcmlvcml0eSBpcyAtKGhlYXRsb3NzK21hbmhhdHRhbiBkaXN0YW5jZSB0byB0aGUgZW5kcG9pbnQpDQogICAgICAgIGlmKGk+PW1pbmRpc3Qpe2xhdmFxdWV1ZSRwdXNoKHR1cGxlKCJVRCIsbmV3eCxuZXd5LG5ld2hlYXQpLHByaW9yaXR5PS0obmV3aGVhdCsoZW5keC1uZXd4KSsoZW5keS1uZXd5KSkpfQ0KICAgICAgICBuZXd4PC1uZXd4LTENCiAgICAgICAgIyMjIHN0b3Agd2hlbiBpIGhpdHMgdGhlIG1heGxlbmd0aA0KICAgICAgICBpPC1pKzF9DQogICAgICAjIyMgb3RoZXJ3aXNlIGlmIG9yaWVudGF0aW9uIGlzIFVELCBmaW5kIHRoZSBwb3NzaWJpbGl0aWVzIHVwIGFuZCBkb3duDQogICAgfWVsc2UgaWYob3JpZW50YXRpb249PSJVRCIpew0KICAgICAgIyMjIGZpcnN0IGxvb2sgZG93bg0KICAgICAgaTwtMQ0KICAgICAgbmV3eTwtY3VycmVudHkrMQ0KICAgICAgbmV3aGVhdDwtY3VycmVudGhlYXQNCiAgICAgIHdoaWxlKG5ld3k+PTEmJm5ld3k8PW1heF95JiZpPD1tYXhkaXN0KXsNCiAgICAgICAgbmV3aGVhdDwtbmV3aGVhdCtsZltuZXd5LG5ld3hdDQogICAgICAgICMjI2FkZCB0byBwcmlvcml0eSBxdWV1ZSBpbiBpZiBpPj1taW5pbXVtZGlzdGFuY2UuDQogICAgICAgICMjI2JlY2F1c2UgcHJpb3JpdHkgZ29lcyBmcm9tIGJpZ2dlc3QgdG8gc21hbGxlc3QsIHByaW9yaXR5IGlzIC0oaGVhdGxvc3MrbWFuaGF0dGFuIGRpc3RhbmNlIHRvIHRoZSBlbmRwb2ludCkNCiAgICAgICAgaWYoaT49bWluZGlzdCl7bGF2YXF1ZXVlJHB1c2godHVwbGUoIlJMIixuZXd4LG5ld3ksbmV3aGVhdCkscHJpb3JpdHk9LShuZXdoZWF0KyhlbmR4LW5ld3gpKyhlbmR5LW5ld3kpKSl9DQogICAgICAgIG5ld3k8LW5ld3krMQ0KICAgICAgICBpPC1pKzF9DQogICAgICAjIyNyZXNldCBhbmQgZ28gdXANCiAgICAgIGk8LTENCiAgICAgIG5ld3k8LWN1cnJlbnR5LTENCiAgICAgIG5ld2hlYXQ8LWN1cnJlbnRoZWF0DQogICAgICB3aGlsZShuZXd5Pj0xJiZuZXd5PD1tYXhfeSYmaTw9bWF4ZGlzdCl7DQogICAgICAgIG5ld2hlYXQ8LW5ld2hlYXQrbGZbbmV3eSxuZXd4XQ0KICAgICAgICAjIyNhZGQgdG8gcHJpb3JpdHkgcXVldWUgaW4gaWYgaT49bWluaW11bWRpc3RhbmNlLg0KICAgICAgICAjIyNiZWNhdXNlIHByaW9yaXR5IGdvZXMgZnJvbSBiaWdnZXN0IHRvIHNtYWxsZXN0LCBwcmlvcml0eSBpcyAtKGhlYXRsb3NzK21hbmhhdHRhbiBkaXN0YW5jZSB0byB0aGUgZW5kcG9pbnQpDQogICAgICAgIGlmKGk+PW1pbmRpc3Qpe2xhdmFxdWV1ZSRwdXNoKHR1cGxlKCJSTCIsbmV3eCxuZXd5LG5ld2hlYXQpLHByaW9yaXR5PS0obmV3aGVhdCsoZW5keC1uZXd4KSsoZW5keS1uZXd5KSkpfQ0KICAgICAgICBuZXd5PC1uZXd5LTENCiAgICAgICAgIyMjIHN0b3Agd2hlbiBpIGhpdHMgdGhlIG1heGxlbmd0aA0KICAgICAgICBpPC1pKzF9fX0NCiAgb3V0fQ0KYGBgDQoNCmBgYHtyfQ0KcGFydDE8LWxvd2VzdGhlYXRsb3NzKDEsMSxjb2xlZGdlLHJvd2VkZ2UsMSwzLGxhdmFmaWVsZCkNCnBhcnQxDQpgYGANCg0KIyMgUGFydCAyDQoNClRoZSBsb3dlc3QgJiBoaWdoZXN0IG51bWJlciBvZiBibG9ja3MgYXJlIGFscmVhZHkgYnVpbHQgaW50byB0aGUgZnVuY3Rpb24uIFJlLXJ1bi4NCg0KYGBge3J9DQpwYXJ0MjwtbG93ZXN0aGVhdGxvc3MoMSwxLGNvbGVkZ2Uscm93ZWRnZSw0LDEwLGxhdmFmaWVsZCkNCnBhcnQyDQpgYGANCg0KU3R1Y2sgYm90aCB0b2dldGhlciBhbmQgaGVyZSBpdCBpczoNCg0KYGBge3J9DQpkYXkxN2Fuc3dlcnMgPC1mdW5jdGlvbihsYXZhZmllbGQpew0KICBjb2xlZGdlPC1uY29sKGxhdmFmaWVsZCkNCiAgcm93ZWRnZTwtbnJvdyhsYXZhZmllbGQpDQogIHBhcnQxIDwtbG93ZXN0aGVhdGxvc3MoMSwxLGNvbGVkZ2Uscm93ZWRnZSwxLDMsbGF2YWZpZWxkKQ0KICBwYXJ0MiA8LWxvd2VzdGhlYXRsb3NzKDEsMSxjb2xlZGdlLHJvd2VkZ2UsNCwxMCxsYXZhZmllbGQpDQogIA0KICBjKHBhcnQxLHBhcnQyKX0NCg0KYGBgDQoNCmBgYHtyfQ0KZGF5MTcgPC0gZGF5MTdhbnN3ZXJzKGxhdmFmaWVsZCkNCmRheTE3DQpgYGANCg==</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIkRheSAxNyBOb3RlYm9vayINCm91dHB1dDogaHRtbF9ub3RlYm9vaw0KLS0tDQoNCmBgYHtyIHNldHVwLCBpbmNsdWRlPUZBTFNFfQ0KbGlicmFyeShzZXRzKQ0KbGlicmFyeShrbml0cikNCmxpYnJhcnkoZHBseXIpDQpsaWJyYXJ5KHN0cmluZ3IpDQpsaWJyYXJ5KHRpZHl2ZXJzZSkNCmxpYnJhcnkoaWdyYXBoKQ0KbGlicmFyeShnZ3Bsb3QyKQ0KbGlicmFyeShyZ2wpDQpsaWJyYXJ5KGdncmFwaCkNCmxpYnJhcnkocmVhZHIpDQpsaWJyYXJ5KGRzNHBzeSkNCmxpYnJhcnkobnVtYmVycykNCm9wdGlvbnMoc2NpcGVuID0gOTk5KQ0KYGBgDQoNCkkgZ290IHRoaXMgdG8gd29yaywgZm91bmQgdGhlIGFuc3dlciwgd2FzIGRpc2FwcG9pbnRlZCB0aGF0IGl0IHRvb2sgdGhlIGJldHRlciBwYXJ0IG9mIGFuIGhvdXIsIHRyaWVkIHRvIHJlZmluZSBpdCwgYnJva2UgaXQuIFJlZmluZWQgc29tZSBtb3JlLiBCcm9rZSBpdCBhZ2Fpbi4gRmluYWxseSBmaXhlZCBpdC4NCg0KIyMgUGFydCAxDQoNClNldHVwIHRoZSBsYXZhZmllbGQgbWF0cml4DQoNCmBgYHtyfQ0KaW5wdXQgPC0gcmVhZF9saW5lcygiRGF5MTdTYW1wbGUudHh0IikNCmxhdmFmaWVsZDwtbWF0cml4KG5jb2w9bmNoYXIoaW5wdXRbMV0pLG5yb3c9MCkNCmZvcihpIGluIDE6bGVuZ3RoKGlucHV0KSl7DQpsYXZhZmllbGQ8LXJiaW5kKGxhdmFmaWVsZCxhcy5udW1lcmljKHVubGlzdChzdHJfc3BsaXQoaW5wdXRbaV0sIiIpKSkpfQ0KY29sZWRnZTwtbmNvbChsYXZhZmllbGQpDQpyb3dlZGdlPC1ucm93KGxhdmFmaWVsZCkNCmBgYA0KDQpGdW5jdGlvbiAtIHRha2VzIGluIGV2ZXJ5dGhpbmcgKHN0YXJ0IHBvaW50LCBlbmQgcG9pbnRzLCBtaW4gZGlzdGFuY2UgYWxsb3dlZCBiZWZvcmUgYSB0dXJuLCBtYXggZGlzdGFuY2UgYWxsb3dlZCBiZWZvcmUgYSB0dXJuLCBhbmQsIG9mIGNvdXJzZSwgdGhlIGxhdmFmaWVsZC4pDQoNClN0ZXBzOg0KDQpTdGFydDogc2V0IHVwIGEgcHJpb3JpdHkgcXVldWUuIEFkZCB0aGUgc3RhcnRpbmcgcG9pbnQgYnV0IFVwL0Rvd24gJiBSaWdodC9MZWZ0DQoNClJlcGVhdCBmcm9tIGhlcmU6DQoNCjEuICBHcmFiIHRoZSBsb3dlc3QgcHJpb3JpdHkuDQoNCjIuICBDaGVja3M6DQoNCiAgICArICBoYXZlIHdlIGJlZW4gdGhlcmUgYmVmb3JlPyBpZiBzbywgYmFjayB0byBTdGVwIDENCg0KICAgICsgIGlzIHRoaXMgdGhlIGVuZD8gaWYgc28sIHN0b3AuIChiZWNhdXNlIG9mIHRoZSB3YXkgcHJpb3JpdHkgaXMgY2FsY3VsYXRlZCwgdGhpcyBtdXN0IGJlIHRoZSBsb3dlc3QgcG9zc2libGUgb3B0aW9uLiBBbnl0aGluZyB0aGF0IGNvbWVzIGxhdGVyIG11c3QgYWxyZWFkeSBoYXZlIGEgaGlnaGVyIGhlYXRsb3NzIGFscmVhZHkgb3IgaW4gYSBiZXN0IGNhc2Ugc2NlbmFyaW8gd291bGQgaGF2ZSBhbiBlcXVhbCBvciBoaWdoZXIgaGVhdCBvbmNlIGl0IHJlYWNoZWQgdGhlIGVuZC4gKQ0KDQo1LiAgRmluZCBhbGwgdGhlIHBvc3NpYmxlIG1vdmVzIGZyb20gdGhhdCBzcG90IChpZiB3ZSBnb3QgdGhlcmUgZ29pbmcgbGVmdC9yaWdodCwgdGhlIG1vdmVzIGFyZSB1cC9kb3duICYgdmljZSB2ZXJzYS4pDQoNCjYuICBBZGQgdGhlbSB0byB0aGUgcXVldWUgd2hlcmUgcHJpb3JpdHkgPSBoZWF0bG9zcyB0byB0aGF0IHNwb3QrbWFuaGF0dGFuIGRpc3RhbmNlICh3aGljaCBpcyB0aGUgbG93ZXN0IHBvc3NpYmxlIGhlYXRsb3NzIC0gYXNzdW1pbmcgaXQgZm91bmQgYSB0cmFpbCBvZiBhbGwgMXMgZnJvbSB0aGF0IHBvaW50IGZvcndhcmQpDQoNCmVuZCByZXBlYXQNCg0KYGBge3J9DQpsb3dlc3RoZWF0bG9zczwtZnVuY3Rpb24oc3RhcnR4PTEsc3RhcnR5PTEsZW5keD0xMyxlbmR5PTEzLG1pbmRpc3Q9MSxtYXhkaXN0PTMsbGY9bGF2YWZpZWxkKXsNCiAgIyMjIGNyZWF0ZSBhIHByaW9yaXR5IHF1ZXVlDQogIGxhdmFxdWV1ZTwtY29sbGVjdGlvbnM6OnByaW9yaXR5X3F1ZXVlKCkNCiAgIyMjIHN0YXJ0IGJ5IHB1c2hpbmcgdGhlIHN0YXJ0IHRvIHRoZSBxdWV1ZSBpbiBSTCAmIFVEIGRpcmVjdGlvbnMNCiAgbWF4X3g8LW5jb2wobGYpDQogIG1heF95PC1ucm93KGxmKQ0KICBsYXZhcXVldWUkcHVzaCh0dXBsZSgiUkwiLHN0YXJ0eCxzdGFydHksMCkscHJpb3JpdHk9MCkNCiAgbGF2YXF1ZXVlJHB1c2godHVwbGUoIlVEIixzdGFydHgsc3RhcnR5LDApLHByaW9yaXR5PTApDQogIG91dDwtMA0KICBiZWVudGhlcmU8LWNvbGxlY3Rpb25zOjpkaWN0KCkNCiAgIyMjIyBiZWdpbiB3aGlsZQ0KICB3aGlsZShsYXZhcXVldWUkc2l6ZSgpPjApew0KICAgIGN1cnJlbnRzdGVwPC1sYXZhcXVldWUkcG9wKCkNCiAgICBvcmllbnRhdGlvbjwtY3VycmVudHN0ZXBbWzFdXQ0KICAgIGN1cnJlbnR4PC1jdXJyZW50c3RlcFtbMl1dDQogICAgY3VycmVudHk8LWN1cnJlbnRzdGVwW1szXV0NCiAgICBjdXJyZW50aGVhdDwtY3VycmVudHN0ZXBbWzRdXQ0KICAgIGlmKGN1cnJlbnR4PT1lbmR4JiZjdXJyZW50eT09ZW5keSl7DQogICAgICBvdXQ9Y3VycmVudGhlYXQNCiAgICAgIGJyZWFrfQ0KICAgIGlmKGJlZW50aGVyZSRoYXMocGFzdGUob3JpZW50YXRpb24sY3VycmVudHgsY3VycmVudHkpKSl7bmV4dA0KICAgICAgfWVsc2V7YmVlbnRoZXJlJHNldChrZXk9cGFzdGUob3JpZW50YXRpb24sY3VycmVudHgsY3VycmVudHkpLHZhbHVlPXBhc3RlKGN1cnJlbnRzdGVwKSl9DQogICAgbmV3aGVhdDwtY3VycmVudGhlYXQNCiAgICBuZXd4PC1jdXJyZW50eA0KICAgIG5ld3k8LWN1cnJlbnR5DQogICAgIyMjIGlmIGN1cnJlbnQgb3JpZW50YXRpb24gaXMgUkwsIGZpbmQgdGhlIG5leHQgc3RlcHMgdG8gdGhlIHJpZ2h0DQogICAgaWYob3JpZW50YXRpb249PSJSTCIpew0KICAgICAgIyMjIGZpbmQgdG8gdGhlIHJpZ2h0DQogICAgICBpPC0xDQogICAgICBuZXd4PC1jdXJyZW50eCsxDQogICAgICBuZXdoZWF0PC1jdXJyZW50aGVhdA0KICAgICAgd2hpbGUobmV3eD49MSYmbmV3eDw9bWF4X3gmJmk8PW1heGRpc3Qpew0KICAgICAgICBuZXdoZWF0PC1uZXdoZWF0K2xmW25ld3ksbmV3eF0NCiAgICAgICAgIyMjYWRkIHRvIHByaW9yaXR5IHF1ZXVlIGluIGlmIGk+PW1pbmltdW1kaXN0YW5jZS4NCiAgICAgICAgIyMjYmVjYXVzZSBwcmlvcml0eSBnb2VzIGZyb20gYmlnZ2VzdCB0byBzbWFsbGVzdCwgcHJpb3JpdHkgaXMgLShoZWF0bG9zcyttYW5oYXR0YW4gZGlzdGFuY2UgdG8gdGhlIGVuZHBvaW50KS4NCiAgICAgICAgaWYoaT49bWluZGlzdCl7bGF2YXF1ZXVlJHB1c2godHVwbGUoIlVEIixuZXd4LG5ld3ksbmV3aGVhdCkscHJpb3JpdHk9LShuZXdoZWF0KyhlbmR4LW5ld3gpKyhlbmR5LW5ld3kpKSl9DQogICAgICAgIG5ld3g8LW5ld3grMQ0KICAgICAgICBpPC1pKzF9DQogICAgICAjIyNyZXNldCBhbmQgZ28gdG8gdGhlIGxlZnQuDQogICAgICBpPC0xDQogICAgICBuZXd4PC1jdXJyZW50eC0xDQogICAgICBuZXdoZWF0PC1jdXJyZW50aGVhdA0KICAgICAgd2hpbGUobmV3eD49MSYmbmV3eDw9bWF4X3gmJmk8PW1heGRpc3Qpew0KICAgICAgICBuZXdoZWF0PC1uZXdoZWF0K2xmW25ld3ksbmV3eF0NCiAgICAgICAgIyMjYWRkIHRvIHByaW9yaXR5IHF1ZXVlIGluIGlmIGk+PW1pbmltdW1kaXN0YW5jZS4NCiAgICAgICAgIyMjYmVjYXVzZSBwcmlvcml0eSBnb2VzIGZyb20gYmlnZ2VzdCB0byBzbWFsbGVzdCwgcHJpb3JpdHkgaXMgLShoZWF0bG9zcyttYW5oYXR0YW4gZGlzdGFuY2UgdG8gdGhlIGVuZHBvaW50KQ0KICAgICAgICBpZihpPj1taW5kaXN0KXtsYXZhcXVldWUkcHVzaCh0dXBsZSgiVUQiLG5ld3gsbmV3eSxuZXdoZWF0KSxwcmlvcml0eT0tKG5ld2hlYXQrKGVuZHgtbmV3eCkrKGVuZHktbmV3eSkpKX0NCiAgICAgICAgbmV3eDwtbmV3eC0xDQogICAgICAgICMjIyBzdG9wIHdoZW4gaSBoaXRzIHRoZSBtYXhsZW5ndGgNCiAgICAgICAgaTwtaSsxfQ0KICAgICAgIyMjIG90aGVyd2lzZSBpZiBvcmllbnRhdGlvbiBpcyBVRCwgZmluZCB0aGUgcG9zc2liaWxpdGllcyB1cCBhbmQgZG93bg0KICAgIH1lbHNlIGlmKG9yaWVudGF0aW9uPT0iVUQiKXsNCiAgICAgICMjIyBmaXJzdCBsb29rIGRvd24NCiAgICAgIGk8LTENCiAgICAgIG5ld3k8LWN1cnJlbnR5KzENCiAgICAgIG5ld2hlYXQ8LWN1cnJlbnRoZWF0DQogICAgICB3aGlsZShuZXd5Pj0xJiZuZXd5PD1tYXhfeSYmaTw9bWF4ZGlzdCl7DQogICAgICAgIG5ld2hlYXQ8LW5ld2hlYXQrbGZbbmV3eSxuZXd4XQ0KICAgICAgICAjIyNhZGQgdG8gcHJpb3JpdHkgcXVldWUgaW4gaWYgaT49bWluaW11bWRpc3RhbmNlLg0KICAgICAgICAjIyNiZWNhdXNlIHByaW9yaXR5IGdvZXMgZnJvbSBiaWdnZXN0IHRvIHNtYWxsZXN0LCBwcmlvcml0eSBpcyAtKGhlYXRsb3NzK21hbmhhdHRhbiBkaXN0YW5jZSB0byB0aGUgZW5kcG9pbnQpDQogICAgICAgIGlmKGk+PW1pbmRpc3Qpe2xhdmFxdWV1ZSRwdXNoKHR1cGxlKCJSTCIsbmV3eCxuZXd5LG5ld2hlYXQpLHByaW9yaXR5PS0obmV3aGVhdCsoZW5keC1uZXd4KSsoZW5keS1uZXd5KSkpfQ0KICAgICAgICBuZXd5PC1uZXd5KzENCiAgICAgICAgaTwtaSsxfQ0KICAgICAgIyMjcmVzZXQgYW5kIGdvIHVwDQogICAgICBpPC0xDQogICAgICBuZXd5PC1jdXJyZW50eS0xDQogICAgICBuZXdoZWF0PC1jdXJyZW50aGVhdA0KICAgICAgd2hpbGUobmV3eT49MSYmbmV3eTw9bWF4X3kmJmk8PW1heGRpc3Qpew0KICAgICAgICBuZXdoZWF0PC1uZXdoZWF0K2xmW25ld3ksbmV3eF0NCiAgICAgICAgIyMjYWRkIHRvIHByaW9yaXR5IHF1ZXVlIGluIGlmIGk+PW1pbmltdW1kaXN0YW5jZS4NCiAgICAgICAgIyMjYmVjYXVzZSBwcmlvcml0eSBnb2VzIGZyb20gYmlnZ2VzdCB0byBzbWFsbGVzdCwgcHJpb3JpdHkgaXMgLShoZWF0bG9zcyttYW5oYXR0YW4gZGlzdGFuY2UgdG8gdGhlIGVuZHBvaW50KQ0KICAgICAgICBpZihpPj1taW5kaXN0KXtsYXZhcXVldWUkcHVzaCh0dXBsZSgiUkwiLG5ld3gsbmV3eSxuZXdoZWF0KSxwcmlvcml0eT0tKG5ld2hlYXQrKGVuZHgtbmV3eCkrKGVuZHktbmV3eSkpKX0NCiAgICAgICAgbmV3eTwtbmV3eS0xDQogICAgICAgICMjIyBzdG9wIHdoZW4gaSBoaXRzIHRoZSBtYXhsZW5ndGgNCiAgICAgICAgaTwtaSsxfX19DQogIG91dH0NCmBgYA0KDQpgYGB7cn0NCnBhcnQxPC1sb3dlc3RoZWF0bG9zcygxLDEsY29sZWRnZSxyb3dlZGdlLDEsMyxsYXZhZmllbGQpDQpwYXJ0MQ0KYGBgDQoNCiMjIFBhcnQgMg0KDQpUaGUgbG93ZXN0ICYgaGlnaGVzdCBudW1iZXIgb2YgYmxvY2tzIGFyZSBhbHJlYWR5IGJ1aWx0IGludG8gdGhlIGZ1bmN0aW9uLiBSZS1ydW4uDQoNCmBgYHtyfQ0KcGFydDI8LWxvd2VzdGhlYXRsb3NzKDEsMSxjb2xlZGdlLHJvd2VkZ2UsNCwxMCxsYXZhZmllbGQpDQpwYXJ0Mg0KYGBgDQoNClN0dWNrIGJvdGggdG9nZXRoZXIgYW5kIGhlcmUgaXQgaXM6DQoNCmBgYHtyfQ0KZGF5MTdhbnN3ZXJzIDwtZnVuY3Rpb24obGF2YWZpZWxkKXsNCiAgY29sZWRnZTwtbmNvbChsYXZhZmllbGQpDQogIHJvd2VkZ2U8LW5yb3cobGF2YWZpZWxkKQ0KICBwYXJ0MSA8LWxvd2VzdGhlYXRsb3NzKDEsMSxjb2xlZGdlLHJvd2VkZ2UsMSwzLGxhdmFmaWVsZCkNCiAgcGFydDIgPC1sb3dlc3RoZWF0bG9zcygxLDEsY29sZWRnZSxyb3dlZGdlLDQsMTAsbGF2YWZpZWxkKQ0KICANCiAgYyhwYXJ0MSxwYXJ0Mil9DQoNCmBgYA0KDQpgYGB7cn0NCmRheTE3IDwtIGRheTE3YW5zd2VycyhsYXZhZmllbGQpDQpkYXkxNw0KYGBgDQo=</div>
 
 
 
