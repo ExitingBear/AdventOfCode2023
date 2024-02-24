@@ -19,7 +19,7 @@ library(numbers)
 options(scipen = 999)
 ```
 
-I got this to work, found the answer, was disappointed that it took the better part of an hour, tried to refine it, broke it. It now takes only a few seconds to come up with the wrong answer. (All the sample problems I've found so far work.) Also, unfortunately, my notes are such a hash on the first go-round that I honestly can't tell what's broken.
+I got this to work, found the answer, was disappointed that it took the better part of an hour, tried to refine it, broke it. Refined some more. Broke it again. Finally fixed it.
 
 ## Part 1
 

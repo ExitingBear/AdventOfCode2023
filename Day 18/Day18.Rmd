@@ -1,0 +1,318 @@
+---
+title: "Day 18 Notebook"
+output: html_notebook
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(dplyr)
+library(stringr)
+library(tidyverse)
+library(igraph)
+library(ggplot2)
+library(rgl)
+library(ggraph)
+library(readr)
+library(ds4psy)
+library(numbers)
+options(scipen = 999)
+```
+
+
+## Part 1
+```{r}
+input <- read_lines("Day18Sample.txt")
+#input <- read_lines("../../Advent2023/Day18.txt")
+```
+
+
+Start by setting up the list of vertices:
+
+```{r}
+runningx<-0
+runningy<-0
+### start at (0,0)
+lakecorners<-list(c(0,0))
+lakeperimeter<-0
+lakecolors<-c()
+for(i in 1:length(input)){
+  x<-unlist(str_split(input[[i]]," "))
+  dr<-x[1]
+  ds<-as.numeric(x[2])
+  co<-x[3]
+  lakeperimeter<-lakeperimeter+ds
+  lakecolors<-c(lakecolors,str_sub(co,2,8))
+  switch(dr,
+         "R"=runningx<-runningx+ds,
+         "L"=runningx<-runningx-ds,
+         "U"=runningy<-runningy+ds,
+         "D"=runningy<-runningy-ds,
+         message("no direction"))
+  
+  lakecorners<-append(lakecorners,list(c(runningx,runningy)))}
+### show that it ends up back at (0,0)
+lakeperimeter
+tail(lakecorners,1)
+```
+
+Then, apply the shoelace theorem, which basically says to go around a polygon from vertex and multiply (x1\*y2+x2\*y3+...+xn\*y1) - (y1\*x2+y2\*x3+...+yn\*x1) and divide that by 2 to get the area inside the polygon.
+
+```{r}
+lakearea<-0
+for(i in 1:(length(lakecorners)-1)){
+  v1<-lakecorners[[i]]
+  v2<-lakecorners[[i+1]]
+  lakearea<-lakearea+v1[1]*v2[2]-v1[2]*v2[1]
+}
+lakearea<-abs(lakearea/2)
+lakearea
+```
+And then use Pick's theorem that says the Area is the interiorpoints + (Perimter)/2-1
+
+```{r}
+lakeinterior<-lakearea-(lakeperimeter)/2+1
+lakeinterior
+```
+And so, the total is the interior+the perimeter:
+
+```{r}
+part1<-lakeinterior+lakeperimeter
+part1
+```
+Here's what the sample graph looks like with paint:
+
+```{r,echo=FALSE}
+grdata<-as.data.frame(matrix(ncol=5,nrow=0))
+for(i in 1:(length(lakecorners)-1)){
+  line<-list(lakecorners[[i]][1],lakecorners[[i]][2],lakecorners[[i+1]][1],lakecorners[[i+1]][2],lakecolors[i])
+  grdata<-rbind(grdata,line)}
+colnames(grdata)<-c("x1","y1","x2","y2","color")
+grdata$x1<-as.numeric(grdata$x1)
+grdata$x2<-as.numeric(grdata$x2)
+grdata$y1<-as.numeric(grdata$y1)
+grdata$y2<-as.numeric(grdata$y2)
+
+gr<-ggplot(data=grdata)+
+  geom_segment(aes(x=x1,y=y1,xend=x2,yend=y2,colour=color),size=2)+
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.title.y = element_blank(),
+        axis.title.x = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        legend.position="none")+
+  coord_fixed()
+
+gr
+```
+
+```{r,echo=FALSE}
+realinput<-read_lines("../../Advent2023/Day18.txt")
+realgr<-as.data.frame(matrix(ncol=3,nrow=0))
+realrunx<-0
+realruny<-0
+for(i in 1:length(realinput)){
+  addline<-c(realrunx,realruny)
+  plan<-unlist(str_split(realinput[[i]]," "))
+  realdr<-plan[1]
+  realds<-as.numeric(plan[2])
+  realco<-str_sub(plan[3],2,8)
+  switch(realdr,
+         "R"=realrunx<-realrunx+realds,
+         "L"=realrunx<-realrunx-realds,
+         "U"=realruny<-realruny+realds,
+         "D"=realruny<-realruny-realds,
+         message("no direction"))
+  realgr<-rbind(realgr,append(addline,list(realrunx,realruny,realco)))}
+colnames(realgr)<-c("x1","y1","x2","y2","color")
+
+
+graphreal<-ggplot(data=realgr)+
+  geom_segment(aes(x=x1,y=y1,xend=x2,yend=y2,colour=color))+
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.title.y = element_blank(),
+        axis.title.x = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        legend.position="none")+
+  coord_fixed()
+
+graphreal
+```
+## Part 2
+The elves can't read their writing again. Still, it's pretty much the same thing - transform the color into a combo of direction, distance and then find the area again:
+
+```{r}
+
+```
+
+
+```{r}
+lakecorners2<-list(c(0,0))
+runningx2<-0
+runningy2<-0
+lakeperimeter2<-0
+
+### find the corners & perimeter
+for (i in 1:length(lakecolors)){
+  x<-lakecolors[i]
+  dr<-str_sub(x,7,7)
+  ds<-as.integer(as.hexmode(str_sub(x,2,6)))
+  lakeperimeter2<-lakeperimeter2+ds
+  switch(dr,
+         "0"=runningx2<-runningx2+ds,
+         "2"=runningx2<-runningx2-ds,
+         "3"=runningy2<-runningy2+ds,
+         "1"=runningy2<-runningy2-ds,
+         message("no direction"))
+  lakecorners2<-append(lakecorners2,list(c(runningx2,runningy2)))}
+
+###find the area
+lakearea2<-0
+for(i in 1:(length(lakecorners2)-1)){
+  v1<-lakecorners2[[i]]
+  v2<-lakecorners2[[i+1]]
+  lakearea2<-lakearea2+v1[1]*v2[2]-v1[2]*v2[1]}
+lakearea2<-abs(lakearea2/2)
+
+### find the interior
+part2<-lakearea2+lakeperimeter2/2+1
+part2
+```
+Here's what the updated version looks like (using the same paint colors, even though they're not colors)
+
+```{r,echo=FALSE}
+
+grdata2<-as.data.frame(matrix(ncol=5,nrow=0))
+for(i in 1:(length(lakecorners2)-1)){
+  line<-list(lakecorners2[[i]][1],lakecorners2[[i]][2],lakecorners2[[i+1]][1],lakecorners2[[i+1]][2],lakecolors[i])
+  grdata2<-rbind(grdata2,line)}
+colnames(grdata2)<-c("x1","y1","x2","y2","color")
+grdata2$x1<-as.numeric(grdata2$x1)
+grdata2$x2<-as.numeric(grdata2$x2)
+grdata2$y1<-as.numeric(grdata2$y1)
+grdata2$y2<-as.numeric(grdata2$y2)
+
+gr2<-ggplot(data=grdata2)+
+  geom_segment(aes(x=x1,y=y1,xend=x2,yend=y2,colour=color),size=2)+
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.title.y = element_blank(),
+        axis.title.x = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        legend.position="none")+
+  coord_fixed()
+
+gr2
+```
+And here's the real data:
+
+```{r,echo=FALSE}
+realcolors<- realgr$color
+adjustgr<-as.data.frame(matrix(ncol=3,nrow=0))
+
+realrunx<-0
+realruny<-0
+for(i in 1:length(realcolors)){
+  addline<-c(realrunx,realruny)
+  adjustline<-realcolors[i]
+  realdr<-str_sub(adjustline,7,7)
+  realds<-as.integer(as.hexmode(str_sub(adjustline,2,6)))
+  switch(realdr,
+         "0"=realrunx<-realrunx+realds,
+         "2"=realrunx<-realrunx-realds,
+         "3"=realruny<-realruny+realds,
+         "1"=realruny<-realruny-realds,
+         message("no direction"))
+  adjustgr<-rbind(adjustgr,append(addline,list(realrunx,realruny,adjustline)))}
+colnames(adjustgr)<-c("x1","y1","x2","y2","color")
+
+
+graphadjust<-ggplot(data=adjustgr)+
+  geom_segment(aes(x=x1,y=y1,xend=x2,yend=y2,colour=color))+
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.title.y = element_blank(),
+        axis.title.x = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        legend.position="none")+
+  coord_fixed()
+
+graphadjust
+```
+
+
+```{r}
+day18answers <-function(input){
+  ### set running xs & ys
+  smallrunningx<-0
+  smallrunningy<-0
+  largerunningx<-0
+  largerunningy<-0
+  ### start at (0,0)
+  ### set perimeters
+  smalllakecorners<-list(c(0,0))
+  smalllakeperimeter<-0
+  largelakecorners<-list(c(0,0))
+  largelakeperimeter<-0
+  
+  for(i in 1:length(input)){
+    plan<-unlist(str_split(input[[i]]," "))
+    ###part1
+    smalldr<-plan[1]
+    smallds<-as.numeric(plan[2])
+    smalllakeperimeter<-smalllakeperimeter+smallds
+    switch(smalldr,
+           "R"=smallrunningx<-smallrunningx+smallds,
+           "L"=smallrunningx<-smallrunningx-smallds,
+           "U"=smallrunningy<-smallrunningy+smallds,
+           "D"=smallrunningy<-smallrunningy-smallds,
+           message("no direction"))
+    smalllakecorners<-append(smalllakecorners,list(c(smallrunningx,smallrunningy)))
+    ###part2
+    largedr<-str_sub(plan[3],8,8)
+    largeds<-as.integer(as.hexmode(str_sub(plan[3],3,7)))
+    largelakeperimeter<-largelakeperimeter+largeds
+    switch(largedr,
+           "0"=largerunningx<-largerunningx+largeds,
+           "2"=largerunningx<-largerunningx-largeds,
+           "3"=largerunningy<-largerunningy+largeds,
+           "1"=largerunningy<-largerunningy-largeds,
+           message("no direction"))
+    largelakecorners<-append(largelakecorners,list(c(largerunningx,largerunningy)))}
+  ### find the areas
+  smalllakearea<-0
+  largelakearea<-0
+  for(i in 1:(length(smalllakecorners)-1)){
+    smallv1<-smalllakecorners[[i]]
+    smallv2<-smalllakecorners[[i+1]]
+    smalllakearea<-smalllakearea+smallv1[1]*smallv2[2]-smallv1[2]*smallv2[1]
+    largev1<-largelakecorners[[i]]
+    largev2<-largelakecorners[[i+1]]
+    largelakearea<-largelakearea+largev1[1]*largev2[2]-largev1[2]*largev2[1]}
+
+  smalllakearea<-abs(smalllakearea/2)
+  largelakearea<-abs(largelakearea/2)
+  
+  ### find the interior
+  part1<-smalllakearea+smalllakeperimeter/2+1
+  part2<-largelakearea+largelakeperimeter/2+1
+  c(part1,part2)}
+
+```
+
+```{r}
+day18 <- day18answers(input)
+day18
+```

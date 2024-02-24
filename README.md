@@ -22,3 +22,4 @@ Code and notebooks from [Advent of Code 2023](https://adventofcode.com/2023).
 | 15 | [HTML](https://exitingbear.github.io/AdventOfCode2023/Day-15.nb.html) | [Notebook](<Day 15/Day15.Rmd>) | [Files](<Day 15>) |
 | 16 | [HTML](https://exitingbear.github.io/AdventOfCode2023/Day-16.nb.html) | [Notebook](<Day 16/Day16.Rmd>) | [Files](<Day 16>) |
 | 17 | [HTML](https://exitingbear.github.io/AdventOfCode2023/Day-17.nb.html) | [Notebook](<Day 17/Day17.Rmd>) | [Files](<Day 17>) |
+| 18 | [HTML](https://exitingbear.github.io/AdventOfCode2023/Day-18.nb.html) | [Notebook](<Day 18/Day18.Rmd>) | [Files](<Day 18>) |
