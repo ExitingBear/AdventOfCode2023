@@ -1,0 +1,174 @@
+---
+title: "Day 19 Notebook"
+output: html_notebook
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(dplyr)
+library(stringr)
+library(tidyverse)
+library(igraph)
+library(ggplot2)
+library(rgl)
+library(ggraph)
+library(readr)
+library(ds4psy)
+library(numbers)
+library(collections)
+options(scipen = 999)
+```
+
+Having read part 2 (because this is done way after the fact), the goal is to sort some stuff.  Much like an earlier day, if there's a universal sorter, then sorting the specifics is trivial and so, to the universal first.
+
+First, bring in the data. Then do the universal sorter. Then apply it to the specific cases (part 1) then the general (part 2)
+
+
+```{r}
+input <- read_lines("Day19Sample.txt")
+blankline<-which(input=="")
+### set up the rules as a dictionary
+rules<-dict()
+for (i in 1:(blankline-1)){
+  r<-unlist(str_split(str_sub(input[i],end=-2),"\\{"))
+  rname<-r[1]
+  rdetails<-r[2]
+  rules$set(rname,rdetails)}
+
+### set up the parts as a list of vectors (x,m,a,s)
+partslist<-input[(blankline+1):length(input)]
+parts<-list()
+for(i in 1:length(partslist)){
+  x<-unlist(str_split(str_sub(partslist[[i]],2,-2),","))
+  x<-sapply(x,function(y){as.numeric(str_sub(y,3))})
+  x<-unname(x)
+  parts<-append(parts,list(x))}
+```
+
+Then build the supporting functions:
+
+```{r}
+### takes in the < or >, a number and  range
+### splits this into two ranges around the number
+microsplit <- function(gtlt,num,lh){
+  if(gtlt=="<"){c(lh[1],num-1,num,lh[2])
+  }else{c(num+1,lh[2],lh[1],num)}}
+
+### takes in the letter to be evaluated (x,m,a,s), < or >, the number to split by, and the full x,m,a,s of the line
+### returns two ranges split, successfully.
+macrosplit <- function(xmaslet,gtlt,num,xmasline){
+  ### split the line into 4 parts, x,m,a,s and duplicate them.
+  xrange<-c(xmasline[1:2],xmasline[1:2])
+  mrange<-c(xmasline[3:4],xmasline[3:4])
+  arange<-c(xmasline[5:6],xmasline[5:6])
+  srange<-c(xmasline[7:8],xmasline[7:8])
+  ### if this is the letter to decide on, then, do the microsplit to turn it into two different ranges
+  if(xmaslet=="x"){xrange <- microsplit(gtlt,num,xrange[1:2])
+  }else if (xmaslet=="m"){mrange <- microsplit(gtlt,num,mrange[1:2])
+  }else if (xmaslet=="a"){arange <- microsplit(gtlt,num,arange[1:2])
+  }else{srange <- microsplit(gtlt,num,srange[1:2])}
+  ### send out two different groups to be evaluated 
+  c(xrange[1:2],mrange[1:2],arange[1:2],srange[1:2],xrange[3:4],mrange[3:4],arange[3:4],srange[3:4])}
+```
+
+The giant sorter - 
+
+```{r}
+### takes in a range (xmasln) of the form c(xmin,xmax,mmin,mmax,amin,amax,smin,smax) a rulename, and a rule list
+### returns a df of ranges and final disposition (Accepted or Rejected) 
+partsorter<-function(xmasln=c(1,4000,1,4000,1,4000,1,4000),rname="in",rulelist=rules){
+  ###set the output dataframe
+  partfinals<-as.data.frame(matrix(nrow=0,ncol=9))
+  colnames(partfinals)<-c("AR","xmin","xmax","mmin","mmax","amin","amax","smin","smax")
+  ###set up the queue
+  partstack<-queue()
+  partstack$push(list(rname,xmasln))
+  while(partstack$size()>0){
+    work<-partstack$pop()
+    workingline<-work[[2]]
+    workingrule<-unlist(str_split(rules$get(work[[1]]),","))
+    ### if max is less than min for any of these, then drop it and move to the next
+    if(workingline[2]<workingline[1]||workingline[4]<workingline[3]||workingline[6]<workingline[5]||workingline[8]<workingline[7]){next}
+    ### if not at the default/catchall, do the following 
+    while(length(workingrule)>1){
+      wr<-unlist(str_split(workingrule[1],":"))
+      ### split into two groups, the group that applies and the group that is passed forward
+      splitline<-macrosplit(str_sub(wr[1],1,1),str_sub(wr[1],2,2),as.numeric(str_sub(wr[1],3)),workingline)
+      ### if A, add to the finals. if R also add to the finals
+      if(wr[2]=="A"){partfinals<-rbind(partfinals,append("A",splitline[1:8]))
+      }else if(wr[2]=="R"){partfinals<-rbind(partfinals,append("R",splitline[1:8]))
+      ### if it is neither, push the rule to the queue with the appropriate half of the split 
+      }else{partstack$push(list(wr[2],splitline[1:8]))}
+      ### repeat while with the second half of the splitline and the rest of the workingrule
+      workingrule<-workingrule[2:length(workingrule)]
+      workingline<-splitline[9:16]}
+    #### once at the spillover instruction do the following
+    if(workingrule=="A"){partfinals<-rbind(partfinals,append("A",workingline))
+    }else if(workingrule=="R"){partfinals<-rbind(partfinals,append("R",workingline))
+    }else{partstack$push(list(workingrule,workingline))}}
+  ### go back and pop the next thing in the stack
+  colnames(partfinals)<-c("AR","xmin","xmax","mmin","mmax","amin","amax","smin","smax")
+  ### change ranges to numerics
+  partfinals<-partfinals %>% mutate(xmin=as.numeric(xmin),xmax=as.numeric(xmax),
+                                    mmin=as.numeric(mmin),mmax=as.numeric(mmax),
+                                    amin=as.numeric(amin),amax=as.numeric(amax),
+                                    smin=as.numeric(smin),smax=as.numeric(smax))
+  ### filter out impossible ranges (where min > max)
+  partfinals<-partfinals %>% filter(xmax>=xmin,mmax>=mmin,amax>=amin,smax>=smin)
+  partfinals}
+```
+
+## Part 1
+Run the sorter on the individual lines:
+```{r}
+part1<-sapply(parts,function(x){
+  ### apply partsorter to the line
+  outdf <- partsorter(c(x[1],x[1],x[2],x[2],x[3],x[3],x[4],x[4]),"in",rules)
+  ### if there are lines that do not apply, remove them, too
+  outdf<- outdf %>% filter(xmin<=x[1],xmax>=x[1],mmin<=x[2],mmax>=x[2],amin<=x[3],amax>=x[3],smin<=x[4],smax>=x[4])%>%select(AR)
+  outdf<-outdf$AR[1]
+  if(outdf=="A"){x[1]+x[2]+x[3]+x[4]}else{0}})
+
+part1<-sum(part1)
+part1
+```
+## Part 2
+run the sorter on full range (1-4000 for all letters)
+```{r}
+part2<-partsorter()
+part2<-part2 %>% mutate(combinations=(xmax-xmin+1)*(mmax-mmin+1)*(amax-amin+1)*(smax-smin+1))%>%
+  group_by(AR) %>% summarise(combinations=sum(combinations))%>%
+  filter(AR=="A")
+part2<-sum(part2$combinations)
+part2
+```
+
+Single function (needs above functions, rules, and parts)
+```{r}
+day19answers <-function(rules,parts){
+  #### as above, find the giant table of ranges
+  part2<-partsorter(c(1,4000,1,4000,1,4000,1,4000),"in",rules)
+  part1<-0
+  ### for each part, find which range it belongs to and and whether that's an accept or reject
+  for(i in 1:length(parts)){
+    p<-parts[[i]]
+    pdf<-part2
+    pdf<-pdf%>%filter(xmax>=p[1],xmin<=p[1],mmax>=p[2],mmin<=p[2],amax>=p[3],amin<=p[3],smax>=p[4],smin<=p[4])
+    ### if accept, then add x+m+a+s.
+    if(pdf$AR[1]=="A"){part1<-part1+sum(p)}}
+  ### run part 2 as above (get the number of combinations in each range, filter & add the accepted ones)
+  part2<-part2 %>% mutate(combinations=(xmax-xmin+1)*(mmax-mmin+1)*(amax-amin+1)*(smax-smin+1))%>%
+    group_by(AR) %>% summarise(combinations=sum(combinations))%>%
+    filter(AR=="A")
+  part2<-sum(part2$combinations)
+  part2
+  c(part1,part2)}
+```
+
+
+```{r}
+day19<-day19answers(rules,parts)
+day19
+```
+
+
