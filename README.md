@@ -24,3 +24,4 @@ Code and notebooks from [Advent of Code 2023](https://adventofcode.com/2023).
 | 17 | *Clumsy Crucible* | [HTML](https://exitingbear.github.io/AdventOfCode2023/Day-17.nb.html) | [Notebook](<Day 17/Day17.Rmd>) | [Files](<Day 17>) |
 | 18 | *Lavaduct Lagoon* | [HTML](https://exitingbear.github.io/AdventOfCode2023/Day-18.nb.html) | [Notebook](<Day 18/Day18.Rmd>) | [Files](<Day 18>) |
 | 19 | *Aplenty* | [HTML](https://exitingbear.github.io/AdventOfCode2023/Day-19.nb.html) | [Notebook](<Day 19/Day19.Rmd>) | [Files](<Day 19>) |
+| 20 | *Pulse Propogation* | [HTML](https://exitingbear.github.io/AdventOfCode2023/Day-20.nb.html) | [Notebook](<Day 20/Day20.Rmd>) | [Files](<Day 20>) |

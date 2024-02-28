@@ -1,0 +1,249 @@
+---
+title: "Day 20 Notebook"
+output: html_notebook
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(dplyr)
+library(stringr)
+library(tidyverse)
+library(igraph)
+library(ggplot2)
+library(rgl)
+library(ggraph)
+library(readr)
+library(ds4psy)
+library(numbers)
+options(scipen = 999)
+```
+Finally, turning entirely not graph things into a graph!!!!
+
+## Part 1
+
+There's a circut, of a bunch of modules which turn on and off and send pulses to other modules.
+
+If each module is a node in the graph, it's possible to save info about their state in the node, and save information about the pulses they received in the edges from one module to the next.  So:
+```{r}
+input <- read_lines("Day20Sample2.txt")
+```
+Create a quick function to add the input to the circut.
+```{r}
+### The input is in the form "type+from_module -> to_module"
+
+addtocircuit<- function(circuitgraph,instring){
+  instring <- str_remove_all(instring," ")
+  ### get the from
+  froms <- str_split(instring,"->")[[1]][1]
+  ### get the to_modules
+  tos <- unlist(str_split(str_split(instring,"->")[[1]][2],","))
+  ### get the moduletype
+  typs <- str_sub(froms,1,1)
+  if(typs=="b"){
+    typs<-"broadcaster"}else{froms<-str_sub(froms,2)}
+  
+  ## add vertex if it isn't there
+  if(!(froms %in% names(V(circuitgraph)))){
+    circuitgraph<-add_vertices(circuitgraph,1,name=froms)}
+  ### add vertex attributes (the type of circuit and the list of its outgoing neighbors)
+  vertex_attr(circuitgraph,"nextvs",froms)<-list(tos)
+  vertex_attr(circuitgraph,"kind",froms)<-typs
+  
+  ### for each of the to modules, add the vertex (if it isn't there).  Then add the edge
+  for(i in 1:length(tos)){
+    if(!(tos[i] %in% names(V(circuitgraph)))){
+      circuitgraph<-add_vertices(circuitgraph,1,name=tos[i])}
+    circuitgraph <- circuitgraph %>% add_edges(c(froms,tos[i]))}
+  circuitgraph}
+
+### set up the circuit
+circuit<-make_empty_graph()
+for(i in 1:length(input)){
+  circuit<-addtocircuit(circuit,input[i])}
+### set all circuits to off and and all edges to "low"
+vertex_attr(circuit,"on")<-FALSE
+edge_attr(circuit,"highlow")<-"low"
+
+plot(circuit)
+```
+Then - a function for pressing the button module (which sends the first high signal to the broadcaster module)
+
+```{r}
+button<- function(gr,highs=0,lows=0){
+  ### set up the queue for which module works next
+  modulequeue <- collections::queue()
+  ### in the queue will be a vector of module to be worked on, the module that the signal came on, and the signal
+  modulequeue$push(c("broadcaster","","low"))
+  while (modulequeue$size() != 0){
+    ### get the working signal and get the information, including 
+    workingsignal <- modulequeue$pop()
+    currentmodule <- workingsignal[1]
+    previousmodule <- workingsignal[2]
+    highlow <- workingsignal[3]
+    moduletype <- vertex_attr(gr,"kind",currentmodule)
+    nextmodules <- unlist(vertex_attr(gr,"nextvs",currentmodule))
+    
+    if(highlow=="high"){highs<-highs+1}else{lows<-lows+1}
+    ### depending on the module type, do the following
+    ### if the module doesn't have a type, do nothing.
+    if(is.na(moduletype)){
+      ### if the module is a broadcaster, send the low signal to all of its outputs.
+      ### update the "low" counter for each 
+    }else if(moduletype=="broadcaster"){
+      ##broadcaster - send the low signal and update the "low" counter for each outgoing module
+      for(i in 1:length(nextmodules)){
+        modulequeue$push(c(nextmodules[i],"broadcaster","low"))}
+      ###if the module is a flip-flop, update flipflop to off or on
+    }else if(moduletype=="%"){
+      ### if the module is low, then toggle the it off/on.
+      if(highlow=="low"){
+        vertex_attr(gr,"on",currentmodule)<-!vertex_attr(gr,"on",currentmodule)
+        ### if the attribute is on, then push a high signal out.
+        if(vertex_attr(gr,"on",currentmodule)){
+          sapply(nextmodules,function(x){modulequeue$push(c(x,currentmodule,"high"))})
+          ### if the attribute is off, push a low signal
+        }else{
+          sapply(nextmodules,function(x){modulequeue$push(c(x,currentmodule,"low"))})}}
+      ### if the module is a conjunction
+    }else if(moduletype=="&"){
+      ### if the signal is low, then update the edge attribute to low and send high signals out
+      if(highlow=="low"){
+        edge_attr(gr,"highlow",get.edge.ids(gr,c(previousmodule,currentmodule)))<-"low"
+        sapply(nextmodules,function(x){modulequeue$push(c(x,currentmodule,"high"))})
+      }else{
+        ### if high, update the edge to high. check other incoming edges-send low if all high, otherwise send high.
+        edge_attr(gr,"highlow",get.edge.ids(gr,c(previousmodule,currentmodule)))<-"high"
+        if(all(edge_attr(gr,"highlow",index=incident(gr,currentmodule,"in"))=="high")){
+          sapply(nextmodules,function(x){modulequeue$push(c(x,currentmodule,"low"))})
+        }else{
+          sapply(nextmodules,function(x){modulequeue$push(c(x,currentmodule,"high"))})}}}}
+  ### output is a list of the graph (with updates, the number of high signals, and the number of low signals)
+  list(gr,highs,lows)}
+
+```
+
+Part 1 is the highs * the lows if we push the button 1000 times.
+
+```{r}
+part1<-list(circuit,0,0)
+### run 1000 times
+for(i in 1:1000){
+  part1<-button(part1[[1]],part1[[2]],part1[[3]])}
+
+part1<-part1[[2]]*part1[[3]]
+part1
+```
+## Part 2
+There's no effective sample data for part 2.  It is highly dependent on actual input data - resetting the circuit:
+
+```{r,echo=FALSE,warning=FALSE}
+input <- read_lines("../../Advent2023/Day20.txt")
+circuit<-make_empty_graph()
+for(i in 1:length(input)){
+  circuit<-addtocircuit(circuit,input[i])}
+### set all circuits to off and and all edges to "low"
+vertex_attr(circuit,"on")<-FALSE
+edge_attr(circuit,"highlow")<-"low"
+```
+
+```{r,echo=FALSE,warning=FALSE}
+plotnow <- ggraph(circuit,layout="lgl" )+
+  geom_edge_fan(arrow=arrow(length=unit(4,'mm')),aes(colour=highlow))+
+  geom_node_point(aes(shape=kind,color=on), size=3, position="jitter")+
+  geom_node_text(aes(label=name),size=3,repel=TRUE)
+plotnow
+```
+
+
+
+
+Part 2 involves actually looking at the graph to find out when "rx" will get a low pulse.  So start by seeing what sends to rx.
+```{r}
+x<-neighbors(circuit,"rx",mode="in")
+vertex_attr(circuit,name="name",x)
+vertex_attr(circuit,name="kind",x)
+```
+and because kc is an inversion, for it to send low, then its incoming modules need to send "high."  The graph indicates that it is highly likely that there's a cycle. So find the cycle for each, then the least common multiplier for the cycles is the answer:
+
+```{r}
+
+to_kc<-incident(circuit,"kc",mode="in")
+to_kc
+```
+Then make a small, small change to button(). Send a flag every time one of those is vertices is sending a "high" message to kc.
+
+```{r}
+buttontrace<- function(gr,counter,highs=0,lows=0){
+  ### set up the queue for which module works next
+  modulequeue <- collections::queue()
+  ### in the queue will be a vector of module to be worked on, the module that the signal came on, and the signal
+  modulequeue$push(c("broadcaster","","low"))
+  while (modulequeue$size() != 0){
+    ### get the working signal and get the information, including 
+    workingsignal <- modulequeue$pop()
+    currentmodule <- workingsignal[1]
+    previousmodule <- workingsignal[2]
+    highlow <- workingsignal[3]
+    moduletype <- vertex_attr(gr,"kind",currentmodule)
+    nextmodules <- unlist(vertex_attr(gr,"nextvs",currentmodule))
+    ### tiny flag
+    if(currentmodule=="kc"&& highlow=="high" && previousmodule %in% (c("ph","hn","vn","kt"))){
+      cat(counter,previousmodule,"\n")}
+    if(highlow=="high"){highs<-highs+1}else{lows<-lows+1}
+    ### depending on the module type, do the following
+    ### if the module doesn't have a type, do nothing.
+    if(is.na(moduletype)){
+      ### if the module is a broadcaster, send the low signal to all of its outputs.
+      ### update the "low" counter for each 
+    }else if(moduletype=="broadcaster"){
+      ##broadcaster - send the low signal and update the "low" counter for each outgoing module
+      for(i in 1:length(nextmodules)){
+        modulequeue$push(c(nextmodules[i],"broadcaster","low"))}
+      ###if the module is a flip-flop, update flipflop to off or on
+    }else if(moduletype=="%"){
+      ### if the module is low, then toggle the it off/on.
+      if(highlow=="low"){
+        vertex_attr(gr,"on",currentmodule)<-!vertex_attr(gr,"on",currentmodule)
+        ### if the attribute is on, then push a high signal out.
+        if(vertex_attr(gr,"on",currentmodule)){
+          sapply(nextmodules,function(x){modulequeue$push(c(x,currentmodule,"high"))})
+          ### if the attribute is off, push a low signal
+        }else{
+          sapply(nextmodules,function(x){modulequeue$push(c(x,currentmodule,"low"))})}}
+      ### if the module is a conjunction
+    }else if(moduletype=="&"){
+      ### if the signal is low, then update the edge attribute to low and send high signals out
+      if(highlow=="low"){
+        edge_attr(gr,"highlow",get.edge.ids(gr,c(previousmodule,currentmodule)))<-"low"
+        sapply(nextmodules,function(x){modulequeue$push(c(x,currentmodule,"high"))})
+      }else{
+        ### if high, update the edge to high. check other incoming edges-send low if all high, otherwise send high.
+        edge_attr(gr,"highlow",get.edge.ids(gr,c(previousmodule,currentmodule)))<-"high"
+        if(all(edge_attr(gr,"highlow",index=incident(gr,currentmodule,"in"))=="high")){
+          sapply(nextmodules,function(x){modulequeue$push(c(x,currentmodule,"low"))})
+        }else{
+          sapply(nextmodules,function(x){modulequeue$push(c(x,currentmodule,"high"))})}}}}
+  ### output is a list of the graph (with updates, the number of high signals, and the number of low signals)
+  gr}
+### reset the circuit & create a df to hold the edge attributes
+vertex_attr(circuit,"on")<-FALSE
+edge_attr(circuit,"highlow")<-"low"
+
+findcycle<-circuit
+###
+```
+
+The run this a bunch of times and see what the output is:
+
+```{r}
+for (i in 1:10000){
+   findcycle<-buttontrace(findcycle,i,0,0)}
+```
+
+vn sends a high every 3797, ph - every 3907, hn - every 4021, and kt - every 4093 - so, part 2 is the least common multiple of those 4 cycles.
+
+```{r}
+part2 <- mLCM(c(3797,3907,4021,4093))
+part2
+```
+No "single function" for this because of part 2.
