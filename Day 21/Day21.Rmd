@@ -1,0 +1,234 @@
+---
+title: "Day 21 Notebook"
+output: html_notebook
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(dplyr)
+library(stringr)
+library(tidyverse)
+library(igraph)
+library(ggplot2)
+library(rgl)
+library(ggraph)
+library(readr)
+library(ds4psy)
+library(numbers)
+options(scipen = 999)
+```
+
+
+## Part 1
+How far can he go?
+
+Start by going putting this into a matrix - 
+
+```{r}
+input <- read_lines("Day21Sample.txt")
+
+gardenmatrix<-matrix(nrow=0,ncol=nchar(input[[1]]))
+
+for(i in 1:length(input)){
+  inrow<-unlist(str_split(input[[i]],""))
+  gardenmatrix<-rbind(gardenmatrix,inrow)}
+
+```
+then into a graph, by connecting all of the spaces and pulling out the rocks:
+
+```{r}
+gardenedges<-matrix(nrow=0,ncol=2)
+### horizontal edges
+for(i in 1:nrow(gardenmatrix)){
+  for(j in 1:(ncol(gardenmatrix)-1)){
+    gardenedges<-rbind(gardenedges,c(paste0(i,"~",j),paste0(i,"~",(j+1))))}}
+
+### vert edges
+for(i in 1:(nrow(gardenmatrix)-1)){
+  for(j in 1:ncol(gardenmatrix)){
+    gardenedges<-rbind(gardenedges,c(paste0(i,"~",j),paste0((i+1),"~",j)))}}
+
+colnames(gardenedges) <- c("v1","v2")
+
+### create the graph
+gardengraph <- graph_from_edgelist(as.matrix(gardenedges), directed=FALSE)
+
+### set the graph values
+for(i in 1:nrow(gardenmatrix)){
+  for(j in 1:ncol(gardenmatrix)){
+    vertex_attr(gardengraph,"terrain",index=paste0(i,"~",j))<-gardenmatrix[i,j]}}
+
+### pull out the rocks
+rocks <- which(vertex_attr(gardengraph,"terrain")=="#")
+gardengraph<- delete.vertices(gardengraph,rocks)
+
+
+### label the start
+startingposition <- which(vertex_attr(gardengraph,"terrain")=="S")
+```
+From there find the distances between the start and all of the other vectors:
+```{r}
+gardendists<-distances(gardengraph,v=startingposition,to=V(gardengraph))
+```
+
+the elf can make it to any place where the distance is either less than or equal to the number of steps and where the number of steps mod 2 is the same as distance mod 2.
+```{r}
+steps<-6
+gardendists<-gardendists[intersect(which(steps%%2==gardendists%%2),which(gardendists<=steps))]
+#remove the distances that can't be reached because they are surrounded by rocks.
+gardendists<-gardendists[(which(is.finite(gardendists)))]
+
+
+part1<-length(gardendists)
+part1
+```
+## Part 2
+Part 2 is very contingent on the real data:
+let's look at the graph:
+```{r,echo=FALSE}
+input <- read_lines("../../Advent2023/Day21.txt")
+
+gardenmatrix<-matrix(nrow=0,ncol=nchar(input[[1]]))
+for(i in 1:length(input)){
+  inrow<-unlist(str_split(input[[i]],""))
+  gardenmatrix<-rbind(gardenmatrix,inrow)}
+
+gardenedges<-matrix(nrow=0,ncol=2)
+### horizontal edges
+for(i in 1:nrow(gardenmatrix)){
+  for(j in 1:(ncol(gardenmatrix)-1)){
+    gardenedges<-rbind(gardenedges,c(paste0(i,"~",j),paste0(i,"~",(j+1))))}}
+
+### vert edges
+for(i in 1:(nrow(gardenmatrix)-1)){
+  for(j in 1:ncol(gardenmatrix)){
+    gardenedges<-rbind(gardenedges,c(paste0(i,"~",j),paste0((i+1),"~",j)))}}
+
+colnames(gardenedges) <- c("v1","v2")
+```
+
+```{r, echo=FALSE}
+
+### create the graph
+gardengraph <- graph_from_edgelist(as.matrix(gardenedges), directed=FALSE)
+
+gardendf<-as.data.frame(matrix(ncol=3,nrow=0))
+
+### set the graph values
+for(i in 1:nrow(gardenmatrix)){
+  for(j in 1:ncol(gardenmatrix)){
+    vertex_attr(gardengraph,"terrain",index=paste0(i,"~",j))<-gardenmatrix[i,j]
+    gardendf<-rbind(gardendf,c(j,i,gardenmatrix[i,j]))}}
+
+colnames(gardendf)<-c("x","y","terrain")
+gardendf<-gardendf %>% rowwise %>%
+  mutate(x=as.numeric(x),y=as.numeric(y),
+         color= ifelse(terrain==".","#FFFFFF",ifelse(terrain=="S","#FF0000","#000000")))
+
+
+```
+```{r,echo=FALSE}
+plotgarden<-ggplot(data=gardendf,aes(x,y))+
+  geom_point(colour=gardendf$color,shape=15)+
+  scale_y_reverse()+
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.title.y = element_blank(),
+        axis.title.x = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())+
+  coord_fixed()
+
+plotgarden
+```
+It's easy to see there's a diamond shaped path with no rocks and a little harder to see that straight through the center both horizontally and vertically. And that the rocks are pretty sparse. This makes the question artificially easier.  So does the fact that the elf wants to go 26501365 steps, which is a multiple of 131+65 (specifically *2023*00 times 131).
+
+It means that the furthest you can get is going to be a big diamond, 202300 gardens up, down, to the right, and to the left and it will pretty much fill the same way that the original garden did with one and it will completely fill because of the blank spaces.
+
+The one "trick" is that because there's an odd number of spaces in the garden, the valid spaces flip from odd to even as you go garden to garden to garden.
+
+But since there is an even number of garden multiples *and* because there are odd number of steps, the formula is:
+n = number of multiples
+s = number of steps
+o = places that can be reached in an odd number of steps
+e = places that can be reached with an even number of steps
+
+(n+1)^2\*(o with distance <= s)+n^2\*(e with distance <= s)+(n)\*(n+1)\*(places that take more than s steps)
+```{r, echo=FALSE}
+rocks <- which(vertex_attr(gardengraph,"terrain")=="#")
+gardengraph<- delete.vertices(gardengraph,rocks)
+startingposition <- which(vertex_attr(gardengraph,"terrain")=="S")
+gardendists<-distances(gardengraph,v=startingposition,to=V(gardengraph))
+gardendists<-gardendists[(which(is.finite(gardendists)))]
+```
+
+```{r}
+steps<-26501365%%131
+closeodds<-length(gardendists[intersect(which(gardendists%%2==1),which(gardendists<=steps))])
+closeevens<-length(gardendists[intersect(which(gardendists%%2==0),which(gardendists<=steps))])
+outsidetriangles<-length(gardendists[which(gardendists>steps)])
+
+
+part2<-202301^2*closeodds+202300^2*closeevens+202301*202300*outsidetriangles
+
+part2
+```
+
+
+```{r}
+day21answers<-function(indata=input,p1steps=64,p2steps=26501365){
+  ### set up garden
+  gardenmatrix<-matrix(nrow=0,ncol=length(indata))
+  
+  for(i in 1:length(input)){
+    inrow<-unlist(str_split(input[[i]],""))
+    gardenmatrix<-rbind(gardenmatrix,inrow)}
+  gardenedges<-matrix(nrow=0,ncol=2)
+  ### horizontal edges
+  for(i in 1:nrow(gardenmatrix)){
+    for(j in 1:(ncol(gardenmatrix)-1)){
+      gardenedges<-rbind(gardenedges,c(paste0(i,"~",j),paste0(i,"~",(j+1))))}}
+  ### vert edges
+  for(i in 1:(nrow(gardenmatrix)-1)){
+    for(j in 1:ncol(gardenmatrix)){
+      gardenedges<-rbind(gardenedges,c(paste0(i,"~",j),paste0((i+1),"~",j)))}}
+  colnames(gardenedges) <- c("v1","v2")
+  ### create the graph
+  gardengraph <- graph_from_edgelist(as.matrix(gardenedges), directed=FALSE)
+  ### set the graph values
+  for(i in 1:nrow(gardenmatrix)){
+    for(j in 1:ncol(gardenmatrix)){
+      vertex_attr(gardengraph,"terrain",index=paste0(i,"~",j))<-gardenmatrix[i,j]}}
+  ### pull out the rocks
+  rocks <- which(vertex_attr(gardengraph,"terrain")=="#")
+  gardengraph<- delete.vertices(gardengraph,rocks)
+  ### label the start
+  startingposition <- which(vertex_attr(gardengraph,"terrain")=="S")
+  
+  ###get distance from start
+  gardendists<-distances(gardengraph,v=startingposition,to=V(gardengraph))
+  gardendists<-gardendists[(which(is.finite(gardendists)))]
+  
+  ###part 1, which are within part 1
+  
+  part1<-gardendists[intersect(which(p1steps%%2==gardendists%%2),which(gardendists<=p1steps))]
+  part1<-length(part1)
+  
+  ###part 2
+  n<-p2steps%/%length(indata)
+  p2steps<-p2steps%%length(indata)
+  closeodds<-length(gardendists[intersect(which(gardendists%%2==1),which(gardendists<=p2steps))])
+  closeevens<-length(gardendists[intersect(which(gardendists%%2==0),which(gardendists<=p2steps))])
+  outsidetriangles<-length(gardendists[which(gardendists>p2steps)])
+  
+  part2<-((n+1)^2)*closeodds+(n^2*closeevens)+(n*(n+1)*outsidetriangles)
+  c(part1,part2)}
+```
+
+```{r}
+day21<-day21answers()
+day21
+```
+
