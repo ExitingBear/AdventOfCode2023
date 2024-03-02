@@ -1,0 +1,222 @@
+---
+title: "Day 22 Notebook"
+output: html_notebook
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(dplyr)
+library(stringr)
+library(tidyverse)
+library(igraph)
+library(ggplot2)
+library(rgl)
+library(ggraph)
+library(readr)
+library(ds4psy)
+library(numbers)
+library(randomcoloR) 
+options(scipen = 999)
+options(rgl.useNULL = TRUE) # Suppress the separate window.
+```
+
+
+## Part 1
+Playing Jenga with the elves
+
+First, create the bricks
+```{r}
+input <- read_lines("Day22Sample.txt")
+
+bricks<-as.data.frame(matrix(ncol=6,nrow=0))
+for(i in 1:length(input)){
+  bricks<-rbind(bricks,as.numeric(unlist(str_split(str_replace(input[i],"~",","),","))))}
+colnames(bricks)<-c("x1","y1","z1","x2","y2","z2")
+
+### add 1 because working with R instead of a language that starts at 0.
+bricks<-bricks+1
+```
+
+Now, sort the bricks by the lowest Z, then add a number to show which block is first (& so on)
+```{r}
+bricks <- bricks %>% rowwise %>% mutate(lowz=min(z1,z2)) %>% arrange(lowz) %>%
+  rowid_to_column(var="bricknum") %>% mutate(bricknum=paste0("brick",bricknum))
+bricks[1:5,]
+```
+With the bricks sorted, creating an artifical "tower" for them to settle into.  It will be a three dimensional array and the lowest layer will be "floor"
+
+Create Container and Graph (mostly for part 2)
+```{r}
+tower <- array(character(),
+               c(max(bricks$x1,bricks$x2),
+                 max(bricks$y1,bricks$y2),
+                 max(bricks$z1,bricks$z2)))
+tower[,,1]<-"floor"
+```
+
+
+
+Function to settle the blocks into the tower and create a support graph:
+```{r}
+settle<-function(blist,twr){
+  ### create a support graph
+  supportgraph<-matrix(ncol=2,nrow=0)
+  ### create a new dataframe
+  tinyb<-as.data.frame(matrix(ncol=9,nrow=0))
+  ### for each row of the bricklist
+  for(i in 1:nrow(blist)){
+    keepgoing<-TRUE
+    currbr<-blist[i,]
+    howmanylevels<-dim(twr)[3]
+      for(x in currbr$x1:currbr$x2){
+        for(y in currbr$y1:currbr$y2){
+          for(z in currbr$z1:currbr$z2){
+            highestfilled<-max(which(!is.na(twr[x,y,1:(currbr$lowz-1)])))
+            howmanylevels<-min(howmanylevels,z-highestfilled-1)}}}
+    currbr$z1<-currbr$z1-howmanylevels
+    currbr$z2<-currbr$z2-howmanylevels
+    currbr$lowz<-currbr$lowz-howmanylevels
+    ### once it has dropped as far as possible, add the brickname to the tower
+    for(x in currbr$x1:currbr$x2){
+      for(y in currbr$y1:currbr$y2){
+        for(z in currbr$z1:currbr$z2){
+          twr[x,y,z]<-currbr$bricknum
+          if(!is.na(twr[x,y,(z-1)])){supportgraph<-rbind(supportgraph,c(twr[x,y,(z-1)],currbr$bricknum))}
+          }}}
+    ### add the new brick position to the new bricklist
+    tinyb<-rbind(tinyb,currbr)}
+  ### clean up the repeat edges in the support graph & create the support graph
+  supportgraph <- unique(supportgraph)
+  supportgraph <-simplify(graph_from_edgelist(as.matrix(supportgraph)))
+  colnames(tinyb)<-colnames(blist)
+  ### return the updated tower, the new bricklist and the list of all connections between bricks
+  list(twr,tinyb,supportgraph)}
+```
+
+
+Run on the data
+
+```{r}
+settling<-settle(bricks,tower)
+settledbricks<-settling[[2]]
+settledtower<-settling[[1]]
+settledgraph<-settling[[3]]
+
+```
+
+
+
+Here's a visual of the real data both before and after settling:
+
+```{r,include=FALSE,echo=FALSE}
+realinput <- read_lines("../../Advent2023/Day22.txt")
+realbricks<-as.data.frame(matrix(ncol=6,nrow=0))
+for(i in 1:length(realinput)){
+  realbricks<-rbind(realbricks,as.numeric(unlist(str_split(str_replace(realinput[i],"~",","),","))))}
+colnames(realbricks)<-c("x1","y1","z1","x2","y2","z2")
+realbricks<-realbricks+1
+realbricks <- realbricks %>% rowwise %>% mutate(lowz=min(z1,z2)) %>% arrange(lowz) %>%
+  rowid_to_column(var="bricknum") %>% mutate(bricknum=paste0("brick",bricknum))
+realtower <- array(character(),
+               c(max(realbricks$x1,realbricks$x2),
+                 max(realbricks$y1,realbricks$y2),
+                 max(realbricks$z1,realbricks$z2)))
+realtower[,,1]<-"floor"
+
+brickpalette <- distinctColorPalette(nrow(realbricks))
+realbricks<-cbind(realbricks,brickpalette)
+realsettled<-settle(realbricks,realtower)[[2]]
+```
+
+
+```{r,echo=FALSE,webgl=TRUE}
+for(i in 1:(nrow(realsettled))){
+  #x different
+  if(realsettled$x1[i]!=realsettled$x2[i]){
+    for(j in (realsettled$x1[i]):(realsettled$x2[i])){
+      shade3d(translate3d(cube3d(col = realsettled$brickpalette[i]), 2*j+1, 2*realbricks$y1[i]+1, 2*realbricks$z1[i]+1))
+      shade3d(translate3d(cube3d(col = realsettled$brickpalette[i]), 2*j+26, 2*realsettled$y1[i]+26, 2*realsettled$z1[i]+1))
+    }}else if(realsettled$y1[i]!=realsettled$y2[i]){
+      for(j in (realsettled$y1[i]):(realsettled$y2[i])){
+        shade3d(translate3d(cube3d(col = realsettled$brickpalette[i]),2*realbricks$x1[i]+1, 2*j+1, 2*realbricks$z1[i]+1))
+        shade3d(translate3d(cube3d(col = realsettled$brickpalette[i]),2*realsettled$x1[i]+26, 2*j+26, 2*realsettled$z1[i]+1))}
+    }else{for(j in (realsettled$z1[i]):(realsettled$z2[i])){
+      shade3d(translate3d(cube3d(col = realsettled$brickpalette[i]),2*realbricks$x1[i]+1,2*realbricks$y1[i]+1,2*j+1))
+      shade3d(translate3d(cube3d(col = realsettled$brickpalette[i]),2*realsettled$x1[i]+26,2*realsettled$y1[i]+26,2*j+1))}}}
+
+rglwidget()
+```
+
+
+The support graph shows a connection between every brick and the bricks it is resting on.  A brick is stable if there is a connection between it and the floor.
+
+One way to test is to remove a brick and then see if all of the other bricks still have a connection to the floor.  If so, then it can be safely disintegrated.
+If not, then that brick is not safe
+
+```{r}
+part1<-0
+for(i in 1:nrow(settledbricks)){
+  checkgraph<-delete.vertices(settledgraph,settledbricks[i,]$bricknum)
+  q<-distances(checkgraph,v="floor",to=V(checkgraph),mode=c("out"))[1,]
+  if(all(q!=Inf)){part1<-part1+1}}
+
+part1
+```
+## Part 2 - 
+Find the chain reactions:
+
+```{r}
+part2<-0
+
+### same as before, but instead of counting the safe bricks, count the number that would fall
+
+for(i in 1:nrow(settledbricks)){
+  checkgraph<-delete.vertices(settledgraph,settledbricks[i,]$bricknum)
+  q<-distances(checkgraph,v=1,to=V(checkgraph),mode=c("out"))[1,]
+  part2<-part2 + length(which(q==Inf))}
+
+part2
+```
+
+```{r}
+day22answers <-function(input){
+### set up bricks
+  bricks<-as.data.frame(matrix(ncol=6,nrow=0))
+for(i in 1:length(input)){
+  bricks<-rbind(bricks,as.numeric(unlist(str_split(str_replace(input[i],"~",","),","))))}
+colnames(bricks)<-c("x1","y1","z1","x2","y2","z2")
+
+### add 1 because working with R instead of a language that starts at 0.
+bricks<-bricks+1
+bricks <- bricks %>% rowwise %>% mutate(lowz=min(z1,z2)) %>% arrange(lowz) %>%
+  rowid_to_column(var="bricknum") %>% mutate(bricknum=paste0("brick",bricknum))
+### set up tower
+tower <- array(character(),
+               c(max(bricks$x1,bricks$x2),
+                 max(bricks$y1,bricks$y2),
+                 max(bricks$z1,bricks$z2)))
+tower[,,1]<-"floor"
+
+### run settling
+settling<-settle(bricks,tower)
+settledbricks<-settling[[2]]
+settledtower<-settling[[1]]
+settledgraph<-settling[[3]]  
+
+### run parts 1 & 2
+
+part1<-0
+part2<-0
+for(i in 1:nrow(settledbricks)){
+  checkgraph<-delete.vertices(settledgraph,settledbricks[i,]$bricknum)
+  q<-distances(checkgraph,v="floor",to=V(checkgraph),mode=c("out"))[1,]
+  if(all(q!=Inf)){part1<-part1+1}
+  part2<-part2 + length(which(q==Inf))}
+  c(part1,part2)}
+
+```
+
+```{r}
+day22 <- day22answers(input)
+day22
+```
