@@ -27,3 +27,4 @@ Code and notebooks from [Advent of Code 2023](https://adventofcode.com/2023).
 | 20 | *Pulse Propogation* | [HTML](https://exitingbear.github.io/AdventOfCode2023/Day-20.nb.html) | [Notebook](<Day 20/Day20.Rmd>) | [Files](<Day 20>) |
 | 21 | *Step Counter* | [HTML](https://exitingbear.github.io/AdventOfCode2023/Day-21.nb.html) | [Notebook](<Day 21/Day21.Rmd>) | [Files](<Day 21>) |
 | 22 | *Sand Slabs* | [HTML](https://exitingbear.github.io/AdventOfCode2023/Day-22.nb.html) | [Notebook](<Day 22/Day22.Rmd>) | [Files](<Day 22>) |
+| 23 | *A Long Walk* | [HTML](https://exitingbear.github.io/AdventOfCode2023/Day-23.nb.html) | [Notebook](<Day 23/Day23.Rmd>) | [Files](<Day 23>) |
