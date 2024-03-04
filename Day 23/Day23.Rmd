@@ -1,0 +1,218 @@
+---
+title: "Day 23 Notebook"
+output: html_notebook 
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(dplyr)
+library(stringr)
+library(tidyverse)
+library(igraph)
+library(ggplot2)
+library(rgl)
+library(ggraph)
+library(readr)
+library(ds4psy)
+library(numbers)
+options(scipen = 999)
+```
+
+
+## Part 1
+Find the *longest* path
+
+```{r}
+input <- read_lines("Day23Sample.txt")
+walkingpath<-matrix(nrow=0,ncol=nchar(input[1]))
+
+for(i in 1:length(input)){
+  wp<-unlist(str_split(input[i],""))
+  walkingpath<-rbind(walkingpath,wp)}
+```
+
+First, set this up as a directed graph:
+```{r}
+walkinggraph<-matrix(nrow=0,ncol=2)
+
+### right pathways
+for(y in 1:nrow(walkingpath)){
+  for(x in 1:(ncol(walkingpath)-1)){
+    if((walkingpath[y,x]=="."||walkingpath[y,x]==">")&&walkingpath[y,(x+1)]!="#"){
+      walkinggraph<-rbind(walkinggraph,c(paste0(x,"~",y),paste0(x+1,"~",y)))}}}
+
+
+### right pathways
+for(y in 1:nrow(walkingpath)){
+  for(x in 2:(ncol(walkingpath))){
+    if((walkingpath[y,x]=="."||walkingpath[y,x]=="<")&&walkingpath[y,(x-1)]!="#"){
+      walkinggraph<-rbind(walkinggraph,c(paste0(x,"~",y),paste0(x-1,"~",y)))}}}
+
+### down pathways
+for(x in 1:ncol(walkingpath)){
+  for(y in 1:(nrow(walkingpath)-1)){
+    if((walkingpath[y,x]=="."||walkingpath[y,x]=="v")&&walkingpath[y+1,x]!="#"){
+      walkinggraph<-rbind(walkinggraph,c(paste0(x,"~",y),paste0(x,"~",y+1)))}}}
+
+
+
+for(x in 1:ncol(walkingpath)){
+  for(y in 2:(nrow(walkingpath))){
+    if((walkingpath[y,x]=="."||walkingpath[y,x]=="^")&&walkingpath[y-1,x]!="#"){
+      walkinggraph<-rbind(walkinggraph,c(paste0(x,"~",y),paste0(x,"~",y-1)))}}}
+
+colnames(walkinggraph) <- c("v1","v2")
+walkinggraph <- graph_from_edgelist(walkinggraph, directed=TRUE)
+
+startpoint<-paste0(which(walkingpath[1,]=="."),"~",1)
+endpoint<-paste0(which(walkingpath[nrow(walkingpath),]=="."),"~",nrow(walkingpath))
+```
+
+then find all paths
+```{r}
+everypath<-all_simple_paths(walkinggraph, from=startpoint,to=endpoint)
+part1<-max(sapply(everypath,length))-1 ### -1 because we don't count the starting node
+part1
+```
+## Part 2
+
+This time, find the longest path, however.
+First, take the directionality out from the graph
+```{r}
+### this changes the walking graph to a non-directed one, effectively removing the icy patches
+longwalk<-as.undirected(walkinggraph,"collapse")
+```
+
+Now, to reduce the graph just to the decision points:
+```{r}
+### find the number of connections
+decision_verteces <- sapply(V(longwalk),function(x){length(incident(longwalk,v=x))})
+
+### get the names of the decision vertices where there are more than 2 connections and include starting point & ending point
+decision_verteces <- c(startpoint,endpoint, names(decision_verteces[decision_verteces>2]))
+
+
+### find the distance between the points with the other points removed (this gets rid of the issue where it's quicker to take a shortcut)
+tinygraph<-as.data.frame(matrix(ncol=3,nrow=0))
+
+
+for(i in 1:(length(decision_verteces)-1)){
+  for(j in (i+1):(length(decision_verteces))){
+    tempremove<-decision_verteces[-c(i,j)] ### all except the two vertices that are being measured
+    tempgr<-delete.vertices(longwalk,tempremove)###create a temporary graph without all of those vertices
+    tempdist<-distances(tempgr,v=decision_verteces[i],to=decision_verteces[j],mode=all) ### get the distance (if it exists)
+    tinygraph<-rbind(tinygraph,c(decision_verteces[i],decision_verteces[j],tempdist))}}  ### create a new edge list, with weight = distance (-1 to not count both ends)
+### remove the infinite distances
+colnames(tinygraph)<-c("V1","V2","weight")
+tinygraph <- tinygraph %>% mutate(weight=ifelse(weight=="Inf","0",weight)) %>% mutate(weight=as.numeric(weight)) %>%
+  filter(weight>0)
+
+tgdata<-tinygraph
+
+tinygraph<-graph_from_data_frame(tinygraph,directed=FALSE)
+```
+Here's a quick map of the truncated version and how the key nodes connect
+```{r,message=FALSE,echo=FALSE}
+ggraph(tinygraph)+
+  geom_edge_diagonal(aes(label=weight))+
+  geom_node_label(aes(label=name))
+```
+Then find all the paths that go to all the nodes:
+```{r}
+### get all paths
+longpaths<-all_simple_paths(tinygraph,from=startpoint,to=endpoint)
+
+### find their lengths
+longpathlengths<-sapply(longpaths,function(x){
+  lpd<-sum(E(tinygraph,path=x)$weight)
+  lpd})
+
+### part 2 is the longest of the lengths
+part2<-max(longpathlengths)
+part2
+```
+```{r}
+day23answers<-function(walkingpath){
+  walkinggraph<-matrix(nrow=0,ncol=2)
+  
+  ### right pathways
+  for(y in 1:nrow(walkingpath)){
+    for(x in 1:(ncol(walkingpath)-1)){
+      if((walkingpath[y,x]=="."||walkingpath[y,x]==">")&&walkingpath[y,(x+1)]!="#"){
+        walkinggraph<-rbind(walkinggraph,c(paste0(x,"~",y),paste0(x+1,"~",y)))}}}
+  
+  
+  ### right pathways
+  for(y in 1:nrow(walkingpath)){
+    for(x in 2:(ncol(walkingpath))){
+      if((walkingpath[y,x]=="."||walkingpath[y,x]=="<")&&walkingpath[y,(x-1)]!="#"){
+        walkinggraph<-rbind(walkinggraph,c(paste0(x,"~",y),paste0(x-1,"~",y)))}}}
+  
+  ### down pathways
+  for(x in 1:ncol(walkingpath)){
+    for(y in 1:(nrow(walkingpath)-1)){
+      if((walkingpath[y,x]=="."||walkingpath[y,x]=="v")&&walkingpath[y+1,x]!="#"){
+        walkinggraph<-rbind(walkinggraph,c(paste0(x,"~",y),paste0(x,"~",y+1)))}}}
+  
+  
+  
+  for(x in 1:ncol(walkingpath)){
+    for(y in 2:(nrow(walkingpath))){
+      if((walkingpath[y,x]=="."||walkingpath[y,x]=="^")&&walkingpath[y-1,x]!="#"){
+        walkinggraph<-rbind(walkinggraph,c(paste0(x,"~",y),paste0(x,"~",y-1)))}}}
+  
+  colnames(walkinggraph) <- c("v1","v2")
+  walkinggraph <- graph_from_edgelist(walkinggraph, directed=TRUE)
+  
+  startpoint<-paste0(which(walkingpath[1,]=="."),"~",1)
+  endpoint<-paste0(which(walkingpath[nrow(walkingpath),]=="."),"~",nrow(walkingpath))
+  ### find all paths & then part1
+  everypath<-all_simple_paths(walkinggraph, from=startpoint,to=endpoint)
+  part1<-max(sapply(everypath,length))-1 ### -1 because we don't count the starting node
+  
+  ### find the collapsed graph
+  longwalk<-as.undirected(walkinggraph,"collapse")
+  ### find the number of connections
+  decision_verteces <- sapply(V(longwalk),function(x){length(incident(longwalk,v=x))})
+  
+  ### get the names of the decision vertices where there are more than 2 connections and include starting point & ending point
+  decision_verteces <- c(startpoint,endpoint, names(decision_verteces[decision_verteces>2]))
+  
+  
+  ### find the distance between the points with the other points removed (this gets rid of the issue where it's quicker to take a shortcut)
+  tinygraph<-as.data.frame(matrix(ncol=3,nrow=0))
+  
+  
+  for(i in 1:(length(decision_verteces)-1)){
+    for(j in (i+1):(length(decision_verteces))){
+      tempremove<-decision_verteces[-c(i,j)] ### all except the two vertices that are being measured
+      tempgr<-delete.vertices(longwalk,tempremove)###create a temporary graph without all of those vertices
+      tempdist<-distances(tempgr,v=decision_verteces[i],to=decision_verteces[j],mode=all) ### get the distance (if it exists)
+      tinygraph<-rbind(tinygraph,c(decision_verteces[i],decision_verteces[j],tempdist))}}  ### create a new edge list, with weight = distance (-1 to not count both ends)
+  ### remove the infinite distances
+  colnames(tinygraph)<-c("V1","V2","weight")
+  tinygraph <- tinygraph %>% 
+    mutate(weight=ifelse(weight=="Inf","0",weight)) %>% mutate(weight=as.numeric(weight)) %>%
+    filter(weight>0)
+  
+  tinygraph<-graph_from_data_frame(tinygraph,directed=FALSE)
+  
+  ### get all paths
+  longpaths<-all_simple_paths(tinygraph,from=startpoint,to=endpoint)
+  
+  ### find their lengths
+  longpathlengths<-sapply(longpaths,function(x){
+    lpd<-sum(E(tinygraph,path=x)$weight)
+    lpd})
+  
+  ### part 2 is the longest of the lengths
+  part2<-max(longpathlengths)
+  
+  c(part1,part2)}
+```
+
+```{r}
+day23<-day23answers(walkingpath)
+day23
+```
+
