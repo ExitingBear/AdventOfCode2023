@@ -1759,7 +1759,7 @@ display: none;
 <p>Figure out where the hailstones intersect</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbImlucHV0IDwtIHJlYWRfbGluZXMoXCJEYXkyNFNhbXBsZS50eHRcIikiLCJoYWlsc3RvbmVzPC1tYXRyaXgobmNvbD02LG5yb3c9MCkiLCJmb3IoaSBpbiAxOmxlbmd0aChpbnB1dCkpe1xuICAgeDwtYXMubnVtZXJpYyh1bmxpc3Qoc3RyX3NwbGl0KHN0cl9yZXBsYWNlKGlucHV0W2ldLFwiQFwiLFwiLFwiKSxcIixcIikpKVxuICBoYWlsc3RvbmVzPC1yYmluZChoYWlsc3RvbmVzLHgpfSIsImNvbG5hbWVzKGhhaWxzdG9uZXMpPC1jKFwieDBcIixcInkwXCIsXCJ6MFwiLFwiZGVsdGF4XCIsXCJkZWx0YXlcIixcImRlbHRhelwiKSIsImhhaWxzdG9uZXM8LWFzLmRhdGEuZnJhbWUoaGFpbHN0b25lcykiXX0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaW5wdXQgPC0gcmVhZF9saW5lcyhcIkRheTI0U2FtcGxlLnR4dFwiKVxuaGFpbHN0b25lczwtbWF0cml4KG5jb2w9Nixucm93PTApXG5mb3IoaSBpbiAxOmxlbmd0aChpbnB1dCkpe1xuICAgeDwtYXMubnVtZXJpYyh1bmxpc3Qoc3RyX3NwbGl0KHN0cl9yZXBsYWNlKGlucHV0W2ldLFwiQFwiLFwiLFwiKSxcIixcIikpKVxuICBoYWlsc3RvbmVzPC1yYmluZChoYWlsc3RvbmVzLHgpfVxuY29sbmFtZXMoaGFpbHN0b25lcyk8LWMoXCJ4MFwiLFwieTBcIixcInowXCIsXCJkZWx0YXhcIixcImRlbHRheVwiLFwiZGVsdGF6XCIpXG5oYWlsc3RvbmVzPC1hcy5kYXRhLmZyYW1lKGhhaWxzdG9uZXMpXG5gYGAifQ== -->
 <pre class="r"><code>input &lt;- read_lines(&quot;Day24Sample.txt&quot;)
 hailstones&lt;-matrix(ncol=6,nrow=0)
 for(i in 1:length(input)){
@@ -1773,7 +1773,7 @@ hailstones&lt;-as.data.frame(hailstones)</code></pre>
 <p>Find the A, B, and C for the hailstone equations:</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiaGFpbHN0b25lcyA8LSBoYWlsc3RvbmVzICU+JSBtdXRhdGUoQT1kZWx0YXksIEI9LWRlbHRheCkgJT4lIG11dGF0ZShDPShBKngwKSsoQip5MCkpIn0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaGFpbHN0b25lcyA8LSBoYWlsc3RvbmVzICU+JSBtdXRhdGUoQT1kZWx0YXksIEI9LWRlbHRheCkgJT4lIG11dGF0ZShDPShBKngwKSsoQip5MCkpXG5gYGAifQ== -->
 <pre class="r"><code>hailstones &lt;- hailstones %&gt;% mutate(A=deltay, B=-deltax) %&gt;% mutate(C=(A*x0)+(B*y0))</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
@@ -1782,7 +1782,7 @@ hailstones&lt;-as.data.frame(hailstones)</code></pre>
 is</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbImNyb3NzcG9pbnQ8LWFzLmRhdGEuZnJhbWUobWF0cml4KG5jb2w9NCxucm93PTApKSIsIiIsImZvcihpIGluIDE6KG5yb3coaGFpbHN0b25lcyktMSkpe1xuICBmb3IoaiBpbiAoaSsxKTpucm93KGhhaWxzdG9uZXMpKXtcbiAgICB4Y3Jvc3MgPC0gLShoYWlsc3RvbmVzJEJbaV0qaGFpbHN0b25lcyRDW2pdLWhhaWxzdG9uZXMkQltqXSpoYWlsc3RvbmVzJENbaV0pLyhoYWlsc3RvbmVzJEFbaV0qaGFpbHN0b25lcyRCW2pdLWhhaWxzdG9uZXMkQVtqXSpoYWlsc3RvbmVzJEJbaV0pXG4gICAgeWNyb3NzIDwtIC0oaGFpbHN0b25lcyRBW2pdKmhhaWxzdG9uZXMkQ1tpXS1oYWlsc3RvbmVzJEFbaV0qaGFpbHN0b25lcyRDW2pdKS8oaGFpbHN0b25lcyRBW2ldKmhhaWxzdG9uZXMkQltqXS1oYWlsc3RvbmVzJEFbal0qaGFpbHN0b25lcyRCW2ldKVxuICAgIHQxPC0oeGNyb3NzLWhhaWxzdG9uZXNbaSxdJHgpL2hhaWxzdG9uZXNbaSxdJGRlbHRheCAjIyMgdGltZSBmb3IgaGFpbHN0b25lIDFcbiAgICB0MjwtKHhjcm9zcy1oYWlsc3RvbmVzW2osXSR4KS9oYWlsc3RvbmVzW2osXSRkZWx0YXggIyMjIHRpbWUgZm9yIGhhaWxzdG9uZSAyXG4gICAgY3Jvc3Nwb2ludDwtcmJpbmQoY3Jvc3Nwb2ludCxjKHhjcm9zcyx5Y3Jvc3MsdDEsdDIpKX19Il19 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY3Jvc3Nwb2ludDwtYXMuZGF0YS5mcmFtZShtYXRyaXgobmNvbD00LG5yb3c9MCkpXG5cbmZvcihpIGluIDE6KG5yb3coaGFpbHN0b25lcyktMSkpe1xuICBmb3IoaiBpbiAoaSsxKTpucm93KGhhaWxzdG9uZXMpKXtcbiAgICB4Y3Jvc3MgPC0gLShoYWlsc3RvbmVzJEJbaV0qaGFpbHN0b25lcyRDW2pdLWhhaWxzdG9uZXMkQltqXSpoYWlsc3RvbmVzJENbaV0pLyhoYWlsc3RvbmVzJEFbaV0qaGFpbHN0b25lcyRCW2pdLWhhaWxzdG9uZXMkQVtqXSpoYWlsc3RvbmVzJEJbaV0pXG4gICAgeWNyb3NzIDwtIC0oaGFpbHN0b25lcyRBW2pdKmhhaWxzdG9uZXMkQ1tpXS1oYWlsc3RvbmVzJEFbaV0qaGFpbHN0b25lcyRDW2pdKS8oaGFpbHN0b25lcyRBW2ldKmhhaWxzdG9uZXMkQltqXS1oYWlsc3RvbmVzJEFbal0qaGFpbHN0b25lcyRCW2ldKVxuICAgIHQxPC0oeGNyb3NzLWhhaWxzdG9uZXNbaSxdJHgpL2hhaWxzdG9uZXNbaSxdJGRlbHRheCAjIyMgdGltZSBmb3IgaGFpbHN0b25lIDFcbiAgICB0MjwtKHhjcm9zcy1oYWlsc3RvbmVzW2osXSR4KS9oYWlsc3RvbmVzW2osXSRkZWx0YXggIyMjIHRpbWUgZm9yIGhhaWxzdG9uZSAyXG4gICAgY3Jvc3Nwb2ludDwtcmJpbmQoY3Jvc3Nwb2ludCxjKHhjcm9zcyx5Y3Jvc3MsdDEsdDIpKX19XG5gYGAifQ== -->
 <pre class="r"><code>crosspoint&lt;-as.data.frame(matrix(ncol=4,nrow=0))
 
 for(i in 1:(nrow(hailstones)-1)){
@@ -1797,7 +1797,7 @@ for(i in 1:(nrow(hailstones)-1)){
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbImNvbG5hbWVzKGNyb3NzcG9pbnQpPC1jKFwieFwiLFwieVwiLFwidDFcIixcInQyXCIpIiwiIyMjIGNoYW5nZSB0aGUgaW5maW5pdGVzIChwYXJhbGxlbCBsaW5lcykgdG8gTkEiLCJjcm9zc3BvaW50W21hcHBseShpcy5pbmZpbml0ZSxjcm9zc3BvaW50KV08LU5BIl19 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY29sbmFtZXMoY3Jvc3Nwb2ludCk8LWMoXCJ4XCIsXCJ5XCIsXCJ0MVwiLFwidDJcIilcbiMjIyBjaGFuZ2UgdGhlIGluZmluaXRlcyAocGFyYWxsZWwgbGluZXMpIHRvIE5BXG5jcm9zc3BvaW50W21hcHBseShpcy5pbmZpbml0ZSxjcm9zc3BvaW50KV08LU5BXG5gYGAifQ== -->
 <pre class="r"><code>colnames(crosspoint)&lt;-c(&quot;x&quot;,&quot;y&quot;,&quot;t1&quot;,&quot;t2&quot;)
 ### change the infinites (parallel lines) to NA
 crosspoint[mapply(is.infinite,crosspoint)]&lt;-NA</code></pre>
@@ -1808,7 +1808,7 @@ crosspoint[mapply(is.infinite,crosspoint)]&lt;-NA</code></pre>
 negative</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbImNyb3NzcG9pbnQgPC0gY3Jvc3Nwb2ludCAlPiVcbiAgZmlsdGVyKHQxPj0wLHQyPj0wLHg+PTcseT49Nyx4PD0yNyx5PD0yNykiLCJwYXJ0MTwtbnJvdyhjcm9zc3BvaW50KSIsInBhcnQxIl19 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY3Jvc3Nwb2ludCA8LSBjcm9zc3BvaW50ICU+JVxuICBmaWx0ZXIodDE+PTAsdDI+PTAseD49Nyx5Pj03LHg8PTI3LHk8PTI3KVxucGFydDE8LW5yb3coY3Jvc3Nwb2ludClcbnBhcnQxXG5gYGAifQ== -->
 <pre class="r"><code>crosspoint &lt;- crosspoint %&gt;%
   filter(t1&gt;=0,t2&gt;=0,x&gt;=7,y&gt;=7,x&lt;=27,y&lt;=27)
 part1&lt;-nrow(crosspoint)
@@ -1829,7 +1829,7 @@ then I finally half copied someone’s and then had to find all my typos
 even after copying, but this works.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbImgxPC1oYWlsc3RvbmVzWzEsXSIsImgyPC1oYWlsc3RvbmVzWzIsXSIsImgzPC1oYWlsc3RvbmVzWzMsXSJdfQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaDE8LWhhaWxzdG9uZXNbMSxdXG5oMjwtaGFpbHN0b25lc1syLF1cbmgzPC1oYWlsc3RvbmVzWzMsXVxuYGBgIn0= -->
 <pre class="r"><code>h1&lt;-hailstones[1,]
 h2&lt;-hailstones[2,]
 h3&lt;-hailstones[3,]</code></pre>
@@ -1838,8 +1838,9 @@ h3&lt;-hailstones[3,]</code></pre>
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbImE8LXJiaW5kKFxuICBjKC0oaDEkZGVsdGF5IC0gaDIkZGVsdGF5KSwgaDEkZGVsdGF4IC0gaDIkZGVsdGF4LCAwLCBoMSR5MCAtIGgyJHkwLCAtKGgxJHgwIC0gaDIkeDApLCAwKSxcbiAgYygtKGgxJGRlbHRheSAtIGgzJGRlbHRheSksIGgxJGRlbHRheCAtIGgzJGRlbHRheCwgMCwgaDEkeTAgLSBoMyR5MCwgLShoMSR4MCAtIGgzJHgwKSwwICksXG4gIGMoMCwgLShoMSRkZWx0YXogLSBoMiRkZWx0YXopLCBoMSRkZWx0YXkgLSBoMiRkZWx0YXksICAwLCBoMSR6MCAtIGgyJHowLCAtKGgxJHkwIC0gaDIkeTApKSxcbiAgYygwLCAtKGgxJGRlbHRheiAtIGgzJGRlbHRheiksIGgxJGRlbHRheSAtIGgzJGRlbHRheSwgIDAsIGgxJHowIC0gaDMkejAsIC0oaDEkeTAgLSBoMyR5MCkpLFxuICBjKC0oaDEkZGVsdGF6IC0gaDIkZGVsdGF6KSwgMCwgaDEkZGVsdGF4IC0gaDIkZGVsdGF4LCAgaDEkejAgLSBoMiR6MCwgMCwgLShoMSR4MCAtIGgyJHgwKSksXG4gIGMoLShoMSRkZWx0YXogLSBoMyRkZWx0YXopLCAwLCBoMSRkZWx0YXggLSBoMyRkZWx0YXgsICBoMSR6MCAtIGgzJHowLCAwLCAtKGgxJHgwIC0gaDMkeDApKSkiLCIiLCJiIDwtYyhcbiAgKGgxJHkwICogaDEkZGVsdGF4IC0gaDIkeTAgKiBoMiRkZWx0YXgpIC0gKGgxJHgwICogaDEkZGVsdGF5IC0gaDIkeDAgKiBoMiRkZWx0YXkpLFxuICAoaDEkeTAgKiBoMSRkZWx0YXggLSBoMyR5MCAqIGgzJGRlbHRheCkgLSAoaDEkeDAgKiBoMSRkZWx0YXkgLSBoMyR4MCAqIGgzJGRlbHRheSksXG4gIChoMSR6MCAqIGgxJGRlbHRheSAtIGgyJHowICogaDIkZGVsdGF5KSAtIChoMSR5MCAqIGgxJGRlbHRheiAtIGgyJHkwICogaDIkZGVsdGF6KSxcbiAgKGgxJHowICogaDEkZGVsdGF5IC0gaDMkejAgKiBoMyRkZWx0YXkpIC0gKGgxJHkwICogaDEkZGVsdGF6IC0gaDMkeTAgKiBoMyRkZWx0YXopLFxuICAoaDEkejAgKiBoMSRkZWx0YXggLSBoMiR6MCAqIGgyJGRlbHRheCkgLSAoaDEkeDAgKiBoMSRkZWx0YXogLSBoMiR4MCAqIGgyJGRlbHRheiksXG4gIChoMSR6MCAqIGgxJGRlbHRheCAtIGgzJHowICogaDMkZGVsdGF4KSAtIChoMSR4MCAqIGgxJGRlbHRheiAtIGgzJHgwICogaDMkZGVsdGF6KSkiLCIiLCJwYXJ0Mjwtc29sdmUoYSxiKSIsInBhcnQyPC1zdW0ocGFydDJbMTozXSkiLCJwYXJ0MiJdfQ== -->
-<pre class="r"><code>a&lt;-rbind(
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5hPC1yYmluZChcbiAgYygtKGgxJGRlbHRheSAtIGgyJGRlbHRheSksIGgxJGRlbHRheCAtIGgyJGRlbHRheCwgMCwgaDEkeTAgLSBoMiR5MCwgLShoMSR4MCAtIGgyJHgwKSwgMCksXG4gIGMoLShoMSRkZWx0YXkgLSBoMyRkZWx0YXkpLCBoMSRkZWx0YXggLSBoMyRkZWx0YXgsIDAsIGgxJHkwIC0gaDMkeTAsIC0oaDEkeDAgLSBoMyR4MCksMCApLFxuICBjKDAsIC0oaDEkZGVsdGF6IC0gaDIkZGVsdGF6KSwgaDEkZGVsdGF5IC0gaDIkZGVsdGF5LCAgMCwgaDEkejAgLSBoMiR6MCwgLShoMSR5MCAtIGgyJHkwKSksXG4gIGMoMCwgLShoMSRkZWx0YXogLSBoMyRkZWx0YXopLCBoMSRkZWx0YXkgLSBoMyRkZWx0YXksICAwLCBoMSR6MCAtIGgzJHowLCAtKGgxJHkwIC0gaDMkeTApKSxcbiAgYygtKGgxJGRlbHRheiAtIGgyJGRlbHRheiksIDAsIGgxJGRlbHRheCAtIGgyJGRlbHRheCwgIGgxJHowIC0gaDIkejAsIDAsIC0oaDEkeDAgLSBoMiR4MCkpLFxuICBjKC0oaDEkZGVsdGF6IC0gaDMkZGVsdGF6KSwgMCwgaDEkZGVsdGF4IC0gaDMkZGVsdGF4LCAgaDEkejAgLSBoMyR6MCwgMCwgLShoMSR4MCAtIGgzJHgwKSkpXG5cbmIgPC1jKFxuICAoaDEkeTAgKiBoMSRkZWx0YXggLSBoMiR5MCAqIGgyJGRlbHRheCkgLSAoaDEkeDAgKiBoMSRkZWx0YXkgLSBoMiR4MCAqIGgyJGRlbHRheSksXG4gIChoMSR5MCAqIGgxJGRlbHRheCAtIGgzJHkwICogaDMkZGVsdGF4KSAtIChoMSR4MCAqIGgxJGRlbHRheSAtIGgzJHgwICogaDMkZGVsdGF5KSxcbiAgKGgxJHowICogaDEkZGVsdGF5IC0gaDIkejAgKiBoMiRkZWx0YXkpIC0gKGgxJHkwICogaDEkZGVsdGF6IC0gaDIkeTAgKiBoMiRkZWx0YXopLFxuICAoaDEkejAgKiBoMSRkZWx0YXkgLSBoMyR6MCAqIGgzJGRlbHRheSkgLSAoaDEkeTAgKiBoMSRkZWx0YXogLSBoMyR5MCAqIGgzJGRlbHRheiksXG4gIChoMSR6MCAqIGgxJGRlbHRheCAtIGgyJHowICogaDIkZGVsdGF4KSAtIChoMSR4MCAqIGgxJGRlbHRheiAtIGgyJHgwICogaDIkZGVsdGF6KSxcbiAgKGgxJHowICogaDEkZGVsdGF4IC0gaDMkejAgKiBoMyRkZWx0YXgpIC0gKGgxJHgwICogaDEkZGVsdGF6IC0gaDMkeDAgKiBoMyRkZWx0YXopKVxuXG5wYXJ0Mjwtc29sdmUoYSxiKVxucGFydDI8LXN1bShwYXJ0MlsxOjNdKVxucGFydDJcbmBgYCJ9 -->
+<pre class="r"><code>
+a&lt;-rbind(
   c(-(h1$deltay - h2$deltay), h1$deltax - h2$deltax, 0, h1$y0 - h2$y0, -(h1$x0 - h2$x0), 0),
   c(-(h1$deltay - h3$deltay), h1$deltax - h3$deltax, 0, h1$y0 - h3$y0, -(h1$x0 - h3$x0),0 ),
   c(0, -(h1$deltaz - h2$deltaz), h1$deltay - h2$deltay,  0, h1$z0 - h2$z0, -(h1$y0 - h2$y0)),

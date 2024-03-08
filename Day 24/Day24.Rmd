@@ -1,0 +1,102 @@
+---
+title: "Day 24 Notebook"
+output: html_notebook
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(dplyr)
+library(stringr)
+library(tidyverse)
+library(igraph)
+library(ggplot2)
+library(rgl)
+library(ggraph)
+library(readr)
+library(ds4psy)
+library(numbers)
+options(scipen = 999)
+```
+
+
+## Part 1
+Figure out where the hailstones intersect
+```{r}
+input <- read_lines("Day24Sample.txt")
+hailstones<-matrix(ncol=6,nrow=0)
+for(i in 1:length(input)){
+   x<-as.numeric(unlist(str_split(str_replace(input[i],"@",","),",")))
+  hailstones<-rbind(hailstones,x)}
+colnames(hailstones)<-c("x0","y0","z0","deltax","deltay","deltaz")
+hailstones<-as.data.frame(hailstones)
+```
+Find the A, B, and C for the hailstone equations:
+```{r}
+hailstones <- hailstones %>% mutate(A=deltay, B=-deltax) %>% mutate(C=(A*x0)+(B*y0))
+```
+
+For each pair, solve the determinant to find where the crosspoint is
+
+```{r}
+crosspoint<-as.data.frame(matrix(ncol=4,nrow=0))
+
+for(i in 1:(nrow(hailstones)-1)){
+  for(j in (i+1):nrow(hailstones)){
+    xcross <- -(hailstones$B[i]*hailstones$C[j]-hailstones$B[j]*hailstones$C[i])/(hailstones$A[i]*hailstones$B[j]-hailstones$A[j]*hailstones$B[i])
+    ycross <- -(hailstones$A[j]*hailstones$C[i]-hailstones$A[i]*hailstones$C[j])/(hailstones$A[i]*hailstones$B[j]-hailstones$A[j]*hailstones$B[i])
+    t1<-(xcross-hailstones[i,]$x)/hailstones[i,]$deltax ### time for hailstone 1
+    t2<-(xcross-hailstones[j,]$x)/hailstones[j,]$deltax ### time for hailstone 2
+    crosspoint<-rbind(crosspoint,c(xcross,ycross,t1,t2))}}
+```
+
+
+```{r}
+colnames(crosspoint)<-c("x","y","t1","t2")
+### change the infinites (parallel lines) to NA
+crosspoint[mapply(is.infinite,crosspoint)]<-NA
+```
+
+Filter out crosspoints outside the window and where time is negative
+```{r}
+crosspoint <- crosspoint %>%
+  filter(t1>=0,t2>=0,x>=7,y>=7,x<=27,y<=27)
+part1<-nrow(crosspoint)
+part1
+```
+
+## Part 2 involves math:
+We're trying to find the starting point and the trajectory of the rock so that it hits all of the hailstones.  I'd love to say I did this on my own, but I did, then I didn't, then I kept screwing up the math, then I finally half copied someone's and then had to find all my typos even after copying, but this works.
+
+
+
+
+```{r}
+h1<-hailstones[1,]
+h2<-hailstones[2,]
+h3<-hailstones[3,]
+```
+
+```{r}
+
+a<-rbind(
+  c(-(h1$deltay - h2$deltay), h1$deltax - h2$deltax, 0, h1$y0 - h2$y0, -(h1$x0 - h2$x0), 0),
+  c(-(h1$deltay - h3$deltay), h1$deltax - h3$deltax, 0, h1$y0 - h3$y0, -(h1$x0 - h3$x0),0 ),
+  c(0, -(h1$deltaz - h2$deltaz), h1$deltay - h2$deltay,  0, h1$z0 - h2$z0, -(h1$y0 - h2$y0)),
+  c(0, -(h1$deltaz - h3$deltaz), h1$deltay - h3$deltay,  0, h1$z0 - h3$z0, -(h1$y0 - h3$y0)),
+  c(-(h1$deltaz - h2$deltaz), 0, h1$deltax - h2$deltax,  h1$z0 - h2$z0, 0, -(h1$x0 - h2$x0)),
+  c(-(h1$deltaz - h3$deltaz), 0, h1$deltax - h3$deltax,  h1$z0 - h3$z0, 0, -(h1$x0 - h3$x0)))
+
+b <-c(
+  (h1$y0 * h1$deltax - h2$y0 * h2$deltax) - (h1$x0 * h1$deltay - h2$x0 * h2$deltay),
+  (h1$y0 * h1$deltax - h3$y0 * h3$deltax) - (h1$x0 * h1$deltay - h3$x0 * h3$deltay),
+  (h1$z0 * h1$deltay - h2$z0 * h2$deltay) - (h1$y0 * h1$deltaz - h2$y0 * h2$deltaz),
+  (h1$z0 * h1$deltay - h3$z0 * h3$deltay) - (h1$y0 * h1$deltaz - h3$y0 * h3$deltaz),
+  (h1$z0 * h1$deltax - h2$z0 * h2$deltax) - (h1$x0 * h1$deltaz - h2$x0 * h2$deltaz),
+  (h1$z0 * h1$deltax - h3$z0 * h3$deltax) - (h1$x0 * h1$deltaz - h3$x0 * h3$deltaz))
+
+part2<-solve(a,b)
+part2<-sum(part2[1:3])
+part2
+```
+
+
