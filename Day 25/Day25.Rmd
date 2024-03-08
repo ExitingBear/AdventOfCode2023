@@ -1,0 +1,75 @@
+---
+title: "Day 25 Notebook"
+output: html_notebook
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(dplyr)
+library(stringr)
+library(tidyverse)
+library(igraph)
+library(ggplot2)
+library(rgl)
+library(ggraph)
+library(readr)
+library(ds4psy)
+library(numbers)
+options(scipen = 999)
+```
+
+
+## Part 1
+Again, turn this list of components into a graph
+
+```{r}
+input <- read_lines("Day25Sample.txt")
+
+cmps<-matrix(ncol=2,nrow=0)
+for(i in 1:length(input)){
+  x<-unlist(str_split(input[i],": "))
+  y<-unlist(str_split(x[2]," "))
+  for(j in 1:length(y)){
+    cmps<-rbind(cmps,(c(x[1],y[j])))}}
+
+cmps<-graph_from_edgelist(cmps,directed=FALSE)
+
+```
+Graph it to see what's going on:
+```{r,warning=FALSE,echo=FALSE}
+ggraph(cmps,layout="stress")+
+  geom_edge_diagonal()+
+  geom_node_label(aes(label=name))
+```
+And from there run min_cut to find the cut:
+```{r}
+splitcomponents<-min_cut(cmps,value.only=FALSE)
+splitcomponents
+```
+Which confirms that it can be split into two pieces with 3 cuts, 
+
+```{r,warning=FALSE,echo=FALSE}
+part1<-length(splitcomponents$partition1)*length(splitcomponents$partition2)
+part1
+```
+
+```{r}
+day25answers <-function(input){
+cmps<-matrix(ncol=2,nrow=0)
+for(i in 1:length(input)){
+  x<-unlist(str_split(input[i],": "))
+  y<-unlist(str_split(x[2]," "))
+  for(j in 1:length(y)){
+    cmps<-rbind(cmps,(c(x[1],y[j])))}}
+
+cmps<-graph_from_edgelist(cmps,directed=FALSE)
+splitcomponents<-min_cut(cmps,value.only=FALSE)
+part1<-length(splitcomponents$partition1)*length(splitcomponents$partition2)
+part1}
+
+```
+
+```{r}
+day25 <- day25answers(input)
+day25
+```
